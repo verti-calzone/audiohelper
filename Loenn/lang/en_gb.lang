@@ -1,0 +1,55 @@
+# Bell
+entities.audiohelper/Bell.placements.name.bell=Bell
+entities.audiohelper/Bell.placements.description.bell=Plays a note when the player passes through it. Will be louder the faster the player is going.
+
+# Play Sound On Dash
+entities.audiohelper/PlaySoundOnDash.placements.name.playsoundondash=Play Sound on Dash
+entities.audiohelper/PlaySoundOnDash.placements.description.playsoundondash=Plays an FMOD event when the player dashes. The parameter is set to 1 = left, 2 = up-left, etc, and expects the FMOD event to be formatted accordingly
+
+# Set Music Param On Dash
+entities.audiohelper/SetMusicParamOnDash.placements.name.setmusicparamondash=Set Music Param On Dash
+entities.audiohelper/SetMusicParamOnDash.placements.description.setmusicparamondash=Sets a parameter in the music event when the player dashes. The parameter is set to 1 = left, 2 = up-left, etc, and expects the FMOD event to be formatted accordingly
+
+
+# Play Sound On Directional Dash
+entities.audiohelper/PlaySoundOnDirectionalDash.placements.name.playsoundondirectionaldash=Play Sound on Directional Dash
+entities.audiohelper/PlaySoundOnDirectionalDash.placements.description.playsoundondirectionaldash=Plays a unique FMOD event for each dash direction. Leave a direction blank for no event
+
+# Musical Booster
+entities.audiohelper/MusicalBooster.placements.name.musicalbooster=Musical Booster
+entities.audiohelper/MusicalBooster.placements.description.musicalbooster=A booster with customizable sounds, and sets a music parameter while the player is boosting
+entities.audiohelper/MusicalBooster.attributes.description.EnterSound=FMOD event to play when the player enters the booster. Leave empty for the vanilla red/green sound
+entities.audiohelper/MusicalBooster.attributes.description.StartSound=FMOD event to play when the player starts boosting. Leave empty for the vanilla red/green sound
+entities.audiohelper/MusicalBooster.attributes.description.LoopSound=Red booster only, FMOD event to play while boosting. Leave empty for the vanilla sound
+entities.audiohelper/MusicalBooster.attributes.description.ExitSound=FMOD event to play when boosting is finished. Leave empty for the vanilla red/green sound
+entities.audiohelper/MusicalBooster.attributes.description.SpawnSound=FMOD event to play when the booster respawns. Leave empty for the vanilla red/green sound
+entities.audiohelper/MusicalBooster.attributes.description.MusicParameter=Music parameter to adjust while boosting, resetting once you leave the booster. Leave empty to not affect music
+entities.audiohelper/MusicalBooster.attributes.description.IncrementMode=Increment the music parameter by the amount given, instead of setting it to that amount
+
+# Musical Swap Block
+entities.audiohelper/MusicalSwapBlock.placements.name.normal=Musical Swap Block (Normal)
+entities.audiohelper/MusicalSwapBlock.placements.name.moon=Musical Swap Block (Moon)
+entities.audiohelper/MusicalSwapBlock.placements.description.normal=A swap block with customizable sounds, and sets a music parameter while in motion
+entities.audiohelper/MusicalSwapBlock.placements.description.moon=A swap block with customizable sounds, and sets a music parameter while in motion
+entities.audiohelper/MusicalSwapBlock.attributes.description.StartSound=FMOD event to play when the swapblock activates
+entities.audiohelper/MusicalSwapBlock.attributes.description.MoveSound=Looping FMOD event to play while the swapblock is moving towards its node. Vanilla swapblocks don't actually use a sound here
+entities.audiohelper/MusicalSwapBlock.attributes.description.MoveEndSound=FMOD event to play when the swapblock reaches its node
+entities.audiohelper/MusicalSwapBlock.attributes.description.ReturnSound=Looping FMOD event to play while the swapblock retracts
+entities.audiohelper/MusicalSwapBlock.attributes.description.ReturnEndSound=FMOD event to play when the swapblock returns to its home
+entities.audiohelper/MusicalSwapBlock.attributes.description.EndMoveSoundWithParameter=Ends the move sound by setting an "end" parameter to 1 instead of stopping the looping event. Useful if you're using an event that needs a special ending, rather than fading out. Not recommended unless you know what you're doing in FMOD
+entities.audiohelper/MusicalSwapBlock.attributes.description.EndReturnSoundWithParameter=Ends the return sound by setting an "end" parameter to 1 instead of stopping the looping event, which is how vanilla does it. Useful if you're using an event that needs a special ending, rather than fading out. Not recommended unless you know what you're doing in FMOD
+entities.audiohelper/MusicalSwapBlock.attributes.description.MusicParameter=Music parameter to adjust while the block is activated. Leave empty to not affect music
+entities.audiohelper/MusicalSwapBlock.attributes.description.IncrementMode=Increment the music parameter by the amount given, instead of setting it to that amount
+entities.audiohelper/MusicalSwapBlock.attributes.description.ResetBeforeReturn=Resets the parameter once the swapblock starts retracting, instead of when it returns to its home
+
+# Musical Move Block
+entities.audiohelper/MusicalMoveBlock.placements.name.musicalmoveblock=Musical Move Block
+entities.audiohelper/MusicalMoveBlock.placements.description.musicalmoveblock=A Move Block with customizable sounds, and sets a music parameter while in motion. Also customizes how steering the block affects the moving sound
+
+# WIP Musical Torch
+entities.audiohelper/MusicalTorch.placements.name.musicaltorch= WIP Musical Torch
+entities.audiohelper/MusicalTorch.placements.description.musicaltorch=Plays an FMOD event on activation, and can directly adjust a music parameter
+
+# Sample Trigger
+triggers.audiohelper/SampleTrigger.placements.name.normal=Sample Trigger
+triggers.audiohelper/SampleTrigger.attributes.description.sampleProperty=A sample property for your trigger.

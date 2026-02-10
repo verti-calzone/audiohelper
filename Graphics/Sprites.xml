@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Sprites>
+    <audiohelper_bell path="objects/audiohelper/bell/" start="idle">
+        <Justify x="0.51" y="0.166" />
+        <Anim id="idle" path="idle" delay="0.1" frames="00" />
+        <Anim id="left0" path="left" delay="0.1" frames="00" />
+        <Anim id="left1" path="left" delay="0.1" frames="01" />
+        <Anim id="right0" path="right" delay="0.1" frames="00" />
+        <Anim id="right1" path="right" delay="0.1" frames="01" />
+    </audiohelper_bell>
+</Sprites>
+

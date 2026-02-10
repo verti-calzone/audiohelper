@@ -1,0 +1,12 @@
+-- local SuppressCassetteDeactivationController = {
+--     name = "audiohelper/SuppressCassetteDeactivationController",
+--     depth = -8500,
+--     texture = "objects/audiohelper/SuppressCassetteDeactivationController",
+--     placements = {
+--         {
+--             name = "suppresscassettedeactivationcontroller",
+--         },
+--     },
+-- }
+
+-- return SuppressCassetteDeactivationController

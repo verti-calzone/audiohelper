@@ -1,6 +1,12 @@
+# NEW ENTITIES
+
 # Bell
 entities.audiohelper/Bell.placements.name.bell=Bell
 entities.audiohelper/Bell.placements.description.bell=Plays a note when the player passes through it. Will be louder the faster the player is going.
+
+
+
+# ONDASH ENTITIES
 
 # Play Sound On Dash
 entities.audiohelper/PlaySoundOnDash.placements.name.playsoundondash=Play Sound on Dash
@@ -10,10 +16,37 @@ entities.audiohelper/PlaySoundOnDash.placements.description.playsoundondash=Play
 entities.audiohelper/SetMusicParamOnDash.placements.name.setmusicparamondash=Set Music Param On Dash
 entities.audiohelper/SetMusicParamOnDash.placements.description.setmusicparamondash=Sets a parameter in the music event when the player dashes. The parameter is set to 1 = left, 2 = up-left, etc, and expects the FMOD event to be formatted accordingly
 
-
 # Play Sound On Directional Dash
 entities.audiohelper/PlaySoundOnDirectionalDash.placements.name.playsoundondirectionaldash=Play Sound on Directional Dash
 entities.audiohelper/PlaySoundOnDirectionalDash.placements.description.playsoundondirectionaldash=Plays a unique FMOD event for each dash direction. Leave a direction blank for no event
+
+
+
+# CONTROLLER ENTITIES
+
+# Custom Cassette Block Manager
+entities.audiohelper/CustomCassetteBlockManager.placements.name.customcassetteblockmanager=Custom Cassette Block Manager
+entities.audiohelper/CustomCassetteBlockManager.placements.description.customcassetteblockmanager=Flag-toggled controller that gives more control over cassette music
+entities.audiohelper/CustomCassetteBlockManager.attributes.description.Tempo=Tempo of the music, referring to the speed of the ticking metornome
+entities.audiohelper/CustomCassetteBlockManager.attributes.description.CountInLength=Length of the "count-in" where the blocks tick before the music enters. Measured in notes, not ticks of the metronome
+entities.audiohelper/CustomCassetteBlockManager.attributes.description.LoopStart=Point at which the song loops back to
+entities.audiohelper/CustomCassetteBlockManager.attributes.description.LoopEnd=Point at which the song loops
+entities.audiohelper/CustomCassetteBlockManager.attributes.description.NotesPerTick=Number of notes between each tick of the metronome
+entities.audiohelper/CustomCassetteBlockManager.attributes.description.TicksPerSwap=Number of ticks between each block change
+entities.audiohelper/CustomCassetteBlockManager.attributes.description.StartingColour=Colour of block to start the sequence at. Also affects the "target" colour to be on first after respawning
+entities.audiohelper/CustomCassetteBlockManager.attributes.description.NumberOfBlocks=Number of blocks in the cycle
+entities.audiohelper/CustomCassetteBlockManager.attributes.description.MusicParameter=Name of the parameter that controls the music in FMOD
+entities.audiohelper/CustomCassetteBlockManager.attributes.description.CassetteSong=Song to play. Leave empty to use the main level music instead
+entities.audiohelper/CustomCassetteBlockManager.attributes.description.TickSound=FMOD event to play when the metronome ticks, but the blocks do not change. Leave empty to have no sound
+entities.audiohelper/CustomCassetteBlockManager.attributes.description.SwapSound=FMOD event to play when the blocks change. Leave empty to have no sound
+entities.audiohelper/CustomCassetteBlockManager.attributes.description.UsesFlag=Whether this manager will only be active when the flag is set
+entities.audiohelper/CustomCassetteBlockManager.attributes.description.Flag=Flag to use if "Uses Flag" is enabled
+entities.audiohelper/CustomCassetteBlockManager.attributes.description.FreezeMode=Keeps the blocks frozen in their current state when the flag is disabled. Otherwise disables all blocks when the flag is disabled
+entities.audiohelper/CustomCassetteBlockManager.attributes.description.LatencyFix=Accounts for FMOD latency when using songs with longer audio clips. Necessary for the Farewell track to work properly, otherwise it is best to account for this inside of FMOD instead
+
+
+
+# MUSICAL ENTITIES
 
 # Musical Booster
 entities.audiohelper/MusicalBooster.placements.name.musicalbooster=Musical Booster

@@ -1,50 +1,46 @@
 local CustomCassetteBlockManager = {}
-local noteNames = {
-    {"E6", 24},
-    {"D#/Eb6", 23},
-    {"D6", 22},
-    {"C#/Db6", 21},
-    {"C6", 20},
-    {"B5", 19},
-    {"A#/Bb5", 18},
-    {"A5", 17},
-    {"G#/Ab5", 16},
-    {"G5", 15},
-    {"F#/Gb5", 14},
-    {"F5", 13},
-    {"E5", 12},
-    {"D#/Eb5", 11},
-    {"D5", 10},
-    {"C#/Db5", 9},
-    {"C5", 8},
-    {"B4", 7},
-    {"A#/Bb4", 6},
-    {"A4", 5},
-    {"G#/Ab4", 4},
-    {"G4", 3},
-    {"F#/Gb4", 2},
-    {"F4", 1},
-    {"E4",  0},
+local colourNames = {
+    ["Blue"] = 0,
+    ["Pink"] = 1,
+    ["Yellow"] = 2,
+    ["Green"] = 3
 }
 
-CustomCassetteBlockManager.name = "audiohelper/Bell"
+CustomCassetteBlockManager.name = "audiohelper/CustomCassetteBlockManager"
 CustomCassetteBlockManager.depth = -8500
 CustomCassetteBlockManager.fieldInformation = {
-    pitch = {
+    StartingColour = {
         fieldType = "integer",
-        options = noteNames,
+        options = colourNames,
         editable = false,
     },
-    colour = {
-        fieldType = "color"
+    NumberOfBlocks = {
+        fieldType = "integer",
+        options = {2,3,4},
+        editable = false,
     }
 }
 CustomCassetteBlockManager.placements = {
-    name = "bell",
+    name = "customcassetteblockmanager",
     data = {
-        sound = "event:/vert_audiohelper/bell",
-        pitch = 0,
-        colour = "c0c0c0"
+        Tempo = 90,
+        CountInLength = 16,
+        LoopStart = 0,
+        LoopEnd = 255,
+        NotesPerTick = 4,
+        TicksPerSwap = 2,
+        StartingColour = 0,
+        NumberOfBlocks = 2,
+        MusicParameter = "sixteenth_note",
+
+        CassetteSong = "",
+        TickSound = "event:/game/general/cassette_block_switch_1",
+        SwapSound = "event:/game/general/cassette_block_switch_2",
+
+        UsesFlag = false,
+        Flag = "",
+        FreezeMode = false,
+        LatencyFix = false,
     }
 }
 

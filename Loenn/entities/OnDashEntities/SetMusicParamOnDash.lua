@@ -6,7 +6,7 @@ SetMusicParamOnDash.texture = "objects/audiohelper/SetMusicParamOnDash"
 SetMusicParamOnDash.placements = {
     name = "setmusicparamondash",
     data = {
-        param = "key",
+        parameter = "",
     }
 }
 

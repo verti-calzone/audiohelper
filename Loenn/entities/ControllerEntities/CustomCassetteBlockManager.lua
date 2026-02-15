@@ -8,6 +8,7 @@ local colourNames = {
 
 CustomCassetteBlockManager.name = "audiohelper/CustomCassetteBlockManager"
 CustomCassetteBlockManager.depth = -8500
+CustomCassetteBlockManager.texture = "objects/audiohelper/CustomCassetteBlockManager"
 CustomCassetteBlockManager.fieldInformation = {
     StartingColour = {
         fieldType = "integer",
@@ -32,6 +33,7 @@ CustomCassetteBlockManager.placements = {
         StartingColour = 0,
         NumberOfBlocks = 2,
         MusicParameter = "sixteenth_note",
+        NoteOffset = 0,
 
         CassetteSong = "",
         TickSound = "event:/game/general/cassette_block_switch_1",
@@ -40,7 +42,6 @@ CustomCassetteBlockManager.placements = {
         UsesFlag = false,
         Flag = "",
         FreezeMode = false,
-        LatencyFix = false,
     }
 }
 

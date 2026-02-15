@@ -9,20 +9,25 @@ namespace Celeste.Mod.audiohelper.Entities;
 [Tracked]
 
 public class MusicalTorch : Entity {
+    // Data variables
+    public float Alpha;
+    public int StartRadius;
+    public int EndRadius;
+    public Color Colour = Calc.HexToColor("ffffff");
+    public bool StayLit;
+    public string ActivateSound;
+    public string MusicParam;
+    public float ParamValue;
+    public bool IncMode;
+
+    // Internal variables
     private EntityID id;
     private VertexLight light;
     private BloomPoint bloom;
     public Sprite sprite;
-    public float alpha = 1.0f;
-    public int StartRadius = 48;
-    public int EndRadius = 64;
-    public Color colour = Calc.HexToColor("ffffff");
-    private bool lit;
-    public bool stayLit;
-    public string activateSound;
-    public string musicParameter;
-    public float parameterValue;
-    private string FlagName
+    public bool lit;
+    public float OldParamValue;
+    public string FlagName
     {
         [MethodImpl(MethodImplOptions.NoInlining)]
         get
@@ -32,19 +37,20 @@ public class MusicalTorch : Entity {
     }
     public MusicalTorch(EntityData data, Vector2 offset, EntityID id) : base(data.Position + offset)
     {
-        alpha = data.Float("Alpha");
+        Alpha = data.Float("Alpha");
         StartRadius = data.Int("StartRadius");
         EndRadius = data.Int("EndRadius");
-        colour = data.HexColor("Colour");
-        stayLit = data.Bool("StayLit");
-        activateSound = data.Attr("ActivationSound");
-        musicParameter = data.Attr("MusicParameter");
-        parameterValue = data.Float("ParameterValue");
-        Add(sprite = GFX.SpriteBank.Create("torch"));
+        Colour = data.HexColor("Colour");
+        StayLit = data.Bool("StayLit");
+        ActivateSound = data.Attr("ActivationSound");
+        MusicParam = data.Attr("MusicParameter");
+        ParamValue = data.Float("ParameterValue");
+        IncMode = data.Bool("IncrementMode");
 
+        Add(sprite = GFX.SpriteBank.Create("torch"));
         Collider = new Hitbox(32f, 32f, -16f, -16f);
         Add(new PlayerCollider(OnPlayer));
-        Add(light = new VertexLight(colour, alpha, StartRadius, EndRadius));
+        Add(light = new VertexLight(Colour, Alpha, StartRadius, EndRadius));
         Add(bloom = new BloomPoint(0.5f, 8f));
         bloom.Visible = false;
         light.Visible = false;
@@ -63,12 +69,17 @@ public class MusicalTorch : Entity {
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
-    private void OnPlayer(Player player)
+    public void OnPlayer(Player player)
     {
         if (!lit)
         {
-            Audio.Play(activateSound, Position);
-            Audio.SetMusicParam(musicParameter, parameterValue);
+            Audio.Play(ActivateSound, Position);
+            if (!string.IsNullOrEmpty(MusicParam))
+            {
+                Audio.CurrentMusicEventInstance.getParameterValue(MusicParam, out OldParamValue, out _);
+                if (!IncMode) Audio.SetMusicParam(MusicParam,ParamValue);
+                else Audio.SetMusicParam(MusicParam,OldParamValue+ParamValue);
+            }
             lit = true;
             bloom.Visible = true;
             light.Visible = true;
@@ -82,11 +93,16 @@ public class MusicalTorch : Entity {
                 bloom.Alpha = 0.5f + 0.5f * (1f - t.Eased);
             };
             Add(tween);
-            if(stayLit)
+            if(StayLit)
             {
                 SceneAs<Level>().Session.SetFlag(FlagName);
             }
             SceneAs<Level>().ParticlesFG.Emit(Torch.P_OnLight, 12, Position, new Vector2(3f, 3f));
         }
+    }
+    public override void Removed(Scene scene)
+    {
+        base.Removed(scene);
+        if(!StayLit && !string.IsNullOrEmpty(MusicParam)) Audio.SetMusicParam(MusicParam,OldParamValue);
     }
 }

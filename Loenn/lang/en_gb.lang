@@ -15,10 +15,19 @@ entities.audiohelper/PlaySoundOnDash.placements.description.playsoundondash=Play
 # Set Music Param On Dash
 entities.audiohelper/SetMusicParamOnDash.placements.name.setmusicparamondash=Set Music Param On Dash
 entities.audiohelper/SetMusicParamOnDash.placements.description.setmusicparamondash=Sets a parameter in the music event when the player dashes. The parameter is set to 1 = left, 2 = up-left, etc, and expects the FMOD event to be formatted accordingly
+entities.audiohelper/SetMusicParamOnDash.attributes.description.parameter=Music parameter to set. The parameter is set to 1 = left, 2 = up-left, etc, and expects the FMOD event to be formatted accordingly
 
 # Play Sound On Directional Dash
 entities.audiohelper/PlaySoundOnDirectionalDash.placements.name.playsoundondirectionaldash=Play Sound on Directional Dash
-entities.audiohelper/PlaySoundOnDirectionalDash.placements.description.playsoundondirectionaldash=Plays a unique FMOD event for each dash direction. Leave a direction blank for no event
+entities.audiohelper/PlaySoundOnDirectionalDash.placements.description.playsoundondirectionaldash=Plays a unique FMOD event for each dash direction
+entities.audiohelper/PlaySoundOnDirectionalDash.attributes.description.eventL=Event to play when the player dashes left. Leave blank for no sound
+entities.audiohelper/PlaySoundOnDirectionalDash.attributes.description.eventUL=Event to play when the player dashes up-left. Leave blank for no sound
+entities.audiohelper/PlaySoundOnDirectionalDash.attributes.description.eventU=Event to play when the player dashes up. Leave blank for no sound
+entities.audiohelper/PlaySoundOnDirectionalDash.attributes.description.eventUR=Event to play when the player dashes up-right. Leave blank for no sound
+entities.audiohelper/PlaySoundOnDirectionalDash.attributes.description.eventR=Event to play when the player dashes right. Leave blank for no sound
+entities.audiohelper/PlaySoundOnDirectionalDash.attributes.description.eventDR=Event to play when the player dashes down-right. Leave blank for no sound
+entities.audiohelper/PlaySoundOnDirectionalDash.attributes.description.eventD=Event to play when the player dashes down. Leave blank for no sound
+entities.audiohelper/PlaySoundOnDirectionalDash.attributes.description.eventDL=Event to play when the player dashes down-left. Leave blank for no sound
 
 
 
@@ -41,7 +50,7 @@ entities.audiohelper/CustomCassetteBlockManager.attributes.description.TickSound
 entities.audiohelper/CustomCassetteBlockManager.attributes.description.SwapSound=FMOD event to play when the blocks change. Leave empty to have no sound
 entities.audiohelper/CustomCassetteBlockManager.attributes.description.UsesFlag=Whether this manager will only be active when the flag is set
 entities.audiohelper/CustomCassetteBlockManager.attributes.description.Flag=Flag to use if "Uses Flag" is enabled
-entities.audiohelper/CustomCassetteBlockManager.attributes.description.FreezeMode=Keeps the blocks frozen in their current state when the flag is disabled. Otherwise disables all blocks when the flag is disabled
+entities.audiohelper/CustomCassetteBlockManager.attributes.description.FreezeMode=If no managers are active, freezes the blocks in their current state. If all managers are inactive and none of them use freeze mode, then the blocks will be disabled
 entities.audiohelper/CustomCassetteBlockManager.attributes.description.LatencyFix=Accounts for FMOD latency when using songs with longer audio clips. Necessary for the Farewell track to work properly, otherwise it is best to account for this inside of FMOD instead
 
 
@@ -78,10 +87,25 @@ entities.audiohelper/MusicalSwapBlock.attributes.description.ResetBeforeReturn=R
 # Musical Move Block
 entities.audiohelper/MusicalMoveBlock.placements.name.musicalmoveblock=Musical Move Block
 entities.audiohelper/MusicalMoveBlock.placements.description.musicalmoveblock=A Move Block with customizable sounds, and sets a music parameter while in motion. Also customizes how steering the block affects the moving sound
+entities.audiohelper/MusicalMoveBlock.attributes.description.ActivateSound=FMOD event to play when the block is activated
+entities.audiohelper/MusicalMoveBlock.attributes.description.MoveSound=Looping FMOD event to play when the block is moving. Uses "arrow_influence" and "arrow_stop" parameters, and expects the FMOD event to be formatted accordingly
+entities.audiohelper/MusicalMoveBlock.attributes.description.BreakSound=FMOD event to play when the block breaks
+entities.audiohelper/MusicalMoveBlock.attributes.description.ReformSound=FMOD event to play while the block reforms
+entities.audiohelper/MusicalMoveBlock.attributes.description.ReappearSound=FMOD event to play when the block finishes reappearing
+entities.audiohelper/MusicalMoveBlock.attributes.description.MusicParameter=Music parameter to adjust while the block is activated. Leave empty to not affect music
+entities.audiohelper/MusicalMoveBlock.attributes.description.IncrementMode=Increment the music parameter by the amount given, instead of setting it to that amount
 
-# WIP Musical Torch
-entities.audiohelper/MusicalTorch.placements.name.musicaltorch= WIP Musical Torch
+# Musical Torch
+entities.audiohelper/MusicalTorch.placements.name.musicaltorch=Musical Torch
 entities.audiohelper/MusicalTorch.placements.description.musicaltorch=Plays an FMOD event on activation, and can directly adjust a music parameter
+entities.audiohelper/MusicalTorch.attributes.description.Alpha=Alpha of the light
+entities.audiohelper/MusicalTorch.attributes.description.StartRadius=Distance at which the light begins to fade
+entities.audiohelper/MusicalTorch.attributes.description.EndRadius=Distance at which the light is completely faded
+entities.audiohelper/MusicalTorch.attributes.description.Colour=Colour of the light
+entities.audiohelper/MusicalTorch.attributes.description.StayLit=Whether or not the light stays lit over respawn/room reload. Will reset the music parameter as well if not checked
+entities.audiohelper/MusicalTorch.attributes.description.ActivateSound=FMOD event to play when the torch activates
+entities.audiohelper/MusicalTorch.attributes.description.MusicParameter=Music parameter to adjust when the torch is activated. Leave empty to not affect music
+entities.audiohelper/MusicalTorch.attributes.description.IncrementMode=Increment the music parameter by the amount given, instead of setting it to that amount
 
 # Sample Trigger
 triggers.audiohelper/SampleTrigger.placements.name.normal=Sample Trigger

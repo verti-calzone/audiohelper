@@ -13,7 +13,7 @@ public class SetMusicParamOnDash : Entity {
 
     public SetMusicParamOnDash(EntityData data, Vector2 offset) : base(data.Position + offset)
   {
-    Parameter = data.Attr("param","dash_direction");
+    Parameter = data.Attr("parameter");
   }
     private DashListener dashListener;
     public override void Awake(Scene scene) {

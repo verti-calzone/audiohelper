@@ -11,6 +11,7 @@ using FMOD.Studio;
 using Monocle;
 using System.Collections.Generic;
 using System.Data.Common;
+using System;
 
 namespace Celeste.Mod.audiohelper.Entities;
 
@@ -35,27 +36,28 @@ public class CustomCassetteBlockManager : Entity {
 
     public bool UsesFlag;
     public string FlagName;
-    public bool Flag;
     public bool FreezeMode;
     public bool LatencyFix;
+    public int NoteOffset;
 
-    // implicit variables
-    public EventInstance Song;    
-    public EventInstance Snapshot;
-    public float NoteTimer;
-    public int Note;
-    public int ActiveBlock;
+    // internal variables
+    public EventInstance Song;
+    public static EventInstance Snapshot;
+    public static float NoteTimer;
+    public static int Note = 0;
+    public static int ActiveBlock;
     public EntityID id;
     public bool PrevFlagState = false;
-    public int musState;
+    public static bool CountingIn = true;
+    public bool CanStart = false;
 
-  public CustomCassetteBlockManager(EntityData data, Vector2 offset) : base(data.Position + offset)
+  public CustomCassetteBlockManager(EntityData data, Vector2 offset, EntityID id) : base(data.Position + offset)
     {
         // Global tag allows the manager to stay active across respawn
         base.Tag = Tags.Global;
         Add(new TransitionListener
         {
-            OnOutBegin = RemoveSelf
+            OnOutBegin = this.RemoveSelf,
         });
 
         // Data set in map editor
@@ -67,16 +69,18 @@ public class CustomCassetteBlockManager : Entity {
         TicksPerSwap = data.Int("TicksPerSwap");
         StartingColour = data.Int("StartingColour");
         MaxBlocks = data.Int("NumberOfBlocks");
-        SongParam = data.Attr("MusicParameter");
+        NoteOffset = data.Int("NoteOffset");
 
         SongName = data.Attr("CassetteSong");
         TickSound = data.Attr("TickSound");
         SwapSound = data.Attr("SwapSound");
 
+        SongParam = data.Attr("MusicParameter");
         UsesFlag = data.Bool("UsesFlag");
         FlagName = data.Attr("Flag");
         FreezeMode = data.Bool("FreezeMode");
-        LatencyFix = data.Bool("LatencyFix");
+
+        this.id = id;
     }
     public static bool IsActive(Scene scene)
     {
@@ -86,32 +90,39 @@ public class CustomCassetteBlockManager : Entity {
     {
         base.Added(scene);
         // Removes self if already present
-        foreach(CustomCassetteBlockManager ccbm in scene.Entities.FindAll<CustomCassetteBlockManager>()) if(ccbm != this && ccbm.id.ID == this.id.ID) RemoveSelf();
-
-        // Adds a starter entity to call OnlevelStart 
-        if(scene.Tracker.GetEntity<CustomCassetteBlockManagerStarter>() is null) scene.Add(new CustomCassetteBlockManagerStarter());
+        foreach(CustomCassetteBlockManager ccbm in scene.Entities.FindAll<CustomCassetteBlockManager>()) if(ccbm != this && ccbm.id.Key == id.Key) RemoveSelf();
     }
     public override void Awake(Scene scene)
     {
         base.Awake(scene);
+        
         // remove the vanilla manager. further vanilla managers will be made on reload, but an ILHook prevents those from being created as long as a custom manager exists
         scene.Entities.FindFirst<CassetteBlockManager>()?.RemoveSelf();
 
-        // sets the correct music eventinstance to the Song variable (TODO: copy to update to account for midroom music changes)
-        if(string.IsNullOrEmpty(SongName)) Song = Audio.CurrentMusicEventInstance;
-        else if(Song == null) 
+        // Setting up the EventInstance
+        if(!string.IsNullOrEmpty(SongName)) Song = Audio.CreateInstance(SongName);
+
+
+        if (!CountingIn) CanStart = true;
+        foreach(CustomCassetteBlockManager ccbm in scene.Entities.FindAll<CustomCassetteBlockManager>())
         {
-            Song = Audio.CreateInstance(SongName);
-            Audio.Play("event:/game/general/cassette_block_switch_2");
-            if (CountInLength == 0)
+            if(ccbm.CountInLength == 0 && !(UsesFlag && !SceneAs<Level>().Session.GetFlag(ccbm.FlagName)))
             {
-                Note = 0;
-                Song?.start();
+                CountingIn = false;
+                CanStart = true;
             }
         }
-        // Mutes main music if not using it
-        if (!string.IsNullOrEmpty(SongName)) Snapshot = Audio.CreateSnapshot("snapshot:/music_mains_mute");
-        if (UsesFlag && !SceneAs<Level>().Session.GetFlag(FlagName)) Audio.Stop(Snapshot);
+
+        // Continues running Update whilst transitioning into its room
+        TransitionListener transitionListener = Get<TransitionListener>();
+        if (transitionListener == null) return;
+        transitionListener.OnIn = delegate
+        {
+            if (base.Scene != null && !CountingIn) Update();
+        };
+
+        // Adds a starter entity to call OnlevelStart 
+        if(scene.Tracker.GetEntity<CustomCassetteBlockManagerStarter>() is null) scene.Add(new CustomCassetteBlockManagerStarter());
     }
     public void OnLevelStart()
     {
@@ -123,6 +134,7 @@ public class CustomCassetteBlockManager : Entity {
     }
     private void SilentUpdateBlocks()
     {
+        Logger.Info("audiohelper","running silentupdate"+this.id.Key);        
         foreach (CassetteBlock entity in base.Scene.Tracker.GetEntities<CassetteBlock>())
         {
             if (entity.ID.Level == SceneAs<Level>().Session.Level) entity.SetActivatedSilently(entity.Index == ActiveBlock);
@@ -135,20 +147,16 @@ public class CustomCassetteBlockManager : Entity {
     public override void Update()
     {
         base.Update();
-        if(string.IsNullOrEmpty(SongName)) Song = Audio.CurrentMusicEventInstance;
         AdvanceMusic(Engine.DeltaTime);
-        if (UsesFlag && !SceneAs<Level>().Session.GetFlag(FlagName))
+        UpdateSnapshot();
+        foreach(CustomCassetteBlockManager ccbm in Scene.Entities.FindAll<CustomCassetteBlockManager>())
         {
-            if (!FreezeMode)
-            {
-                foreach (CassetteBlock entity in base.Scene.Tracker.GetEntities<CassetteBlock>()) if(entity.Activated && (Note + 1) % (NotesPerTick * TicksPerSwap) != 0) entity.WillToggle();
-                foreach (CassetteBlock entity in base.Scene.Tracker.GetEntities<CassetteBlock>()) entity.Activated = entity.Index == -1;
-                foreach (CassetteListener component in base.Scene.Tracker.GetComponents<CassetteListener>()) component.SetActivated(false);
-            }
+            // returns without disabling all blocks if an unactive manager uses freeze mode, or there exists an active manager
+            if (ccbm.UsesFlag && !SceneAs<Level>().Session.GetFlag(ccbm.FlagName) && ccbm.FreezeMode || !(ccbm.UsesFlag && !SceneAs<Level>().Session.GetFlag(ccbm.FlagName))) return;
         }
-        if (!string.IsNullOrEmpty(SongName) && PrevFlagState && !SceneAs<Level>().Session.GetFlag(FlagName)) Audio.Stop(Snapshot);
-        if (!string.IsNullOrEmpty(SongName) && !PrevFlagState && SceneAs<Level>().Session.GetFlag(FlagName) && !Audio.IsSnapshotRunning(Snapshot)) Snapshot = Audio.CreateSnapshot("snapshot:/music_mains_mute");
-        if (UsesFlag) PrevFlagState = SceneAs<Level>().Session.GetFlag(FlagName);
+        foreach (CassetteBlock entity in base.Scene.Tracker.GetEntities<CassetteBlock>()) if(entity.Activated && (Note + 1) % (NotesPerTick * TicksPerSwap) != 0) entity.WillToggle();
+        foreach (CassetteBlock entity in base.Scene.Tracker.GetEntities<CassetteBlock>()) entity.Activated = entity.Index == -1;
+        foreach (CassetteListener component in base.Scene.Tracker.GetComponents<CassetteListener>()) component.SetActivated(false);
     }
 
     public void AdvanceMusic(float time)
@@ -162,67 +170,94 @@ public class CustomCassetteBlockManager : Entity {
             Note++;
             if(Note>LoopEnd) Note = LoopStart;
 
+            // Counts down the count-in value to create the intro, where the song doesnt play yet
+            if (CountingIn)
+            {
+                CountInLength--;
+                if (CountInLength <= NoteOffset)
+                {
+                    Note = LoopEnd+1-NoteOffset;
+                    foreach(CustomCassetteBlockManager ccbm in Scene.Entities.FindAll<CustomCassetteBlockManager>()) ccbm.CanStart = true;
+                    CountingIn = false;
+                    //Audio.Play(SwapSound);
+                }
+            }
             // logic for each "swap"
             if (Note % (NotesPerTick*TicksPerSwap) == 0)
             {
                 ActiveBlock++;
                 ActiveBlock %= MaxBlocks;
                 SetActiveIndex(ActiveBlock);
-                if (!string.IsNullOrEmpty(TickSound)) Audio.Play(TickSound);
+                if (!string.IsNullOrEmpty(SwapSound)) Audio.Play(SwapSound);
                 Input.Rumble(RumbleStrength.Medium, RumbleLength.Short);
             }
             else
             {
                 // if one note before a swap, warn the blocks that are about to swap
-                if ((Note + 1) % (NotesPerTick * TicksPerSwap) == 0)
-                {
-                    SetWillActivate((ActiveBlock + 1) % MaxBlocks);
-                }
+                if ((Note + 1) % (NotesPerTick * TicksPerSwap) == 0) SetWillActivate((ActiveBlock + 1) % MaxBlocks);
                 // if a tick (but not a swap!), play the sound
-                if (Note % NotesPerTick == 0 && !string.IsNullOrEmpty(SwapSound)) Audio.Play(SwapSound);
+                if (Note % NotesPerTick == 0 && !string.IsNullOrEmpty(TickSound)) Audio.Play(TickSound);
             }
-            // Counts down the count-in value to create the intro, where the song doesnt play yet
-            if (CountInLength >= 0)
+            
+            // Sets the music param to match the counter once the count-in ends
+            if (!CountingIn) PlayNote(Note);
+            // Begins the song on the first Update where the count-in is finished/skipped, and the flag is set (if used)
+            if (CanStart)
             {
-                CountInLength--;
-                // Starts the song a note early when using the latency fix, so that it sounds in time
-                if (CountInLength == 1 && LatencyFix)
-                {
-                    Note = -1;
-                    if (!string.IsNullOrEmpty(SongName)) Song?.start();
-                }
-                if (CountInLength == 0 && !LatencyFix)
-                {
-                    Note = 0;
-                    if (!string.IsNullOrEmpty(SongName)) Song?.start();
-                }
-            }
-            // Sets the music param to match the counter
-            if (CountInLength <= 0)
-            {
-                // Cues every note to play one step early to account for latency
-                if(LatencyFix)
-                {
-                    if(Note == LoopEnd) Song?.setParameterValue(SongParam, LoopStart+1);
-                    else Song?.setParameterValue(SongParam, Note+2);
-                }
-                else Song?.setParameterValue(SongParam, Note+1);
+                CanStart = false;
+                Song?.start();
             }
         }
     }
+    public void PlayNote(int note)
+    {
+        note -= LoopStart;
+        note += NoteOffset;
+        note %= LoopEnd-LoopStart+1;
+        note += LoopStart;
+        (!string.IsNullOrEmpty(SongName)? Song : Audio.CurrentMusicEventInstance)?.setParameterValue(SongParam, note+1);
+    }
     public void SetActiveIndex(int index)
     {
-        // Logger.Info("audiohelper","ran SetActiveIndex");
         // Controls which blocks are currently active
         foreach (CassetteBlock entity in base.Scene.Tracker.GetEntities<CassetteBlock>()) entity.Activated = entity.Index == index;
         foreach (CassetteListener component in base.Scene.Tracker.GetComponents<CassetteListener>()) component.SetActivated(component.Index == index);
     }
     public void SetWillActivate(int index)
     {
-        // Logger.Info("audiohelper","ran SetWillActivate");
-        // Controls which blocks will activate on the next note (used for the bobbing animation)
+        // Controls which blocks will (de)activate on the next note (used for the bobbing animation)
         foreach (CassetteBlock entity in base.Scene.Tracker.GetEntities<CassetteBlock>()) if (entity.Index == index || entity.Activated) entity.WillToggle();
         foreach (CassetteListener component in base.Scene.Tracker.GetComponents<CassetteListener>()) if (component.Index == index || component.Activated) component.WillToggle();
+    }
+    public void UpdateSnapshot()
+    {
+        // try to start the snapshot 
+        if (!Audio.IsSnapshotRunning(Snapshot))
+        {
+            foreach(CustomCassetteBlockManager ccbm in Scene.Entities.FindAll<CustomCassetteBlockManager>())
+            {
+                if(!(ccbm.UsesFlag && !SceneAs<Level>().Session.GetFlag(ccbm.FlagName)) && !string.IsNullOrEmpty(ccbm.SongName))
+                {
+                    Snapshot = Audio.CreateSnapshot("snapshot:/music_mains_mute");
+                    return;
+                }
+            }
+            return;
+        }
+        //try to stop the snapshot
+        else
+        {
+            foreach(CustomCassetteBlockManager ccbm in Scene.Entities.FindAll<CustomCassetteBlockManager>())
+            {
+                if(!(ccbm.UsesFlag && !SceneAs<Level>().Session.GetFlag(ccbm.FlagName)) && !string.IsNullOrEmpty(ccbm.SongName))
+                {
+                    return;
+                }
+            }
+            Audio.Stop(Snapshot);
+            return;
+        }
+
     }
     public override void SceneEnd(Scene scene)
     {
@@ -231,15 +266,20 @@ public class CustomCassetteBlockManager : Entity {
         {
             Audio.Stop(Snapshot);
             Audio.Stop(Song);
+            CountingIn = true;
+            Note = 0;
         }
     }
     public override void Removed(Scene scene)
     {
         base.Removed(scene);
-        if (!string.IsNullOrEmpty(SongName))
+        if (!string.IsNullOrEmpty(SongName)) Audio.Stop(Song);
+        if(scene.Entities.AmountOf<CustomCassetteBlockManager>() == 0)
         {
+            Logger.Info("audiohelper","resetting variables");
+            CountingIn = true;
+            Note = 0;
             Audio.Stop(Snapshot);
-            Audio.Stop(Song);
         }
     }
 }

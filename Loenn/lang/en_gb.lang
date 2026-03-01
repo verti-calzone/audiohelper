@@ -45,13 +45,13 @@ entities.audiohelper/CustomCassetteBlockManager.attributes.description.TicksPerS
 entities.audiohelper/CustomCassetteBlockManager.attributes.description.StartingColour=Colour of block to start the sequence at. Also affects the "target" colour to be on first after respawning
 entities.audiohelper/CustomCassetteBlockManager.attributes.description.NumberOfBlocks=Number of blocks in the cycle
 entities.audiohelper/CustomCassetteBlockManager.attributes.description.MusicParameter=Name of the parameter that controls the music in FMOD
+entities.audiohelper/CustomCassetteBlockManager.attributes.description.NoteOffset=Number of notes "ahead" the music is, compared to the timing of the blocks. Will skip this many notes from the start of the song when it begins. Should be set to 5 for the Farewell cassette track to work properly
 entities.audiohelper/CustomCassetteBlockManager.attributes.description.CassetteSong=Song to play. Leave empty to use the main level music instead
 entities.audiohelper/CustomCassetteBlockManager.attributes.description.TickSound=FMOD event to play when the metronome ticks, but the blocks do not change. Leave empty to have no sound
 entities.audiohelper/CustomCassetteBlockManager.attributes.description.SwapSound=FMOD event to play when the blocks change. Leave empty to have no sound
 entities.audiohelper/CustomCassetteBlockManager.attributes.description.UsesFlag=Whether this manager will only be active when the flag is set
 entities.audiohelper/CustomCassetteBlockManager.attributes.description.Flag=Flag to use if "Uses Flag" is enabled
 entities.audiohelper/CustomCassetteBlockManager.attributes.description.FreezeMode=If no managers are active, freezes the blocks in their current state. If all managers are inactive and none of them use freeze mode, then the blocks will be disabled
-entities.audiohelper/CustomCassetteBlockManager.attributes.description.LatencyFix=Accounts for FMOD latency when using songs with longer audio clips. Necessary for the Farewell track to work properly, otherwise it is best to account for this inside of FMOD instead
 
 
 
@@ -60,24 +60,34 @@ entities.audiohelper/CustomCassetteBlockManager.attributes.description.LatencyFi
 # Musical Booster
 entities.audiohelper/MusicalBooster.placements.name.musicalbooster=Musical Booster
 entities.audiohelper/MusicalBooster.placements.description.musicalbooster=A booster with customizable sounds, and sets a music parameter while the player is boosting
-entities.audiohelper/MusicalBooster.attributes.description.EnterSound=FMOD event to play when the player enters the booster. Leave empty for the vanilla red/green sound
-entities.audiohelper/MusicalBooster.attributes.description.StartSound=FMOD event to play when the player starts boosting. Leave empty for the vanilla red/green sound
-entities.audiohelper/MusicalBooster.attributes.description.LoopSound=Red booster only, FMOD event to play while boosting. Leave empty for the vanilla sound
-entities.audiohelper/MusicalBooster.attributes.description.ExitSound=FMOD event to play when boosting is finished. Leave empty for the vanilla red/green sound
-entities.audiohelper/MusicalBooster.attributes.description.SpawnSound=FMOD event to play when the booster respawns. Leave empty for the vanilla red/green sound
+entities.audiohelper/MusicalBooster.attributes.description.EnterSound=FMOD event to play when the player enters the booster. Leave blank for no sound to occur
+entities.audiohelper/MusicalBooster.attributes.description.StartSound=FMOD event to play when the player starts boosting. Leave blank for no sound to occur
+entities.audiohelper/MusicalBooster.attributes.description.LoopSound=Red booster only, FMOD event to play while boosting. Leave blank for no sound to occur
+entities.audiohelper/MusicalBooster.attributes.description.ExitSound=FMOD event to play when boosting is finished. Leave blank for no sound to occur
+entities.audiohelper/MusicalBooster.attributes.description.SpawnSound=FMOD event to play when the booster respawns. Leave blank for no sound to occur
 entities.audiohelper/MusicalBooster.attributes.description.MusicParameter=Music parameter to adjust while boosting, resetting once you leave the booster. Leave empty to not affect music
 entities.audiohelper/MusicalBooster.attributes.description.IncrementMode=Increment the music parameter by the amount given, instead of setting it to that amount
+
+# Musical Bumper
+entities.audiohelper/MusicalBumper.placements.name.musicalbumper=Musical Bumper
+entities.audiohelper/MusicalBumper.placements.description.musicalbumper=A bumper with customizable sounds, and briefly sets a music parameter when hit
+entities.audiohelper/MusicalBumper.attributes.description.BumpSound=FMOD event to play when the bumper bumps the player. Leave blank for no sound to occur
+entities.audiohelper/MusicalBumper.attributes.description.FireSound=FMOD event to play when the player dies to the bumper. Leave blank for no sound to occur
+entities.audiohelper/MusicalBumper.attributes.description.SpawnSound=FMOD event to play when the bumper returns from its inactive state. Leave blank for no sound to occur
+entities.audiohelper/MusicalBumper.attributes.description.MusicParameter=Music parameter to adjust while boosting, resetting once you leave the booster. Leave empty to not affect music
+entities.audiohelper/MusicalBumper.attributes.description.IncrementMode=Increment the music parameter by the amount given, instead of setting it to that amount
+entities.audiohelper/MusicalBumper.attributes.description.CoreState=How core mode affects this bumper
 
 # Musical Swap Block
 entities.audiohelper/MusicalSwapBlock.placements.name.normal=Musical Swap Block (Normal)
 entities.audiohelper/MusicalSwapBlock.placements.name.moon=Musical Swap Block (Moon)
 entities.audiohelper/MusicalSwapBlock.placements.description.normal=A swap block with customizable sounds, and sets a music parameter while in motion
 entities.audiohelper/MusicalSwapBlock.placements.description.moon=A swap block with customizable sounds, and sets a music parameter while in motion
-entities.audiohelper/MusicalSwapBlock.attributes.description.StartSound=FMOD event to play when the swapblock activates
-entities.audiohelper/MusicalSwapBlock.attributes.description.MoveSound=Looping FMOD event to play while the swapblock is moving towards its node. Vanilla swapblocks don't actually use a sound here
-entities.audiohelper/MusicalSwapBlock.attributes.description.MoveEndSound=FMOD event to play when the swapblock reaches its node
-entities.audiohelper/MusicalSwapBlock.attributes.description.ReturnSound=Looping FMOD event to play while the swapblock retracts
-entities.audiohelper/MusicalSwapBlock.attributes.description.ReturnEndSound=FMOD event to play when the swapblock returns to its home
+entities.audiohelper/MusicalSwapBlock.attributes.description.StartSound=FMOD event to play when the swapblock activates. Leave blank for no sound to occur
+entities.audiohelper/MusicalSwapBlock.attributes.description.MoveSound=Looping FMOD event to play while the swapblock is moving towards its node (vanilla swapblocks don't actually use a sound here). Leave blank for no sound to occur
+entities.audiohelper/MusicalSwapBlock.attributes.description.MoveEndSound=FMOD event to play when the swapblock reaches its node. Leave blank for no sound to occur
+entities.audiohelper/MusicalSwapBlock.attributes.description.ReturnSound=Looping FMOD event to play while the swapblock retracts. Leave blank for no sound to occur
+entities.audiohelper/MusicalSwapBlock.attributes.description.ReturnEndSound=FMOD event to play when the swapblock returns to its home. Leave blank for no sound to occur
 entities.audiohelper/MusicalSwapBlock.attributes.description.EndMoveSoundWithParameter=Ends the move sound by setting an "end" parameter to 1 instead of stopping the looping event. Useful if you're using an event that needs a special ending, rather than fading out. Not recommended unless you know what you're doing in FMOD
 entities.audiohelper/MusicalSwapBlock.attributes.description.EndReturnSoundWithParameter=Ends the return sound by setting an "end" parameter to 1 instead of stopping the looping event, which is how vanilla does it. Useful if you're using an event that needs a special ending, rather than fading out. Not recommended unless you know what you're doing in FMOD
 entities.audiohelper/MusicalSwapBlock.attributes.description.MusicParameter=Music parameter to adjust while the block is activated. Leave empty to not affect music
@@ -87,11 +97,11 @@ entities.audiohelper/MusicalSwapBlock.attributes.description.ResetBeforeReturn=R
 # Musical Move Block
 entities.audiohelper/MusicalMoveBlock.placements.name.musicalmoveblock=Musical Move Block
 entities.audiohelper/MusicalMoveBlock.placements.description.musicalmoveblock=A Move Block with customizable sounds, and sets a music parameter while in motion. Also customizes how steering the block affects the moving sound
-entities.audiohelper/MusicalMoveBlock.attributes.description.ActivateSound=FMOD event to play when the block is activated
-entities.audiohelper/MusicalMoveBlock.attributes.description.MoveSound=Looping FMOD event to play when the block is moving. Uses "arrow_influence" and "arrow_stop" parameters, and expects the FMOD event to be formatted accordingly
-entities.audiohelper/MusicalMoveBlock.attributes.description.BreakSound=FMOD event to play when the block breaks
-entities.audiohelper/MusicalMoveBlock.attributes.description.ReformSound=FMOD event to play while the block reforms
-entities.audiohelper/MusicalMoveBlock.attributes.description.ReappearSound=FMOD event to play when the block finishes reappearing
+entities.audiohelper/MusicalMoveBlock.attributes.description.ActivateSound=FMOD event to play when the block is activated. Leave blank for no sound to occur
+entities.audiohelper/MusicalMoveBlock.attributes.description.MoveSound=Looping FMOD event to play when the block is moving. Uses "arrow_influence" and "arrow_stop" parameters, and expects the FMOD event to be formatted accordingly. Leave blank for no sound to occur
+entities.audiohelper/MusicalMoveBlock.attributes.description.BreakSound=FMOD event to play when the block breaks.Leave blank for no sound to occur
+entities.audiohelper/MusicalMoveBlock.attributes.description.ReformSound=FMOD event to play while the block reforms. Leave blank for no sound to occur
+entities.audiohelper/MusicalMoveBlock.attributes.description.ReappearSound=FMOD event to play when the block finishes reappearing. Leave blank for no sound to occur
 entities.audiohelper/MusicalMoveBlock.attributes.description.MusicParameter=Music parameter to adjust while the block is activated. Leave empty to not affect music
 entities.audiohelper/MusicalMoveBlock.attributes.description.IncrementMode=Increment the music parameter by the amount given, instead of setting it to that amount
 
@@ -103,7 +113,7 @@ entities.audiohelper/MusicalTorch.attributes.description.StartRadius=Distance at
 entities.audiohelper/MusicalTorch.attributes.description.EndRadius=Distance at which the light is completely faded
 entities.audiohelper/MusicalTorch.attributes.description.Colour=Colour of the light
 entities.audiohelper/MusicalTorch.attributes.description.StayLit=Whether or not the light stays lit over respawn/room reload. Will reset the music parameter as well if not checked
-entities.audiohelper/MusicalTorch.attributes.description.ActivateSound=FMOD event to play when the torch activates
+entities.audiohelper/MusicalTorch.attributes.description.ActivateSound=FMOD event to play when the torch activates. Leave blank for no sound to occur
 entities.audiohelper/MusicalTorch.attributes.description.MusicParameter=Music parameter to adjust when the torch is activated. Leave empty to not affect music
 entities.audiohelper/MusicalTorch.attributes.description.IncrementMode=Increment the music parameter by the amount given, instead of setting it to that amount
 

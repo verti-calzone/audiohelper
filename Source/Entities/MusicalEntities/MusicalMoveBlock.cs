@@ -49,7 +49,7 @@ public class MusicalMoveBlock : MoveBlock {
             {
                 yield return null;
             }
-            Audio.Play(string.IsNullOrEmpty(ActivateSound) ? "event:/game/04_cliffside/arrowblock_activate" : ActivateSound, Position);
+            if (!string.IsNullOrEmpty(ActivateSound)) Audio.Play(ActivateSound, Position);
             if (!string.IsNullOrEmpty(MusicParam))
             {
                 Audio.CurrentMusicEventInstance.getParameterValue(MusicParam, out OldMusicParamValue, out _);
@@ -61,7 +61,7 @@ public class MusicalMoveBlock : MoveBlock {
             ActivateParticles();
             yield return 0.2f;
             targetSpeed = fast ? 75f : 60f;
-            moveSfx.Play(string.IsNullOrEmpty(MoveSound) ? "event:/game/04_cliffside/arrowblock_move" : MoveSound);
+            if (!string.IsNullOrEmpty(MoveSound)) moveSfx.Play(MoveSound);
             moveSfx.Param("arrow_stop", 0f);
             StopPlayerRunIntoAnimation = false;
             float crashTimer = 0.15f;
@@ -72,7 +72,7 @@ public class MusicalMoveBlock : MoveBlock {
                 if (canSteer)
                 {
                     targetAngle = homeAngle;
-                    bool flag = ((direction != Directions.Right && direction != Directions.Left) ? HasPlayerClimbing() : HasPlayerOnTop());
+                    bool flag = (direction != Directions.Right && direction != Directions.Left) ? HasPlayerClimbing() : HasPlayerOnTop();
                     if (flag && noSteerTimer > 0f)
                     {
                         noSteerTimer -= Engine.DeltaTime;
@@ -149,7 +149,7 @@ public class MusicalMoveBlock : MoveBlock {
                 }
                 if (flag2)
                 {
-                    moveSfx.Param("arrow_stop", 1f);
+                    moveSfx?.Param("arrow_stop", 1f);
                     crashResetTimer = 0.1f;
                     if (!(crashTimer > 0f))
                     {
@@ -159,7 +159,7 @@ public class MusicalMoveBlock : MoveBlock {
                 }
                 else
                 {
-                    moveSfx.Param("arrow_stop", 0f);
+                    moveSfx?.Param("arrow_stop", 0f);
                     if (crashResetTimer > 0f)
                     {
                         crashResetTimer -= Engine.DeltaTime;
@@ -176,8 +176,8 @@ public class MusicalMoveBlock : MoveBlock {
                 }
                 yield return null;
             }
-            Audio.Play(string.IsNullOrEmpty(BreakSound) ? "event:/game/04_cliffside/arrowblock_break" : BreakSound, Position);
-            moveSfx.Stop();
+            if (!string.IsNullOrEmpty(BreakSound)) Audio.Play(BreakSound, Position);
+            moveSfx?.Stop();
             if (!string.IsNullOrEmpty(MusicParam)) Audio.SetMusicParam(MusicParam,OldMusicParamValue);
             state = MovementState.Breaking;
             speed = targetSpeed = 0f;
@@ -217,7 +217,7 @@ public class MusicalMoveBlock : MoveBlock {
                 yield return null;
             }
             Collidable = true;
-            EventInstance instance = Audio.Play(string.IsNullOrEmpty(ReformSound) ? "event:/game/04_cliffside/arrowblock_reform_begin" : ReformSound, debris[0].Position);
+            EventInstance instance = Audio.Play(string.IsNullOrEmpty(ReformSound) ? "event:/none" : ReformSound, debris[0].Position);
             MoveBlock moveBlock4 = this;
             Coroutine component;
             Coroutine routine = component = new Coroutine(SoundFollowsDebrisCenter(instance, debris));
@@ -237,7 +237,7 @@ public class MusicalMoveBlock : MoveBlock {
             {
                 item4.RemoveSelf();
             }
-            Audio.Play(string.IsNullOrEmpty(ReappearSound) ? "event:/game/04_cliffside/arrowblock_reappear" : ReappearSound, Position);
+            if (string.IsNullOrEmpty(ReappearSound)) Audio.Play(ReappearSound, Position);
             Visible = true;
             EnableStaticMovers();
             speed = targetSpeed = 0f;

@@ -42,8 +42,7 @@ public class MusicalBooster : Booster {
             cannotUseTimer = 0.45f;
             if (red) player.RedBoost(this);
             else player.Boost(this);
-            if(string.IsNullOrEmpty(EnterSound)) Audio.Play(red ? "event:/game/05_mirror_temple/redbooster_enter" : "event:/game/04_cliffside/greenbooster_enter", Position);
-            else Audio.Play(EnterSound, Position);
+            if(!string.IsNullOrEmpty(EnterSound)) Audio.Play(EnterSound, Position);
             wiggler.Start();
             sprite.Play("inside");
             sprite.FlipX = player.Facing == Facings.Left;
@@ -52,12 +51,10 @@ public class MusicalBooster : Booster {
     [MethodImpl(MethodImplOptions.NoInlining)]
     new public void PlayerBoosted(Player player, Vector2 direction)
     {
-        if(string.IsNullOrEmpty(StartSound)) Audio.Play(red ? "event:/game/05_mirror_temple/redbooster_dash" : "event:/game/04_cliffside/greenbooster_dash", Position);
-        else Audio.Play(StartSound, Position);
+        if(!string.IsNullOrEmpty(StartSound)) Audio.Play(StartSound, Position);
         if (red)
         {
-            if(string.IsNullOrEmpty(LoopSound)) loopingSfx.Play("event:/game/05_mirror_temple/redbooster_move");
-            else loopingSfx.Play(LoopSound);
+            if(!string.IsNullOrEmpty(LoopSound)) loopingSfx.Play(LoopSound);
             loopingSfx.DisposeOnTransition = false;
         }
         if(!string.IsNullOrEmpty(MusicParam)){
@@ -76,8 +73,7 @@ public class MusicalBooster : Booster {
     [MethodImpl(MethodImplOptions.NoInlining)]
     new public void PlayerReleased()
     {
-        if(string.IsNullOrEmpty(ExitSound)) Audio.Play(red ? "event:/game/05_mirror_temple/redbooster_end" : "event:/game/04_cliffside/greenbooster_end", sprite.RenderPosition);
-        else Audio.Play(ExitSound, sprite.RenderPosition);
+        if(!string.IsNullOrEmpty(ExitSound)) Audio.Play(ExitSound, sprite.RenderPosition);
         if(!string.IsNullOrEmpty(MusicParam)) Audio.SetMusicParam(MusicParam,OldParamValue);
 
         sprite.Play("pop");
@@ -90,8 +86,7 @@ public class MusicalBooster : Booster {
     [MethodImpl(MethodImplOptions.NoInlining)]
     new public void Respawn()
     {
-        if(string.IsNullOrEmpty(SpawnSound)) Audio.Play(red ? "event:/game/05_mirror_temple/redbooster_reappear" : "event:/game/04_cliffside/greenbooster_reappear", Position);
-        else Audio.Play(SpawnSound, Position);
+        if(!string.IsNullOrEmpty(SpawnSound)) Audio.Play(SpawnSound, Position);
         sprite.Position = Vector2.Zero;
         sprite.Play("loop", restart: true);
         wiggler.Start();

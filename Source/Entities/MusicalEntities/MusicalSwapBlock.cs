@@ -66,11 +66,11 @@ public class MusicalSwapBlock : SwapBlock {
         {
             if (MoveSoundType) Audio.SetParameter(moveSfx, "end", 1f);
             else Audio.Stop(moveSfx);
-            Audio.Play(string.IsNullOrEmpty(MoveEndSound) ? "event:/game/05_mirror_temple/swapblock_move_end" : MoveEndSound, base.Center);
+            if(!string.IsNullOrEmpty(MoveEndSound))Audio.Play(MoveEndSound, base.Center);
         }
         else
         {
-            startSfx =Audio.Play(string.IsNullOrEmpty(StartSound) ? "event:/game/05_mirror_temple/swapblock_move" : StartSound, base.Center);
+            startSfx = Audio.Play(string.IsNullOrEmpty(StartSound) ? "event:/none" : StartSound, base.Center);
             if (!string.IsNullOrEmpty(MoveSound) && !Audio.IsPlaying(moveSfx)) moveSfx = Audio.Play(MoveSound, base.Center);
         }
         if (Position == start && !string.IsNullOrEmpty(MusicParam) && !ResetType)
@@ -93,7 +93,7 @@ public class MusicalSwapBlock : SwapBlock {
             {
                 target = 0;
                 speed = 0f;
-                returnSfx = Audio.Play(string.IsNullOrEmpty(ReturnSound) ? "event:/game/05_mirror_temple/swapblock_return" : ReturnSound, base.Center);
+                returnSfx = Audio.Play(string.IsNullOrEmpty(ReturnSound) ? "event:/none" : ReturnSound, base.Center);
             }
         }
         if (burst != null)
@@ -141,13 +141,13 @@ public class MusicalSwapBlock : SwapBlock {
                 {
                     if (ReturnSoundType || string.IsNullOrEmpty(ReturnSound)) Audio.SetParameter(returnSfx, "end", 1f);
                     else Audio.Stop(returnSfx);
-                    Audio.Play(string.IsNullOrEmpty(ReturnEndSound) ? "event:/game/05_mirror_temple/swapblock_return_end" : ReturnEndSound, base.Center);
+                    if (!string.IsNullOrEmpty(ReturnEndSound)) Audio.Play(ReturnEndSound, base.Center);
                     if (!string.IsNullOrEmpty(MusicParam) && !ResetType) Audio.SetMusicParam(MusicParam,OldParamValue);
 
                 }
                 else if (Position == end && target == 1)
                 {
-                    Audio.Play(string.IsNullOrEmpty(MoveEndSound) ? "event:/game/05_mirror_temple/swapblock_move_end" : MoveEndSound, base.Center);
+                    if (!string.IsNullOrEmpty(MoveEndSound)) Audio.Play(MoveEndSound, base.Center);
                     if (MoveSoundType) Audio.SetParameter(moveSfx, "end", 1f);
                     else Audio.Stop(moveSfx);
                 }

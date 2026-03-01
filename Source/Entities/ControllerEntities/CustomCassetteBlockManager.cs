@@ -1,7 +1,3 @@
-// TODO: Hook ExtVar to allow NoFreezeFramesAdvanceCassetteBlocks to actually work
-//       Fix nonstandard timescales
-//       Play during room transitions, passing Note and Song to the next manager?s
-
 using MonoMod.RuntimeDetour;
 using Microsoft.Xna.Framework;
 using System.Runtime.CompilerServices;

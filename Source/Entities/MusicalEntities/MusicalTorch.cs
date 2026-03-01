@@ -73,7 +73,7 @@ public class MusicalTorch : Entity {
     {
         if (!lit)
         {
-            Audio.Play(ActivateSound, Position);
+            if (!string.IsNullOrEmpty(ActivateSound)) Audio.Play(ActivateSound, Position);
             if (!string.IsNullOrEmpty(MusicParam))
             {
                 Audio.CurrentMusicEventInstance.getParameterValue(MusicParam, out OldParamValue, out _);

@@ -13,7 +13,7 @@ public class CustomCassetteBlockManagerStarter : Entity {
     public override void Awake(Scene scene)
     {
         base.Awake(scene);
-        foreach(CustomCassetteBlockManager ccbm in scene.Entities.FindAll<CustomCassetteBlockManager>()) ccbm.OnLevelStart();
+        foreach(CustomCassetteBlockManager ccbm in scene.Tracker.GetEntities<CustomCassetteBlockManager>()) ccbm.OnLevelStart();
     }
 
     public override void Removed(Scene scene)

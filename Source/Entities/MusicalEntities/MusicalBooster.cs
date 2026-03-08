@@ -20,8 +20,9 @@ public class MusicalBooster : Booster {
     public string SpawnSound;
     public string MusicParam;
     public float ParamValue;
-    public float OldParamValue;
+
     public bool IncMode = false;
+    public Musicalizer Musicalizer = new();
     public MusicalBooster(EntityData data, Vector2 offset) : base(data.Position + offset, data.Bool("red"))
     {
         EnterSound = data.Attr("EnterSound");
@@ -57,10 +58,10 @@ public class MusicalBooster : Booster {
             if(!string.IsNullOrEmpty(LoopSound)) loopingSfx.Play(LoopSound);
             loopingSfx.DisposeOnTransition = false;
         }
-        if(!string.IsNullOrEmpty(MusicParam)){
-            Audio.CurrentMusicEventInstance.getParameterValue(MusicParam, out OldParamValue, out _);
-            if (!IncMode) Audio.SetMusicParam(MusicParam,ParamValue);
-            else Audio.SetMusicParam(MusicParam,OldParamValue+ParamValue);
+        if(!string.IsNullOrEmpty(MusicParam))
+        {
+            if (IncMode) Musicalizer.IncrementParameter(MusicParam,ParamValue);
+            else Musicalizer.SetParameter(MusicParam,ParamValue);
         }
         BoostingPlayer = true;
         Tag = (int)Tags.Persistent | (int)Tags.TransitionUpdate;
@@ -74,8 +75,11 @@ public class MusicalBooster : Booster {
     new public void PlayerReleased()
     {
         if(!string.IsNullOrEmpty(ExitSound)) Audio.Play(ExitSound, sprite.RenderPosition);
-        if(!string.IsNullOrEmpty(MusicParam)) Audio.SetMusicParam(MusicParam,OldParamValue);
-
+        if(!string.IsNullOrEmpty(MusicParam))
+        {
+            if (IncMode) Musicalizer.DecrementParameter(MusicParam,ParamValue);
+            else Musicalizer.ResetParameter(MusicParam);
+        }
         sprite.Play("pop");
         cannotUseTimer = 0f;
         respawnTimer = 1f;

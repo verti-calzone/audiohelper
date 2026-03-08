@@ -21,9 +21,9 @@ public class MusicalMoveBlock : MoveBlock {
     public string ReformSound;
     public string ReappearSound;
     public string MusicParam;
-    public float MusicParamValue;
-    public float OldMusicParamValue = -1f;
+    public float ParamValue;
     public bool IncMode;
+    public Musicalizer Musicalizer = new();
 
     [MethodImpl(MethodImplOptions.NoInlining)]
     public MusicalMoveBlock(EntityData data, Vector2 offset)
@@ -35,7 +35,7 @@ public class MusicalMoveBlock : MoveBlock {
         ReformSound = data.Attr("ReformSound");
         ReappearSound = data.Attr("ReappearSound");
         MusicParam = data.Attr("MusicParameter");
-        MusicParamValue = data.Float("MusicParameterValue");
+        ParamValue = data.Float("MusicParameterValue");
         IncMode = data.Bool("IncrementMode");
         Get<Coroutine>().Replace(MusicalController());
     }
@@ -50,11 +50,10 @@ public class MusicalMoveBlock : MoveBlock {
                 yield return null;
             }
             if (!string.IsNullOrEmpty(ActivateSound)) Audio.Play(ActivateSound, Position);
-            if (!string.IsNullOrEmpty(MusicParam))
+            if(!string.IsNullOrEmpty(MusicParam))
             {
-                Audio.CurrentMusicEventInstance.getParameterValue(MusicParam, out OldMusicParamValue, out _);
-                if (!IncMode) Audio.SetMusicParam(MusicParam,MusicParamValue);
-                else Audio.SetMusicParam(MusicParam,OldMusicParamValue+MusicParamValue);
+                if (IncMode) Musicalizer.IncrementParameter(MusicParam,ParamValue);
+                else Musicalizer.SetParameter(MusicParam,ParamValue);
             }
             state = MovementState.Moving;
             StartShaking(0.2f);
@@ -178,7 +177,11 @@ public class MusicalMoveBlock : MoveBlock {
             }
             if (!string.IsNullOrEmpty(BreakSound)) Audio.Play(BreakSound, Position);
             moveSfx?.Stop();
-            if (!string.IsNullOrEmpty(MusicParam)) Audio.SetMusicParam(MusicParam,OldMusicParamValue);
+            if(!string.IsNullOrEmpty(MusicParam))
+            {
+                if (IncMode) Musicalizer.DecrementParameter(MusicParam,ParamValue);
+                else Musicalizer.ResetParameter(MusicParam);
+            }
             state = MovementState.Breaking;
             speed = targetSpeed = 0f;
             angle = targetAngle = homeAngle;
@@ -253,13 +256,21 @@ public class MusicalMoveBlock : MoveBlock {
     public override void Removed(Scene scene)
     {
         base.Removed(scene);
-        if(!string.IsNullOrEmpty(MusicParam)) Audio.SetMusicParam(MusicParam,OldMusicParamValue);
+        if(!string.IsNullOrEmpty(MusicParam)) 
+        {
+            if (IncMode) Musicalizer.DecrementParameter(MusicParam,ParamValue);
+            else Musicalizer.ResetParameter(MusicParam);
+        }
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
     public override void SceneEnd(Scene scene)
     {
         base.SceneEnd(scene);
-        if(!string.IsNullOrEmpty(MusicParam)) Audio.SetMusicParam(MusicParam,OldMusicParamValue);
+        if(!string.IsNullOrEmpty(MusicParam)) 
+        {
+            if (IncMode) Musicalizer.DecrementParameter(MusicParam,ParamValue);
+            else Musicalizer.ResetParameter(MusicParam);
+        }
     }
 }

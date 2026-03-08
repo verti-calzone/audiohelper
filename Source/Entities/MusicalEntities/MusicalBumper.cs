@@ -18,9 +18,9 @@ public class MusicalBumper : Bumper {
     public string SpawnSound;
     public string MusicParam;
     public float ParamValue;
-    public float OldParamValue;
     public bool IncMode = false;
     public int CoreState;
+    public Musicalizer Musicalizer = new();
     public MusicalBumper(EntityData data, Vector2 offset) : base(data.Position + offset, data.FirstNodeNullable(offset))
     {
         BumpSound = data.Attr("BumpSound");
@@ -68,7 +68,11 @@ public class MusicalBumper : Bumper {
                 sprite.Play("on");
                 spriteEvil.Play("on");
                 if (!fireMode && !string.IsNullOrEmpty(SpawnSound)) Audio.Play(SpawnSound, Position);
-                if(!string.IsNullOrEmpty(MusicParam)) Audio.SetMusicParam(MusicParam,OldParamValue);
+                if(!string.IsNullOrEmpty(MusicParam))
+                {
+                    if (IncMode) Musicalizer.DecrementParameter(MusicParam,ParamValue);
+                    else Musicalizer.ResetParameter(MusicParam);
+                }
             }
         }
         else if (base.Scene.OnInterval(0.05f))
@@ -102,10 +106,10 @@ public class MusicalBumper : Bumper {
         else if (respawnTimer <= 0f)
         {
             if(!string.IsNullOrEmpty(BumpSound)) Audio.Play(BumpSound, Position);
-            if(!string.IsNullOrEmpty(MusicParam)){
-                Audio.CurrentMusicEventInstance.getParameterValue(MusicParam, out OldParamValue, out _);
-                if (!IncMode) Audio.SetMusicParam(MusicParam,ParamValue);
-                else Audio.SetMusicParam(MusicParam,OldParamValue+ParamValue);
+            if(!string.IsNullOrEmpty(MusicParam))
+            {
+                if (IncMode) Musicalizer.IncrementParameter(MusicParam,ParamValue);
+                else Musicalizer.SetParameter(MusicParam,ParamValue);
             }
             respawnTimer = 0.6f;
             Vector2 vector2 = player.ExplodeLaunch(Position, snapUp: false, sidesOnly: false);

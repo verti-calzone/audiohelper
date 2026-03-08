@@ -38,12 +38,21 @@ public class CustomCassetteBlockManager : Entity {
 
     // internal variables
     public EventInstance Song;
+
+    //[SpeedrunToolIop.Static]
     public static EventInstance Snapshot;
+
+    [SpeedrunToolIop.Static]
     public static float NoteTimer;
+
+    [SpeedrunToolIop.Static]
     public static int Note = 0;
+
+    [SpeedrunToolIop.Static]
     public static int ActiveBlock;
     public EntityID id;
     public bool PrevFlagState = false;
+    
     public static bool CountingIn = true;
     public bool CanStart = false;
 
@@ -86,7 +95,7 @@ public class CustomCassetteBlockManager : Entity {
     {
         base.Added(scene);
         // Removes self if already present
-        foreach(CustomCassetteBlockManager ccbm in scene.Entities.FindAll<CustomCassetteBlockManager>()) if(ccbm != this && ccbm.id.Key == id.Key) RemoveSelf();
+        foreach(CustomCassetteBlockManager ccbm in scene.Tracker.GetEntities<CustomCassetteBlockManager>()) if(ccbm != this && ccbm.id.Key == id.Key) RemoveSelf();
     }
     public override void Awake(Scene scene)
     {
@@ -100,7 +109,7 @@ public class CustomCassetteBlockManager : Entity {
 
 
         if (!CountingIn) CanStart = true;
-        foreach(CustomCassetteBlockManager ccbm in scene.Entities.FindAll<CustomCassetteBlockManager>())
+        foreach(CustomCassetteBlockManager ccbm in scene.Tracker.GetEntities<CustomCassetteBlockManager>())
         {
             if(ccbm.CountInLength == 0 && !(UsesFlag && !SceneAs<Level>().Session.GetFlag(ccbm.FlagName)))
             {
@@ -145,7 +154,7 @@ public class CustomCassetteBlockManager : Entity {
         base.Update();
         AdvanceMusic(Engine.DeltaTime);
         UpdateSnapshot();
-        foreach(CustomCassetteBlockManager ccbm in Scene.Entities.FindAll<CustomCassetteBlockManager>())
+        foreach(CustomCassetteBlockManager ccbm in Scene.Tracker.GetEntities<CustomCassetteBlockManager>())
         {
             // returns without disabling all blocks if an unactive manager uses freeze mode, or there exists an active manager
             if (ccbm.UsesFlag && !SceneAs<Level>().Session.GetFlag(ccbm.FlagName) && ccbm.FreezeMode || !(ccbm.UsesFlag && !SceneAs<Level>().Session.GetFlag(ccbm.FlagName))) return;
@@ -173,7 +182,7 @@ public class CustomCassetteBlockManager : Entity {
                 if (CountInLength <= NoteOffset)
                 {
                     Note = LoopEnd+1-NoteOffset;
-                    foreach(CustomCassetteBlockManager ccbm in Scene.Entities.FindAll<CustomCassetteBlockManager>()) ccbm.CanStart = true;
+                    foreach(CustomCassetteBlockManager ccbm in Scene.Tracker.GetEntities<CustomCassetteBlockManager>()) ccbm.CanStart = true;
                     CountingIn = false;
                     //Audio.Play(SwapSound);
                 }
@@ -230,7 +239,7 @@ public class CustomCassetteBlockManager : Entity {
         // try to start the snapshot 
         if (!Audio.IsSnapshotRunning(Snapshot))
         {
-            foreach(CustomCassetteBlockManager ccbm in Scene.Entities.FindAll<CustomCassetteBlockManager>())
+            foreach(CustomCassetteBlockManager ccbm in Scene.Tracker.GetEntities<CustomCassetteBlockManager>())
             {
                 if(!(ccbm.UsesFlag && !SceneAs<Level>().Session.GetFlag(ccbm.FlagName)) && !string.IsNullOrEmpty(ccbm.SongName))
                 {
@@ -243,17 +252,13 @@ public class CustomCassetteBlockManager : Entity {
         //try to stop the snapshot
         else
         {
-            foreach(CustomCassetteBlockManager ccbm in Scene.Entities.FindAll<CustomCassetteBlockManager>())
+            foreach(CustomCassetteBlockManager ccbm in Scene.Tracker.GetEntities<CustomCassetteBlockManager>())
             {
-                if(!(ccbm.UsesFlag && !SceneAs<Level>().Session.GetFlag(ccbm.FlagName)) && !string.IsNullOrEmpty(ccbm.SongName))
-                {
-                    return;
-                }
+                if(!(ccbm.UsesFlag && !SceneAs<Level>().Session.GetFlag(ccbm.FlagName)) && !string.IsNullOrEmpty(ccbm.SongName)) return;
             }
             Audio.Stop(Snapshot);
             return;
         }
-
     }
     public override void SceneEnd(Scene scene)
     {

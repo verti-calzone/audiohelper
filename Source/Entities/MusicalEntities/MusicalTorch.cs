@@ -19,6 +19,7 @@ public class MusicalTorch : Entity {
     public string MusicParam;
     public float ParamValue;
     public bool IncMode;
+    public Musicalizer Musicalizer = new();
 
     // Internal variables
     private EntityID id;
@@ -26,7 +27,6 @@ public class MusicalTorch : Entity {
     private BloomPoint bloom;
     public Sprite sprite;
     public bool lit;
-    public float OldParamValue;
     public string FlagName
     {
         [MethodImpl(MethodImplOptions.NoInlining)]
@@ -74,11 +74,10 @@ public class MusicalTorch : Entity {
         if (!lit)
         {
             if (!string.IsNullOrEmpty(ActivateSound)) Audio.Play(ActivateSound, Position);
-            if (!string.IsNullOrEmpty(MusicParam))
+            if(!string.IsNullOrEmpty(MusicParam))
             {
-                Audio.CurrentMusicEventInstance.getParameterValue(MusicParam, out OldParamValue, out _);
-                if (!IncMode) Audio.SetMusicParam(MusicParam,ParamValue);
-                else Audio.SetMusicParam(MusicParam,OldParamValue+ParamValue);
+                if (IncMode) Musicalizer.IncrementParameter(MusicParam,ParamValue);
+                else Musicalizer.SetParameter(MusicParam,ParamValue);
             }
             lit = true;
             bloom.Visible = true;
@@ -103,6 +102,10 @@ public class MusicalTorch : Entity {
     public override void Removed(Scene scene)
     {
         base.Removed(scene);
-        if(!StayLit && !string.IsNullOrEmpty(MusicParam)) Audio.SetMusicParam(MusicParam,OldParamValue);
+        if(!StayLit && !string.IsNullOrEmpty(MusicParam)) 
+        {
+            if (IncMode) Musicalizer.DecrementParameter(MusicParam,ParamValue);
+            else Musicalizer.ResetParameter(MusicParam);
+        }
     }
 }

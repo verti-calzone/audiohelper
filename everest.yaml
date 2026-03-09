@@ -3,4 +3,7 @@
   DLL: bin/audiohelper.dll
   Dependencies:
     - Name: EverestCore
-      Version: 1.5935.0
+      Version: 1.6194.0
+  OptionalDependencies:
+    - Name: SpeedrunTool
+      Version: 3.24.5

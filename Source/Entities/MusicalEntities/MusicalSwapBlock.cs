@@ -73,11 +73,7 @@ public class MusicalSwapBlock : SwapBlock {
             startSfx = Audio.Play(string.IsNullOrEmpty(StartSound) ? "event:/none" : StartSound, base.Center);
             if (!string.IsNullOrEmpty(MoveSound) && !Audio.IsPlaying(moveSfx)) moveSfx = Audio.Play(MoveSound, base.Center);
         }
-        if (Position == start && !string.IsNullOrEmpty(MusicParam) && !ResetType)
-        {
-            if (IncMode) Musicalizer.DecrementParameter(MusicParam,ParamValue);
-            else Musicalizer.ResetParameter(MusicParam);
-        }
+        if (Position == start && !string.IsNullOrEmpty(MusicParam) && !ResetType) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode);
     }
     [MonoModLinkTo("Celeste.Solid", "System.Void Update()")]
     private extern void Solid_Update();
@@ -141,11 +137,7 @@ public class MusicalSwapBlock : SwapBlock {
                     if (ReturnSoundType || string.IsNullOrEmpty(ReturnSound)) Audio.SetParameter(returnSfx, "end", 1f);
                     else Audio.Stop(returnSfx);
                     if (!string.IsNullOrEmpty(ReturnEndSound)) Audio.Play(ReturnEndSound, base.Center);
-                    if (!string.IsNullOrEmpty(MusicParam) && !ResetType)
-                    {
-                        if (IncMode) Musicalizer.DecrementParameter(MusicParam,ParamValue);
-                        else Musicalizer.ResetParameter(MusicParam);
-                    }
+                    if (!string.IsNullOrEmpty(MusicParam) && !ResetType) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode);
                 }
                 else if (Position == end && target == 1)
                 {
@@ -156,16 +148,8 @@ public class MusicalSwapBlock : SwapBlock {
             }
         }
         if (Swapping && lerp >= 1f) Swapping = false;
-        if(!WasSwapping && Swapping && !string.IsNullOrEmpty(MusicParam) && ResetType)
-        {
-            if (IncMode) Musicalizer.IncrementParameter(MusicParam,ParamValue);
-            else Musicalizer.SetParameter(MusicParam,ParamValue);
-        }
-        if(WasSwapping && !Swapping && !string.IsNullOrEmpty(MusicParam) && ResetType)
-        {
-            if (IncMode) Musicalizer.DecrementParameter(MusicParam,ParamValue);
-            else Musicalizer.ResetParameter(MusicParam);
-        }
+        if(!WasSwapping && Swapping && !string.IsNullOrEmpty(MusicParam) && ResetType)Musicalizer.SetParameter(MusicParam,ParamValue,IncMode);
+        if(WasSwapping && !Swapping && !string.IsNullOrEmpty(MusicParam) && ResetType) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode);
         WasSwapping = Swapping;
 
         StopPlayerRunIntoAnimation = lerp <= 0f || lerp >= 1f;
@@ -177,11 +161,7 @@ public class MusicalSwapBlock : SwapBlock {
         Audio.Stop(startSfx);
         Audio.Stop(moveSfx);
         Audio.Stop(returnSfx);
-        if(!string.IsNullOrEmpty(MusicParam))
-        {
-            if (IncMode) Musicalizer.DecrementParameter(MusicParam,ParamValue);
-            else Musicalizer.ResetParameter(MusicParam);
-        }
+        if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode);
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
@@ -191,10 +171,6 @@ public class MusicalSwapBlock : SwapBlock {
         Audio.Stop(startSfx);
         Audio.Stop(moveSfx);
         Audio.Stop(returnSfx);
-        if(!string.IsNullOrEmpty(MusicParam))
-        {
-            if (IncMode) Musicalizer.DecrementParameter(MusicParam,ParamValue);
-            else Musicalizer.ResetParameter(MusicParam);
-        }
+        if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode);
     }
 }

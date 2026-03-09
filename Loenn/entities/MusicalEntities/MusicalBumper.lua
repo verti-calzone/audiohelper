@@ -7,6 +7,8 @@ local coreStates = {
 
 MusicalBumper.name = "audiohelper/MusicalBumper"
 MusicalBumper.depth = -8500
+MusicalBumper.nodeLimits = {0, 1}
+MusicalBumper.nodeLineRenderType = "line"
 MusicalBumper.fieldInformation = {
     CoreState = {
         fieldType = "integer",

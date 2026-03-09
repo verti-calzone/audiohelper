@@ -32,21 +32,7 @@ public class audiohelperModule : EverestModule {
         Logger.SetLogLevel(nameof(audiohelperModule), LogLevel.Info);
 #endif
     }
-    private static void MusicalBoosterStart(On.Celeste.Booster.orig_PlayerBoosted orig, Booster self, Player player, Vector2 direction)
-    {
-        if (self is MusicalBooster MusicalBooster) MusicalBooster.PlayerBoosted(player, direction);
-        else orig(self, player, direction);
-    }
-    private static void MusicalBoosterRelease(On.Celeste.Booster.orig_PlayerReleased orig, Booster self)
-    {
-        if (self is MusicalBooster MusicalBooster) MusicalBooster.PlayerReleased();
-        else orig(self);
-    }
-    private static void MusicalBoosterRespawn(On.Celeste.Booster.orig_Respawn orig, Booster self)
-    {
-        if (self is MusicalBooster MusicalBooster) MusicalBooster.Respawn();
-        else orig(self);
-    }
+
     private static void CCBMFreeze(On.Celeste.Celeste.orig_Freeze orig, float time)
     {
         if(Monocle.Engine.Scene != null) Monocle.Engine.Scene.Tracker.GetEntity<CustomCassetteBlockManager>()?.AdvanceMusic(time);
@@ -94,9 +80,11 @@ public class audiohelperModule : EverestModule {
     public static ILHook SuppressVanillaCassetteBlockManagerOnLevelStart;
 
     public override void Load() {
-        On.Celeste.Booster.PlayerBoosted += MusicalBoosterStart;
-        On.Celeste.Booster.PlayerReleased += MusicalBoosterRelease;
-        On.Celeste.Booster.Respawn += MusicalBoosterRespawn;
+        On.Celeste.Booster.PlayerBoosted += MusicalBooster.MusicalBoosterStart;
+        On.Celeste.Booster.PlayerReleased += MusicalBooster.MusicalBoosterRelease;
+        On.Celeste.Booster.Respawn += MusicalBooster.MusicalBoosterRespawn;
+
+        On.Celeste.CrushBlock.Attack += MusicalKevin.MusicalKevinAttack;
 
         On.Celeste.Celeste.Freeze += CCBMFreeze;
         SuppressVanillaCassetteBlockManager = new ILHook(typeof(Level).GetMethod("orig_LoadLevel", BindingFlags.Public | BindingFlags.Instance),IL_SuppressVanillaCassetteBlockManager);
@@ -108,9 +96,11 @@ public class audiohelperModule : EverestModule {
     }
 
     public override void Unload() {
-        On.Celeste.Booster.PlayerBoosted -= MusicalBoosterStart;
-        On.Celeste.Booster.PlayerReleased -= MusicalBoosterRelease;
-        On.Celeste.Booster.Respawn -= MusicalBoosterRespawn;
+        On.Celeste.Booster.PlayerBoosted -= MusicalBooster.MusicalBoosterStart;
+        On.Celeste.Booster.PlayerReleased -= MusicalBooster.MusicalBoosterRelease;
+        On.Celeste.Booster.Respawn -= MusicalBooster.MusicalBoosterRespawn;
+
+        On.Celeste.CrushBlock.Attack -= MusicalKevin.MusicalKevinAttack;
 
         On.Celeste.Celeste.Freeze -= CCBMFreeze;
         SuppressVanillaCassetteBlockManager.Dispose();

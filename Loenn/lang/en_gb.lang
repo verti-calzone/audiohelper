@@ -53,6 +53,12 @@ entities.audiohelper/CustomCassetteBlockManager.attributes.description.UsesFlag=
 entities.audiohelper/CustomCassetteBlockManager.attributes.description.Flag=Flag to use if "Uses Flag" is enabled
 entities.audiohelper/CustomCassetteBlockManager.attributes.description.FreezeMode=If no managers are active, freezes the blocks in their current state. If all managers are inactive and none of them use freeze mode, then the blocks will be disabled
 
+# Simple Audio Replacer
+entities.audiohelper/SimpleAudioReplacer.placements.name.simpleaudioreplacer=Simple Audio Replacer
+entities.audiohelper/SimpleAudioReplacer.placements.description.simpleaudioreplacer=Replaces all instances of any FMOD event with another
+entities.audiohelper/SimpleAudioReplacer.attributes.description.OldEvent=FMOD event path of the existing sound to be replaced by the new event
+entities.audiohelper/SimpleAudioReplacer.attributes.description.NewEvent=FMOD event path of the sound that replaces the old event
+
 
 
 # MUSICAL ENTITIES
@@ -79,10 +85,8 @@ entities.audiohelper/MusicalBumper.attributes.description.IncrementMode=Incremen
 entities.audiohelper/MusicalBumper.attributes.description.CoreState=How core mode affects this bumper
 
 # Musical Swap Block
-entities.audiohelper/MusicalSwapBlock.placements.name.normal=Musical Swap Block (Normal)
-entities.audiohelper/MusicalSwapBlock.placements.name.moon=Musical Swap Block (Moon)
-entities.audiohelper/MusicalSwapBlock.placements.description.normal=A swap block with customizable sounds, and sets a music parameter while in motion
-entities.audiohelper/MusicalSwapBlock.placements.description.moon=A swap block with customizable sounds, and sets a music parameter while in motion
+entities.audiohelper/MusicalSwapBlock.placements.name.musicalswapblock=Musical Swap Block
+entities.audiohelper/MusicalSwapBlock.placements.description.musicalswapblock=A swap block with customizable sounds, and sets a music parameter while in motion
 entities.audiohelper/MusicalSwapBlock.attributes.description.StartSound=FMOD event to play when the swapblock activates. Leave blank for no sound to occur
 entities.audiohelper/MusicalSwapBlock.attributes.description.MoveSound=Looping FMOD event to play while the swapblock is moving towards its node (vanilla swapblocks don't actually use a sound here). Leave blank for no sound to occur
 entities.audiohelper/MusicalSwapBlock.attributes.description.MoveEndSound=FMOD event to play when the swapblock reaches its node. Leave blank for no sound to occur
@@ -98,12 +102,24 @@ entities.audiohelper/MusicalSwapBlock.attributes.description.ResetBeforeReturn=R
 entities.audiohelper/MusicalMoveBlock.placements.name.musicalmoveblock=Musical Move Block
 entities.audiohelper/MusicalMoveBlock.placements.description.musicalmoveblock=A Move Block with customizable sounds, and sets a music parameter while in motion. Also customizes how steering the block affects the moving sound
 entities.audiohelper/MusicalMoveBlock.attributes.description.ActivateSound=FMOD event to play when the block is activated. Leave blank for no sound to occur
-entities.audiohelper/MusicalMoveBlock.attributes.description.MoveSound=Looping FMOD event to play when the block is moving. Uses "arrow_influence" and "arrow_stop" parameters, and expects the FMOD event to be formatted accordingly. Leave blank for no sound to occur
+entities.audiohelper/MusicalMoveBlock.attributes.description.MoveSound=Looping FMOD event to play while the block is moving. Uses "arrow_influence" and "arrow_stop" parameters, and expects the FMOD event to be formatted accordingly. Leave blank for no sound to occur
 entities.audiohelper/MusicalMoveBlock.attributes.description.BreakSound=FMOD event to play when the block breaks.Leave blank for no sound to occur
 entities.audiohelper/MusicalMoveBlock.attributes.description.ReformSound=FMOD event to play while the block reforms. Leave blank for no sound to occur
 entities.audiohelper/MusicalMoveBlock.attributes.description.ReappearSound=FMOD event to play when the block finishes reappearing. Leave blank for no sound to occur
 entities.audiohelper/MusicalMoveBlock.attributes.description.MusicParameter=Music parameter to adjust while the block is activated. Leave empty to not affect music
 entities.audiohelper/MusicalMoveBlock.attributes.description.IncrementMode=Increment the music parameter by the amount given, instead of setting it to that amount
+
+# Musical Kevin
+entities.audiohelper/MusicalKevin.placements.name.musicalkevin=Musical Kevin
+entities.audiohelper/MusicalKevin.placements.description.musicalkevin=A Kevin with customizable sounds, and sets a music parameter while in motion
+entities.audiohelper/MusicalKevin.attributes.description.ActivateSound=FMOD event to play when the Kevin is activated. Leave blank for no sound to occur
+entities.audiohelper/MusicalKevin.attributes.description.MoveSound=Looping FMOD event to play while the Kevin is "attacking". Has a "suberged" parameter for when the Kevin is underwater. Leave blank for no sound to occur
+entities.audiohelper/MusicalKevin.attributes.description.ImpactSound=FMOD event to play when the Kevin hits something. Leave blank for no sound to occur
+entities.audiohelper/MusicalKevin.attributes.description.ReturnSound=Looping FMOD event to play while the Kevin is moving back to its home. Leave blank for no sound to occur
+entities.audiohelper/MusicalKevin.attributes.description.WaypointSound=FMOD event to play when the Kevin reaches each waypoint on its way home. Leave blank for no sound to occur
+entities.audiohelper/MusicalKevin.attributes.description.RestSound=FMOD event to play when the Kevin returns to its home. Leave blank for no sound to occur
+entities.audiohelper/MusicalKevin.attributes.description.MusicParameter=Music parameter to adjust while the Kevin is activated. Leave empty to not affect music
+entities.audiohelper/MusicalKevin.attributes.description.IncrementMode=Increment the music parameter by the amount given, instead of setting it to that amount
 
 # Musical Torch
 entities.audiohelper/MusicalTorch.placements.name.musicaltorch=Musical Torch

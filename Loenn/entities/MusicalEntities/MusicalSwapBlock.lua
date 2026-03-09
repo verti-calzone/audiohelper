@@ -63,30 +63,25 @@ MusicalSwapBlock.fieldInformation = {
         editable = false
     }
 }
-MusicalSwapBlock.placements = {}
+MusicalSwapBlock.placements = {
+    name = "musicalswapblock",
+    data = {
+        width = 16,
+        height = 16,
+        theme = "Normal",
+        StartSound = "",
+        MoveSound = "event:/game/05_mirror_temple/swapblock_move",
+        EndMoveSoundWithParameter = false,
+        MoveEndSound = "event:/game/05_mirror_temple/swapblock_move_end",
+        ReturnSound = "event:/game/05_mirror_temple/swapblock_return",
+        EndReturnSoundWithParameter = false,
+        ReturnEndSound = "event:/game/05_mirror_temple/swapblock_return_end",
+        MusicParameter = "",
+        ParameterValue = 0,
+        ResetBeforeReturn = false,
+        IncrementMode = false;
+    }}
 MusicalSwapBlock.warnBelowSize = {16, 16}
-
-for i, theme in ipairs(themes) do
-    MusicalSwapBlock.placements[i] = {
-        name = string.lower(theme),
-        data = {
-            width = 16,
-            height = 16,
-            theme = theme,
-            StartSound = "",
-            MoveSound = "event:/game/05_mirror_temple/swapblock_move",
-            EndMoveSoundWithParameter = false,
-            MoveEndSound = "event:/game/05_mirror_temple/swapblock_move_end",
-            ReturnSound = "event:/game/05_mirror_temple/swapblock_return",
-            EndReturnSoundWithParameter = false,
-            ReturnEndSound = "event:/game/05_mirror_temple/swapblock_return_end",
-            MusicParameter = "",
-            ParameterValue = 0,
-            ResetBeforeReturn = false,
-            IncrementMode = false;
-        }
-    }
-end
 
 local function addBlockSprites(sprites, entity, position, frameTexture, middleTexture, isNode)
     local x, y = position.x or 0, position.y or 0

@@ -68,11 +68,7 @@ public class MusicalBumper : Bumper {
                 sprite.Play("on");
                 spriteEvil.Play("on");
                 if (!fireMode && !string.IsNullOrEmpty(SpawnSound)) Audio.Play(SpawnSound, Position);
-                if(!string.IsNullOrEmpty(MusicParam))
-                {
-                    if (IncMode) Musicalizer.DecrementParameter(MusicParam,ParamValue);
-                    else Musicalizer.ResetParameter(MusicParam);
-                }
+                if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode);
             }
         }
         else if (base.Scene.OnInterval(0.05f))
@@ -106,11 +102,7 @@ public class MusicalBumper : Bumper {
         else if (respawnTimer <= 0f)
         {
             if(!string.IsNullOrEmpty(BumpSound)) Audio.Play(BumpSound, Position);
-            if(!string.IsNullOrEmpty(MusicParam))
-            {
-                if (IncMode) Musicalizer.IncrementParameter(MusicParam,ParamValue);
-                else Musicalizer.SetParameter(MusicParam,ParamValue);
-            }
+            if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.SetParameter(MusicParam,ParamValue,IncMode);
             respawnTimer = 0.6f;
             Vector2 vector2 = player.ExplodeLaunch(Position, snapUp: false, sidesOnly: false);
             sprite.Play("hit", restart: true);

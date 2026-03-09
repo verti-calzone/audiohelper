@@ -74,11 +74,7 @@ public class MusicalTorch : Entity {
         if (!lit)
         {
             if (!string.IsNullOrEmpty(ActivateSound)) Audio.Play(ActivateSound, Position);
-            if(!string.IsNullOrEmpty(MusicParam))
-            {
-                if (IncMode) Musicalizer.IncrementParameter(MusicParam,ParamValue);
-                else Musicalizer.SetParameter(MusicParam,ParamValue);
-            }
+            if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.SetParameter(MusicParam,ParamValue,IncMode);
             lit = true;
             bloom.Visible = true;
             light.Visible = true;
@@ -102,10 +98,6 @@ public class MusicalTorch : Entity {
     public override void Removed(Scene scene)
     {
         base.Removed(scene);
-        if(!StayLit && !string.IsNullOrEmpty(MusicParam)) 
-        {
-            if (IncMode) Musicalizer.DecrementParameter(MusicParam,ParamValue);
-            else Musicalizer.ResetParameter(MusicParam);
-        }
+        if(!StayLit && !string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode);
     }
 }

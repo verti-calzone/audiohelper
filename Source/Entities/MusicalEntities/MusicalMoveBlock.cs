@@ -50,11 +50,7 @@ public class MusicalMoveBlock : MoveBlock {
                 yield return null;
             }
             if (!string.IsNullOrEmpty(ActivateSound)) Audio.Play(ActivateSound, Position);
-            if(!string.IsNullOrEmpty(MusicParam))
-            {
-                if (IncMode) Musicalizer.IncrementParameter(MusicParam,ParamValue);
-                else Musicalizer.SetParameter(MusicParam,ParamValue);
-            }
+            if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.SetParameter(MusicParam,ParamValue,IncMode);
             state = MovementState.Moving;
             StartShaking(0.2f);
             ActivateParticles();
@@ -177,11 +173,7 @@ public class MusicalMoveBlock : MoveBlock {
             }
             if (!string.IsNullOrEmpty(BreakSound)) Audio.Play(BreakSound, Position);
             moveSfx?.Stop();
-            if(!string.IsNullOrEmpty(MusicParam))
-            {
-                if (IncMode) Musicalizer.DecrementParameter(MusicParam,ParamValue);
-                else Musicalizer.ResetParameter(MusicParam);
-            }
+            if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode);
             state = MovementState.Breaking;
             speed = targetSpeed = 0f;
             angle = targetAngle = homeAngle;
@@ -256,21 +248,13 @@ public class MusicalMoveBlock : MoveBlock {
     public override void Removed(Scene scene)
     {
         base.Removed(scene);
-        if(!string.IsNullOrEmpty(MusicParam)) 
-        {
-            if (IncMode) Musicalizer.DecrementParameter(MusicParam,ParamValue);
-            else Musicalizer.ResetParameter(MusicParam);
-        }
+        if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode);
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
     public override void SceneEnd(Scene scene)
     {
         base.SceneEnd(scene);
-        if(!string.IsNullOrEmpty(MusicParam)) 
-        {
-            if (IncMode) Musicalizer.DecrementParameter(MusicParam,ParamValue);
-            else Musicalizer.ResetParameter(MusicParam);
-        }
+        if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode);
     }
 }

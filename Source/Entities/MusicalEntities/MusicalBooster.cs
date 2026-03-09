@@ -58,11 +58,7 @@ public class MusicalBooster : Booster {
             if(!string.IsNullOrEmpty(LoopSound)) loopingSfx.Play(LoopSound);
             loopingSfx.DisposeOnTransition = false;
         }
-        if(!string.IsNullOrEmpty(MusicParam))
-        {
-            if (IncMode) Musicalizer.IncrementParameter(MusicParam,ParamValue);
-            else Musicalizer.SetParameter(MusicParam,ParamValue);
-        }
+        if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.SetParameter(MusicParam,ParamValue,IncMode);
         BoostingPlayer = true;
         Tag = (int)Tags.Persistent | (int)Tags.TransitionUpdate;
         sprite.Play("spin");
@@ -75,11 +71,7 @@ public class MusicalBooster : Booster {
     new public void PlayerReleased()
     {
         if(!string.IsNullOrEmpty(ExitSound)) Audio.Play(ExitSound, sprite.RenderPosition);
-        if(!string.IsNullOrEmpty(MusicParam))
-        {
-            if (IncMode) Musicalizer.DecrementParameter(MusicParam,ParamValue);
-            else Musicalizer.ResetParameter(MusicParam);
-        }
+        if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode);
         sprite.Play("pop");
         cannotUseTimer = 0f;
         respawnTimer = 1f;
@@ -97,5 +89,20 @@ public class MusicalBooster : Booster {
         sprite.Visible = true;
         outline.Visible = false;
         AppearParticles();
+    }
+    public static void MusicalBoosterStart(On.Celeste.Booster.orig_PlayerBoosted orig, Booster self, Player player, Vector2 direction)
+    {
+        if (self is MusicalBooster MusicalBooster) MusicalBooster.PlayerBoosted(player, direction);
+        else orig(self, player, direction);
+    }
+    public static void MusicalBoosterRelease(On.Celeste.Booster.orig_PlayerReleased orig, Booster self)
+    {
+        if (self is MusicalBooster MusicalBooster) MusicalBooster.PlayerReleased();
+        else orig(self);
+    }
+    public static void MusicalBoosterRespawn(On.Celeste.Booster.orig_Respawn orig, Booster self)
+    {
+        if (self is MusicalBooster MusicalBooster) MusicalBooster.Respawn();
+        else orig(self);
     }
 }

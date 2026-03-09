@@ -13,23 +13,29 @@ public class Musicalizer : Component {
 	private float OldParameter = -1f;
   	public Musicalizer() : base(active: true, visible: false) {}
 
-	public void SetParameter(string Parameter, float ParameterValue)
+	public void SetParameter(string Parameter, float ParameterValue, bool IncMode)
 	{
-		Audio.CurrentMusicEventInstance.getParameterValue(Parameter, out OldParameter, out _);
-        Audio.SetMusicParam(Parameter,ParameterValue);
+		if (IncMode)
+		{
+			Audio.CurrentMusicEventInstance.getParameterValue(Parameter, out OldParameter, out _);
+    		Audio.SetMusicParam(Parameter,OldParameter + ParameterValue);
+		}
+		else
+		{
+			Audio.CurrentMusicEventInstance.getParameterValue(Parameter, out OldParameter, out _);
+    		Audio.SetMusicParam(Parameter,ParameterValue);
+		}
 	}
-	public void ResetParameter(string Parameter)
+	public void ResetParameter(string Parameter, float ParameterValue, bool IncMode)
 	{
-		Audio.SetMusicParam(Parameter, OldParameter);
-	}
-		public void IncrementParameter(string Parameter, float ParameterValue)
-	{
-		Audio.CurrentMusicEventInstance.getParameterValue(Parameter, out OldParameter, out _);
-        Audio.SetMusicParam(Parameter,OldParameter + ParameterValue);
-	}
-		public void DecrementParameter(string Parameter, float ParameterValue)
-	{
-        Audio.CurrentMusicEventInstance.getParameterValue(Parameter, out OldParameter, out _);
-		Audio.SetMusicParam(Parameter,OldParameter - ParameterValue);
+		if (IncMode)
+		{
+			Audio.CurrentMusicEventInstance.getParameterValue(Parameter, out OldParameter, out _);
+			Audio.SetMusicParam(Parameter,OldParameter - ParameterValue);
+		}
+		else
+		{
+			Audio.SetMusicParam(Parameter, OldParameter);
+		}
 	}
 }

@@ -1,11 +1,11 @@
-using Celeste.Mod.Entities;
-using Microsoft.Xna.Framework;
+// using Celeste.Mod.Entities;
+// using Microsoft.Xna.Framework;
 
-namespace Celeste.Mod.audiohelper.Triggers;
+// namespace Celeste.Mod.audiohelper.Triggers;
 
-[CustomEntity("audiohelper/SampleTrigger")]
-public class SampleTrigger : Trigger {
-    public SampleTrigger(EntityData data, Vector2 offset) : base(data, offset) {
-        // TODO: read properties from data
-    }
-}
+// [CustomEntity("audiohelper/SampleTrigger")]
+// public class SampleTrigger : Trigger {
+//     public SampleTrigger(EntityData data, Vector2 offset) : base(data, offset) {
+//         // TODO: read properties from data
+//     }
+// }

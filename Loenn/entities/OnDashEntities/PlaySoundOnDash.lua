@@ -7,7 +7,7 @@ PlaySoundOnDash.placements = {
     name = "playsoundondash",
     data = {
         event = "event:/game/06_reflection/supersecret_dashflavour",
-        param = "dash_direction",
+        parameter = "dash_direction",
     }
 }
 

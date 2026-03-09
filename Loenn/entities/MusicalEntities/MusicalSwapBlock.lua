@@ -78,7 +78,7 @@ MusicalSwapBlock.placements = {
         ReturnEndSound = "event:/game/05_mirror_temple/swapblock_return_end",
         MusicParameter = "",
         ParameterValue = 0,
-        ResetBeforeReturn = false,
+        ResetBeforeReturn = true,
         IncrementMode = false;
     }}
 MusicalSwapBlock.warnBelowSize = {16, 16}

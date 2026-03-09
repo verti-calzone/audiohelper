@@ -13,7 +13,7 @@ public class Bell : Entity {
     public Sprite sprite;
     public string Sound;
     public int Pitch;
-    public Color Colour = Calc.HexToColor("ffffff");
+    public Color Colour = Calc.HexToColor("c0c0c0");
     public bool Ready;
     public bool Waiting = false;
     public float Timer;

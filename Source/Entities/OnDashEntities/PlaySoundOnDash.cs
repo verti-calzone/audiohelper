@@ -16,7 +16,7 @@ public class PlaySoundOnDash : Entity {
     public PlaySoundOnDash(EntityData data, Vector2 offset) : base(data.Position + offset)
   {
     Event = data.Attr("event","event:/game/06_reflection/supersecret_dashflavour");
-    Parameter = data.Attr("param","dash_direction");
+    Parameter = data.Attr("parameter","dash_direction");
   }
     private DashListener dashListener;
 

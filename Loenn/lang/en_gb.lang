@@ -121,6 +121,20 @@ entities.audiohelper/MusicalKevin.attributes.description.RestSound=FMOD event to
 entities.audiohelper/MusicalKevin.attributes.description.MusicParameter=Music parameter to adjust while the Kevin is activated. Leave empty to not affect music
 entities.audiohelper/MusicalKevin.attributes.description.IncrementMode=Increment the music parameter by the amount given, instead of setting it to that amount
 
+# Musical Zip Mover
+entities.audiohelper/MusicalZipMover.placements.name.musicalzipmover=Musical Zip Mover
+entities.audiohelper/MusicalZipMover.placements.description.musicalzipmover=A zip mover with customizable sounds and timings, and sets a music parameter while in motion
+entities.audiohelper/MusicalZipMover.attributes.description.MoveTime=Time in seconds for the zip mover to reach its node after it begins moving (a 0.1 second delay is always present before it starts moving)
+entities.audiohelper/MusicalZipMover.attributes.description.HoldTime=Time in seconds that the zip mover waits at its node before it starts returning
+entities.audiohelper/MusicalZipMover.attributes.description.ReturnTime=Time in seconds for the zip mover to reach its home from its node
+entities.audiohelper/MusicalZipMover.attributes.description.ActivateSound=Looping FMOD event to play while the zip mover is moving towards its node. Leave blank for no sound to occur
+entities.audiohelper/MusicalZipMover.attributes.description.ImpactSound=FMOD event to play when the zip mover reaches its node. Leave blank for no sound to occur
+entities.audiohelper/MusicalZipMover.attributes.description.ReturnSound=Looping FMOD event to play while the Kevin is moving back to its home. Leave blank for no sound to occur
+entities.audiohelper/MusicalZipMover.attributes.description.ResetSound=FMOD event to play when the zip mover returns to its home. Leave blank for no sound to occur
+entities.audiohelper/MusicalZipMover.attributes.description.MusicParameter=Music parameter to adjust while the zip mover is activated. Leave empty to not affect music
+entities.audiohelper/MusicalZipMover.attributes.description.IncrementMode=Increment the music parameter by the amount given, instead of setting it to that amount
+entities.audiohelper/MusicalZipMover.attributes.description.ResetBeforeReturn=Resets the parameter once the zip mover reaches its node, instead of when it returns to its home
+
 # Musical Torch
 entities.audiohelper/MusicalTorch.placements.name.musicaltorch=Musical Torch
 entities.audiohelper/MusicalTorch.placements.description.musicaltorch=Plays an FMOD event on activation, and can directly adjust a music parameter

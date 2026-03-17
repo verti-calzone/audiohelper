@@ -22,7 +22,7 @@ public class MusicalBooster : Booster {
     public float ParamValue;
 
     public bool IncMode = false;
-    public Musicalizer Musicalizer = new();
+    public Musicalizer Musicalizer;
     public MusicalBooster(EntityData data, Vector2 offset) : base(data.Position + offset, data.Bool("red"))
     {
         EnterSound = data.Attr("EnterSound");
@@ -34,6 +34,7 @@ public class MusicalBooster : Booster {
         ParamValue = data.Float("ParameterValue");
         IncMode = data.Bool("IncrementMode");
         Get<PlayerCollider>().OnCollide = MusicalOnPlayer;
+        if(!string.IsNullOrEmpty(MusicParam)) Musicalizer = new Musicalizer();
     }
     [MethodImpl(MethodImplOptions.NoInlining)]
     private void MusicalOnPlayer(Player player)

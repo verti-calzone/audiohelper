@@ -19,7 +19,7 @@ public class MusicalTorch : Entity {
     public string MusicParam;
     public float ParamValue;
     public bool IncMode;
-    public Musicalizer Musicalizer = new();
+    public Musicalizer Musicalizer;
 
     // Internal variables
     private EntityID id;
@@ -46,6 +46,8 @@ public class MusicalTorch : Entity {
         MusicParam = data.Attr("MusicParameter");
         ParamValue = data.Float("ParameterValue");
         IncMode = data.Bool("IncrementMode");
+
+        if(!string.IsNullOrEmpty(MusicParam)) Musicalizer = new Musicalizer();
 
         Add(sprite = GFX.SpriteBank.Create("torch"));
         Collider = new Hitbox(32f, 32f, -16f, -16f);

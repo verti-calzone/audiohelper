@@ -23,7 +23,7 @@ public class MusicalMoveBlock : MoveBlock {
     public string MusicParam;
     public float ParamValue;
     public bool IncMode;
-    public Musicalizer Musicalizer = new();
+    public Musicalizer Musicalizer;
 
     [MethodImpl(MethodImplOptions.NoInlining)]
     public MusicalMoveBlock(EntityData data, Vector2 offset)
@@ -38,6 +38,7 @@ public class MusicalMoveBlock : MoveBlock {
         ParamValue = data.Float("MusicParameterValue");
         IncMode = data.Bool("IncrementMode");
         Get<Coroutine>().Replace(MusicalController());
+        if(!string.IsNullOrEmpty(MusicParam)) Musicalizer = new Musicalizer();
     }
     public IEnumerator MusicalController()
     {

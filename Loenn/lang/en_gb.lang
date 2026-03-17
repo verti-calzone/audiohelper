@@ -59,6 +59,16 @@ entities.audiohelper/SimpleAudioReplacer.placements.description.simpleaudiorepla
 entities.audiohelper/SimpleAudioReplacer.attributes.description.OldEvent=FMOD event path of the existing sound to be replaced by the new event
 entities.audiohelper/SimpleAudioReplacer.attributes.description.NewEvent=FMOD event path of the sound that replaces the old event
 
+# Advanced Audio Replacer
+entities.audiohelper/AdvancedAudioReplacer.placements.name.advancedaudioreplacer=Advanced Audio Replacer
+entities.audiohelper/AdvancedAudioReplacer.placements.description.advancedaudioreplacer=Replaces all instances of any FMOD event with another, controllable with a flag, and can set a music parameter
+entities.audiohelper/AdvancedAudioReplacer.attributes.description.OldEvent=FMOD event path of the existing sound to be replaced by the new event
+entities.audiohelper/AdvancedAudioReplacer.attributes.description.NewEvent=FMOD event path of the sound that replaces the old event
+entities.audiohelper/AdvancedAudioReplacer.attributes.description.FlagName=Flag that should be set for the replacer to take effect. Leave blank to not require a flag
+entities.audiohelper/AdvancedAudioReplacer.attributes.description.MusicParameter=Music parameter to adjust when the sound is replaced. Leave empty to not affect music
+entities.audiohelper/AdvancedAudioReplacer.attributes.description.IncrementMode=Increment the music parameter by the amount given, instead of setting it to that amount
+entities.audiohelper/AdvancedAudioReplacer.attributes.description.ResetTime=Time in seconds to wait before resetting the music parameter
+
 
 
 # MUSICAL ENTITIES

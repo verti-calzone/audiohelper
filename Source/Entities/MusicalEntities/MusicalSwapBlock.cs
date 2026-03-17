@@ -25,7 +25,7 @@ public class MusicalSwapBlock : SwapBlock {
     public float ParamValue;
     public bool ResetType;
     public bool IncMode;
-    public Musicalizer Musicalizer = new();
+    public Musicalizer Musicalizer;
     public EventInstance startSfx;
     public bool WasSwapping = false;
     public MusicalSwapBlock(EntityData data, Vector2 offset)
@@ -43,6 +43,7 @@ public class MusicalSwapBlock : SwapBlock {
         ResetType = data.Bool("ResetBeforeReturn");
         IncMode = data.Bool("IncrementMode");
         Get<DashListener>().OnDash = MusicalOnDash;
+        if(!string.IsNullOrEmpty(MusicParam)) Musicalizer = new Musicalizer();
     }
     [MethodImpl(MethodImplOptions.NoInlining)]
     private void MusicalOnDash(Vector2 direction)

@@ -23,7 +23,7 @@ public class MusicalKevin : CrushBlock {
     public string MusicParam;
     public float ParamValue;
     public bool IncMode = false;
-    public Musicalizer Musicalizer = new();
+    public Musicalizer Musicalizer;
     public MusicalKevin(EntityData data, Vector2 offset) : base(data.Position + offset, data.Width, data.Height, data.Enum("axes", Axes.Both), data.Bool("chillout"))
     {
         ActivateSound = data.Attr("ActivateSound");
@@ -36,6 +36,8 @@ public class MusicalKevin : CrushBlock {
         MusicParam = data.Attr("MusicParameter");
         ParamValue = data.Float("ParameterValue");
         IncMode = data.Bool("IncrementMode");
+
+        if(!string.IsNullOrEmpty(MusicParam)) Musicalizer = new Musicalizer();
     }
     private void MusicalAttack(Vector2 direction)
     {

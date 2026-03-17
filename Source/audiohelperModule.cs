@@ -90,7 +90,7 @@ public class audiohelperModule : EverestModule {
         SuppressVanillaCassetteBlockManager = new ILHook(typeof(Level).GetMethod("orig_LoadLevel", BindingFlags.Public | BindingFlags.Instance),IL_SuppressVanillaCassetteBlockManager);
         SuppressVanillaCassetteBlockManagerOnLevelStart = new ILHook(typeof(Level).GetMethod("orig_LoadLevel", BindingFlags.Public | BindingFlags.Instance),IL_SuppressVanillaCassetteBlockManagerOnLevelStart);
 
-        On.Celeste.Audio.GetEventDescription += SimpleAudioReplacer.OnGetEventDescription;
+        On.Celeste.Audio.GetEventDescription += AdvancedAudioReplacer.OnGetEventDescription;
 
         SpeedrunToolIop.srtloaduseapi();
     }
@@ -106,7 +106,7 @@ public class audiohelperModule : EverestModule {
         SuppressVanillaCassetteBlockManager.Dispose();
         SuppressVanillaCassetteBlockManagerOnLevelStart.Dispose();
 
-        On.Celeste.Audio.GetEventDescription -= SimpleAudioReplacer.OnGetEventDescription;
+        On.Celeste.Audio.GetEventDescription -= AdvancedAudioReplacer.OnGetEventDescription;
 
         SpeedrunToolIop.Unload();
     }

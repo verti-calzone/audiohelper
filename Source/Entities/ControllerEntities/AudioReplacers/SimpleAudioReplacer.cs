@@ -10,39 +10,20 @@ namespace Celeste.Mod.audiohelper.Entities;
 
 [CustomEntity("audiohelper/SimpleAudioReplacer")]
 [Tracked]
-public class SimpleAudioReplacer : Entity {
-    public bool Global;
-    public string OldEvent;
-    public string NewEvent;
+public class SimpleAudioReplacer : AdvancedAudioReplacer {
 
-    [SpeedrunToolIop.Static]
-    public static Dictionary<string,SimpleAudioReplacer> EventPairs = new();
-
-    public SimpleAudioReplacer(EntityData data, Vector2 offset){
+    public SimpleAudioReplacer(EntityData data, Vector2 offset) : base(data,offset){
         OldEvent = data.Attr("OldEvent");
         NewEvent = data.Attr("NewEvent");
 	}
-    public static EventDescription OnGetEventDescription(On.Celeste.Audio.orig_GetEventDescription orig, String path)
-    {
-        if(EventPairs.TryGetValue(path,out var replacer)) return orig(replacer.NewEvent);
-        return orig(path);
-    }
 
     public override void Added(Scene scene)
     {
         EventPairs[OldEvent] = this;
         base.Added(scene);
     }
-
-    public override void Removed(Scene scene)
+    public override void Update()
     {
-        if(EventPairs.TryGetValue(OldEvent,out var replacer) && replacer == this) EventPairs.Remove(OldEvent);
-        base.Removed(scene);
-    }
-
-    public override void SceneEnd(Scene scene)
-    {
-        EventPairs.Remove(OldEvent);
-        base.SceneEnd(scene);
+        base.Update();
     }
 }

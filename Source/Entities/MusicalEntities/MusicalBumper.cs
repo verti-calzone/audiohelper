@@ -20,7 +20,7 @@ public class MusicalBumper : Bumper {
     public float ParamValue;
     public bool IncMode = false;
     public int CoreState;
-    public Musicalizer Musicalizer = new();
+    public Musicalizer Musicalizer;
     public MusicalBumper(EntityData data, Vector2 offset) : base(data.Position + offset, data.FirstNodeNullable(offset))
     {
         BumpSound = data.Attr("BumpSound");
@@ -32,6 +32,7 @@ public class MusicalBumper : Bumper {
         CoreState = data.Int("CoreState");
         Get<CoreModeListener>().OnChange = MusicalOnChangeMode;
         Get<PlayerCollider>().OnCollide = MusicalOnPlayer;
+        if(!string.IsNullOrEmpty(MusicParam)) Musicalizer = new Musicalizer();
     }
     [MethodImpl(MethodImplOptions.NoInlining)]
     public override void Added(Scene scene)

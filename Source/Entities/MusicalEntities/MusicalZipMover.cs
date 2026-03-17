@@ -25,7 +25,7 @@ public class MusicalZipMover : ZipMover {
     public float ParamValue;
     public bool IncMode = false;
     public bool ResetType;
-    public Musicalizer Musicalizer = new();
+    public Musicalizer Musicalizer;
 
     public bool CanPlayResetSound = true;
     public MusicalZipMover(EntityData data, Vector2 offset) : base(data.Position + offset, data.Width, data.Height, data.Nodes[0] + offset, data.Enum("theme", Themes.Normal))
@@ -46,6 +46,7 @@ public class MusicalZipMover : ZipMover {
         ResetType = data.Bool("ResetBeforeReturn");
 
         Get<Coroutine>().Replace(MusicalSequence());
+        if(!string.IsNullOrEmpty(MusicParam)) Musicalizer = new Musicalizer();
     }
     private IEnumerator MusicalSequence()
     {

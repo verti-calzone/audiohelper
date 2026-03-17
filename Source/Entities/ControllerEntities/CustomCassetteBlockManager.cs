@@ -138,8 +138,7 @@ public class CustomCassetteBlockManager : Entity {
         if((UsesFlag && SceneAs<Level>().Session.GetFlag(FlagName)) || !UsesFlag) SilentUpdateBlocks();
     }
     private void SilentUpdateBlocks()
-    {
-        Logger.Info("audiohelper","running silentupdate"+this.id.Key);        
+    {   
         foreach (CassetteBlock entity in base.Scene.Tracker.GetEntities<CassetteBlock>())
         {
             if (entity.ID.Level == SceneAs<Level>().Session.Level) entity.SetActivatedSilently(entity.Index == ActiveBlock);
@@ -277,7 +276,6 @@ public class CustomCassetteBlockManager : Entity {
         if (!string.IsNullOrEmpty(SongName)) Audio.Stop(Song);
         if(scene.Entities.AmountOf<CustomCassetteBlockManager>() == 0)
         {
-            Logger.Info("audiohelper","resetting variables");
             CountingIn = true;
             Note = 0;
             Audio.Stop(Snapshot);

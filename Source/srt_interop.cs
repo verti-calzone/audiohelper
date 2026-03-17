@@ -25,7 +25,6 @@ internal static class SpeedrunToolIop{
         }
       }
       if(st.Count==0) continue;
-      //Logger.Verbose("auspicioushelper",$"(SRT) Type {t.FullName}: adding static fields [{string.Join(", ",st)}]");
       toDeregister.Add(SpeedrunToolImport.RegisterStaticTypes(t, st.ToArray()));
     }
   }
@@ -47,7 +46,6 @@ internal static class SpeedrunToolIop{
   }
   #pragma warning restore CS0649
   internal static void srtloaduseapi(){
-    Logger.Log("audiohelper","Doing srt setup");
     typeof(SpeedrunToolImport).ModInterop();
     if(SpeedrunToolImport.RegisterStaticTypes!=null){
       SetupStaticAttr();

@@ -11,20 +11,24 @@ namespace Celeste.Mod.audiohelper.Entities;
 
 public class Musicalizer : Component {
 	private float OldParameter = -1f;
+	private bool Musicalizing = false;
   	public Musicalizer() : base(active: true, visible: false) {}
 
 	public void SetParameter(string Parameter, float ParameterValue, bool IncMode)
 	{
-		if (IncMode)
-		{
-			Audio.CurrentMusicEventInstance.getParameterValue(Parameter, out OldParameter, out _);
-    		Audio.SetMusicParam(Parameter,OldParameter + ParameterValue);
+		if(!Musicalizing){
+			if (IncMode)
+			{
+				Audio.CurrentMusicEventInstance.getParameterValue(Parameter, out OldParameter, out _);
+				Audio.SetMusicParam(Parameter,OldParameter + ParameterValue);
+			}
+			else
+			{
+				Audio.CurrentMusicEventInstance.getParameterValue(Parameter, out OldParameter, out _);
+				Audio.SetMusicParam(Parameter,ParameterValue);
+			}
 		}
-		else
-		{
-			Audio.CurrentMusicEventInstance.getParameterValue(Parameter, out OldParameter, out _);
-    		Audio.SetMusicParam(Parameter,ParameterValue);
-		}
+		Musicalizing = true;
 	}
 	public void ResetParameter(string Parameter, float ParameterValue, bool IncMode)
 	{
@@ -37,5 +41,6 @@ public class Musicalizer : Component {
 		{
 			Audio.SetMusicParam(Parameter, OldParameter);
 		}
+		Musicalizing = false;
 	}
 }

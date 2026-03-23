@@ -2,7 +2,9 @@
 
 # Bell
 entities.audiohelper/Bell.placements.name.bell=Bell
-entities.audiohelper/Bell.placements.description.bell=Plays a note when the player passes through it. Will be louder the faster the player is going.
+entities.audiohelper/Bell.placements.description.bell=Plays a note when the player passes through it. Will be louder the faster the player is going
+entities.audiohelper/Bell.attributes.description.VolumeBoost=Adds a bit of volume to the bell by pretending the player has more speed. Set to 0 for base behaviour. Set to 1 to have all rings act as if the player is at the max speed
+entities.audiohelper/Bell.attributes.description.SetFlag=Sets a flag when the bell is rung. Leave blank to not set a flag
 
 
 
@@ -68,6 +70,11 @@ entities.audiohelper/AdvancedAudioReplacer.attributes.description.FlagName=Flag 
 entities.audiohelper/AdvancedAudioReplacer.attributes.description.MusicParameter=Music parameter to adjust when the sound is replaced. Leave empty to not affect music
 entities.audiohelper/AdvancedAudioReplacer.attributes.description.IncrementMode=Increment the music parameter by the amount given, instead of setting it to that amount
 entities.audiohelper/AdvancedAudioReplacer.attributes.description.ResetTime=Time in seconds to wait before resetting the music parameter
+
+# Muter
+entities.audiohelper/Muter.placements.name.muter=Muter
+entities.audiohelper/Muter.placements.description.muter=Mutes all instances of a particular FMOD event
+entities.audiohelper/Muter.attributes.description.EventToMute=FMOD event path of the event to mute
 
 
 

@@ -26,6 +26,7 @@ MusicalBumper.placements = {
         ParameterValue = 0,
         IncrementMode = false;
         CoreState = 2,
+        BigShake = false;
     }
 }
 function MusicalBumper.texture(room, entity)

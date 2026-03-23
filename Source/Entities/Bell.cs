@@ -14,23 +14,26 @@ public class Bell : Entity {
     public string Sound;
     public int Pitch;
     public Color Colour = Calc.HexToColor("c0c0c0");
-    public bool Ready;
+    public float VolumeBoost = 0f;
+    public string SetFlag;
+    public bool Ready = true;
     public bool Waiting = false;
-    public float Timer;
+    public float Timer = 1f;
     public float Speed;
     public float Angle;
-    public float AnglularMomentum;
+    public float AngularMomentum;
     public float Inertia;
     public float InertiaBase = 10;
-    public MultiParameterSoundSource sfx = new MultiParameterSoundSource();
+    public MultiParameterSoundSource sfx;
     public Bell(EntityData data, Vector2 offset, EntityID id) : base(data.Position + offset)
     {
         Sound = data.Attr("sound");
         Pitch = data.Int("pitch");
         Colour = data.HexColor("colour");
+        VolumeBoost = data.Float("VolumeBoost");
+        if(VolumeBoost < 0) VolumeBoost = 0f;
+        SetFlag = data.Attr("SetFlag");
         Add(sprite = GFX.SpriteBank.Create("audiohelper_bell"));
-        // sprite.Scale.X = 0.5f;
-        // sprite.Scale.Y = 0.5f;
         sprite.Color = Colour;
         Add(sfx = new MultiParameterSoundSource());
         sfx.Position.Y = 8;
@@ -39,33 +42,20 @@ public class Bell : Entity {
         Add(new PlayerCollider(OnPlayer));
         Depth = 2000;
     }
-    public override void Awake(Scene scene)
-    {
-        base.Awake(scene);
-    }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
     private void OnPlayer(Player player)
     {
         if(Ready)
         {
-            Player entity = base.Scene.Tracker.GetEntity<Player>();
-            Speed = (float)Math.Sqrt(entity.Speed.X*entity.Speed.X+entity.Speed.Y*entity.Speed.Y);
-            if (!string.IsNullOrEmpty(Sound)){
-                sfx.Play(Sound,"pitch", (float)Pitch,"speed",Speed*0.002f,false);
-            }
-            if(entity.Speed.X == 0)
-            {
-                AnglularMomentum = -2f;
-            }
-            else if(Math.Abs(entity.Speed.X) <= 200)
-            {
-                AnglularMomentum = Math.Sign(entity.Speed.X)*-2f;
-            }
-            else
-            {
-                AnglularMomentum = entity.Speed.X*-0.01f;
-            }
+            Speed = (float)Math.Sqrt(player.Speed.X*player.Speed.X+player.Speed.Y*player.Speed.Y) + 500*VolumeBoost;
+            if(Speed < 200) Speed = 200;
+            else if(Speed > 500) Speed = 500;
+            //Logger.Info("audiohelper","rang a bell with speed: "+Speed+" and speed param: "+Speed*0.002);
+            if (!string.IsNullOrEmpty(Sound)) sfx.Play(Sound,"pitch",Pitch,"speed",Speed*0.002f,false);
+            AngularMomentum = 0.01f*Speed;
+            if(Math.Sign(player.Speed.X) == 1) AngularMomentum *= -1;
+            if(!string.IsNullOrEmpty(SetFlag)) SceneAs<Level>().Session.SetFlag(SetFlag);
             Ready = false;
         }
         Waiting = true;
@@ -76,15 +66,9 @@ public class Bell : Entity {
 		base.Update();
         if (!Waiting)
         {
-            if(Timer > 0f)
-            {
-                Timer -= Engine.DeltaTime;
-            }
+            if(Timer > 0f) Timer -= Engine.DeltaTime;
         }
-        else
-        {
-            Waiting = false;
-        }
+        else Waiting = false;
         if(Timer <= 0f)
         {
             Ready = true;
@@ -92,35 +76,23 @@ public class Bell : Entity {
         }
 
 
-        if(Math.Abs(AnglularMomentum)<=0.01 && Math.Abs(Angle)<=0.1f)
+        if(Math.Abs(AngularMomentum)<=0.01 && Math.Abs(Angle)<=0.1f)
         {
-            AnglularMomentum = 0;
+            AngularMomentum = 0;
             Angle = 0;
         }
-        Angle += AnglularMomentum * Engine.DeltaTime;
+        Angle += AngularMomentum * Engine.DeltaTime;
         if(Angle > 0)
         {
-            if(AnglularMomentum > 0)
-            {
-                Inertia = 1.5f*InertiaBase;
-            }
-            else
-            {
-                Inertia = InertiaBase;
-            }
+            if(AngularMomentum > 0) Inertia = 1.5f*InertiaBase;
+            else Inertia = InertiaBase;
         }
         else
         {   
-            if(AnglularMomentum < 0)
-            {
-                Inertia = -1.5f*InertiaBase;
-            }
-            else
-            {
-                Inertia = -InertiaBase;
-            }
+            if(AngularMomentum < 0) Inertia = -1.5f*InertiaBase;
+            else Inertia = -InertiaBase;
         }
-        AnglularMomentum -= Inertia * Engine.DeltaTime;
+        AngularMomentum -= Inertia * Engine.DeltaTime;
         sprite.Rotation = Angle;
         if (Angle > 0.3f)
         {

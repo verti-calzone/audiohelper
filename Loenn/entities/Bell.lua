@@ -27,6 +27,10 @@ local noteNames = {
     {"F4", 1},
     {"E4",  0},
 }
+local sounds ={
+    "event:/vert_audiohelper/bell",
+    "event:/vert_audiohelper/chime"
+}
 
 Bell.name = "audiohelper/Bell"
 Bell.depth = -8500
@@ -35,6 +39,10 @@ Bell.fieldInformation = {
         fieldType = "integer",
         options = noteNames,
         editable = false,
+    },
+    sound = {
+        options = sounds,
+        editable = true,
     },
     colour = {
         fieldType = "color"
@@ -45,7 +53,9 @@ Bell.placements = {
     data = {
         sound = "event:/vert_audiohelper/bell",
         pitch = 0,
-        colour = "c0c0c0"
+        colour = "c0c0c0",
+        VolumeBoost = 0,
+        SetFlag = ""
     }
 }
 function Bell.sprite(room, entity)

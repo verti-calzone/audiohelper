@@ -20,6 +20,7 @@ public class MusicalBumper : Bumper {
     public float ParamValue;
     public bool IncMode = false;
     public int CoreState;
+    public bool BigShake = false;
     public Musicalizer Musicalizer;
     public MusicalBumper(EntityData data, Vector2 offset) : base(data.Position + offset, data.FirstNodeNullable(offset))
     {
@@ -30,6 +31,8 @@ public class MusicalBumper : Bumper {
         ParamValue = data.Float("ParameterValue");
         IncMode = data.Bool("IncrementMode");
         CoreState = data.Int("CoreState");
+        BigShake = data.Bool("BigShake");
+
         Get<CoreModeListener>().OnChange = MusicalOnChangeMode;
         Get<PlayerCollider>().OnCollide = MusicalOnPlayer;
         if(!string.IsNullOrEmpty(MusicParam)) Musicalizer = new Musicalizer();
@@ -110,7 +113,7 @@ public class MusicalBumper : Bumper {
             spriteEvil.Play("hit", restart: true);
             light.Visible = false;
             bloom.Visible = false;
-            SceneAs<Level>().DirectionalShake(vector2, 0.15f);
+            SceneAs<Level>().DirectionalShake(vector2, BigShake ?  0.3f : 0.15f);
             SceneAs<Level>().Displacement.AddBurst(base.Center, 0.3f, 8f, 32f, 0.8f);
             SceneAs<Level>().Particles.Emit(P_Launch, 12, base.Center + vector2 * 12f, Vector2.One * 3f, vector2.Angle());
         }

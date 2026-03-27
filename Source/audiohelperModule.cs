@@ -7,6 +7,7 @@ using Monocle;
 using Microsoft.Xna.Framework;
 using MonoMod.Cil;
 using MonoMod.RuntimeDetour;
+using Celeste.Mod.Entities;
 
 namespace Celeste.Mod.audiohelper;
 
@@ -33,6 +34,7 @@ public class audiohelperModule : EverestModule {
 #endif
     }
 
+
     private static void CCBMFreeze(On.Celeste.Celeste.orig_Freeze orig, float time)
     {
         if(Monocle.Engine.Scene != null) Monocle.Engine.Scene.Tracker.GetEntity<CustomCassetteBlockManager>()?.AdvanceMusic(time);
@@ -40,7 +42,12 @@ public class audiohelperModule : EverestModule {
     }
     public static bool SuppressVanillaCassetteBlockManagerDelegate(bool orig, Level level)
     {
-        if(CustomCassetteBlockManager.IsActive(level)) return false;
+        Logger.Info("audiohelper","running delegate: SuppressVanillaCassetteBlockManagerDelegate");
+        if(CustomCassetteBlockManager.IsActive(level)) 
+        {
+            Logger.Info("audiohelper","suppressing cbm");
+            return false;
+        }
         else return orig;
     }
     public static void IL_SuppressVanillaCassetteBlockManager(ILContext il)
@@ -60,7 +67,12 @@ public class audiohelperModule : EverestModule {
     public static ILHook SuppressVanillaCassetteBlockManager;
     public static bool SuppressVanillaCassetteBlockManagerOnLevelStartDelegate(bool orig, Level level)
     {
-        if(CustomCassetteBlockManager.IsActive(level)) return false;
+        Logger.Info("audiohelper","running delegate: SuppressVanillaCassetteBlockManagerOnLevelStartDelegate");
+        if(CustomCassetteBlockManager.IsActive(level)) 
+        {
+            Logger.Info("audiohelper","suppressing cbm on levelstart");
+            return false;
+        }
         else return orig;
     }
     public static void IL_SuppressVanillaCassetteBlockManagerOnLevelStart(ILContext il)

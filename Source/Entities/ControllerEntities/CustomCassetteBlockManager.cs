@@ -13,6 +13,7 @@ namespace Celeste.Mod.audiohelper.Entities;
 
 [CustomEntity("audiohelper/CustomCassetteBlockManager")]
 [Tracked]
+[TrackedAs(typeof(CassetteBlockManager))]
 
 public class CustomCassetteBlockManager : Entity {
     // data variables
@@ -51,7 +52,6 @@ public class CustomCassetteBlockManager : Entity {
     [SpeedrunToolIop.Static]
     public static int ActiveBlock;
     public EntityID id;
-    public bool PrevFlagState = false;
     
     public static bool CountingIn = true;
     public bool CanStart = false;
@@ -94,6 +94,7 @@ public class CustomCassetteBlockManager : Entity {
     public override void Added(Scene scene)
     {
         base.Added(scene);
+        //scene.Entities.UpdateLists();
         // Removes self if already present
         foreach(CustomCassetteBlockManager ccbm in scene.Tracker.GetEntities<CustomCassetteBlockManager>()) if(ccbm != this && ccbm.id.Key == id.Key) RemoveSelf();
     }

@@ -23,6 +23,7 @@ public class MusicalMoveBlock : MoveBlock {
     public string MusicParam;
     public float ParamValue;
     public bool IncMode;
+    public bool DepthFix = false;
     public Musicalizer Musicalizer;
 
     [MethodImpl(MethodImplOptions.NoInlining)]
@@ -37,8 +38,11 @@ public class MusicalMoveBlock : MoveBlock {
         MusicParam = data.Attr("MusicParameter");
         ParamValue = data.Float("MusicParameterValue");
         IncMode = data.Bool("IncrementMode");
+        DepthFix = data.Bool("DepthFix");
         Get<Coroutine>().Replace(MusicalController());
         if(!string.IsNullOrEmpty(MusicParam)) Musicalizer = new Musicalizer();
+
+        if(DepthFix) base.Depth = -1000;
     }
     public IEnumerator MusicalController()
     {

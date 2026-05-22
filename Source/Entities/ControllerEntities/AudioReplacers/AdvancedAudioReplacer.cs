@@ -21,7 +21,8 @@ public class AdvancedAudioReplacer : Entity {
     public Musicalizer Musicalizer;
     public float ResetTime;
     public string MusicParam;
-    public float ParamValue;
+    public float ParamValue, ResetValue;
+    private int Mode = 0;
     public bool IncMode = false;
     public bool CanReset = false;
     [SpeedrunToolIop.Static]
@@ -35,6 +36,8 @@ public class AdvancedAudioReplacer : Entity {
         ResetTime = data.Float("ResetTime");
         MusicParam = data.Attr("MusicParameter");
         ParamValue = data.Float("ParameterValue");
+        ResetValue = data.Float("ParameterResetValue");
+        Mode = data.Int("Mode");
         IncMode = data.Bool("IncrementMode");
         if(!string.IsNullOrEmpty(MusicParam)) Musicalizer = new Musicalizer();
 	}
@@ -62,7 +65,7 @@ public class AdvancedAudioReplacer : Entity {
         }
         else if(CanReset)
         {
-            Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode);
+            Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode,Mode,ResetValue);
             CanReset = false;
         }
     }
@@ -74,7 +77,7 @@ public class AdvancedAudioReplacer : Entity {
             if(replacer is not SimpleAudioReplacer && !string.IsNullOrEmpty(replacer.MusicParam))
             {
                 replacer.ResetTimer = replacer.ResetTime;
-                replacer.Musicalizer.SetParameter(replacer.MusicParam,replacer.ParamValue,replacer.IncMode);
+                replacer.Musicalizer.SetParameter(replacer.MusicParam,replacer.ParamValue,replacer.IncMode,replacer.Mode);
             }
             return orig(replacer.NewEvent);
         }

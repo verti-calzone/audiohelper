@@ -17,8 +17,9 @@ public class MusicalBumper : Bumper {
     public string FireSound;
     public string SpawnSound;
     public string MusicParam;
-    public float ParamValue;
+    public float ParamValue, ResetValue;
     public bool IncMode = false;
+    private int Mode = 0;
     public int CoreState;
     public bool BigShake = false;
     public Musicalizer Musicalizer;
@@ -29,6 +30,8 @@ public class MusicalBumper : Bumper {
         SpawnSound = data.Attr("SpawnSound");
         MusicParam = data.Attr("MusicParameter");
         ParamValue = data.Float("ParameterValue");
+        ResetValue = data.Float("ParameterResetValue");
+        Mode = data.Int("Mode");
         IncMode = data.Bool("IncrementMode");
         CoreState = data.Int("CoreState");
         BigShake = data.Bool("BigShake");
@@ -72,7 +75,7 @@ public class MusicalBumper : Bumper {
                 sprite.Play("on");
                 spriteEvil.Play("on");
                 if (!fireMode && !string.IsNullOrEmpty(SpawnSound)) Audio.Play(SpawnSound, Position);
-                if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode);
+                if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode,Mode,ResetValue);
             }
         }
         else if (base.Scene.OnInterval(0.05f))
@@ -106,7 +109,7 @@ public class MusicalBumper : Bumper {
         else if (respawnTimer <= 0f)
         {
             if(!string.IsNullOrEmpty(BumpSound)) Audio.Play(BumpSound, Position);
-            if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.SetParameter(MusicParam,ParamValue,IncMode);
+            if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.SetParameter(MusicParam,ParamValue,IncMode,Mode);
             respawnTimer = 0.6f;
             Vector2 vector2 = player.ExplodeLaunch(Position, snapUp: false, sidesOnly: false);
             sprite.Play("hit", restart: true);
@@ -117,5 +120,19 @@ public class MusicalBumper : Bumper {
             SceneAs<Level>().Displacement.AddBurst(base.Center, 0.3f, 8f, 32f, 0.8f);
             SceneAs<Level>().Particles.Emit(P_Launch, 12, base.Center + vector2 * 12f, Vector2.One * 3f, vector2.Angle());
         }
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public override void Removed(Scene scene)
+    {
+        base.Removed(scene);
+        if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode,Mode,ResetValue);
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public override void SceneEnd(Scene scene)
+    {
+        base.SceneEnd(scene);
+        if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode,Mode,ResetValue);
     }
 }

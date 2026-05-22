@@ -22,7 +22,8 @@ public class MusicalZipMover : ZipMover {
     public string ReturnSound;
     public string ResetSound;
     public string MusicParam;
-    public float ParamValue;
+    public float ParamValue, ResetValue;
+    private int Mode = 0;
     public bool IncMode = false;
     public bool ResetType;
     public Musicalizer Musicalizer;
@@ -42,6 +43,8 @@ public class MusicalZipMover : ZipMover {
         ResetSound = data.Attr("ResetSound");
         MusicParam = data.Attr("MusicParameter");
         ParamValue = data.Float("ParameterValue");
+        ResetValue = data.Float("ParameterResetValue");
+        Mode = data.Int("Mode");
         IncMode = data.Bool("IncrementMode");
         ResetType = data.Bool("ResetBeforeReturn");
 
@@ -61,7 +64,7 @@ public class MusicalZipMover : ZipMover {
 
             // Activate Stage
             sfx.Play(string.IsNullOrEmpty(ActivateSound) ? "event:/none" : ActivateSound);
-            if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.SetParameter(MusicParam,ParamValue,IncMode);
+            if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.SetParameter(MusicParam,ParamValue,IncMode,Mode);
             Input.Rumble(RumbleStrength.Medium, RumbleLength.Short);
             StartShaking(0.1f);
             yield return 0.1f;
@@ -85,7 +88,7 @@ public class MusicalZipMover : ZipMover {
             // Hold Stage
             sfx.Stop();
             if(!string.IsNullOrEmpty(ImpactSound)) Audio.Play(ImpactSound,Position);
-            if(!string.IsNullOrEmpty(MusicParam) && ResetType) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode);
+            if(!string.IsNullOrEmpty(MusicParam) && ResetType) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode,Mode,ResetValue);
             StartShaking(0.2f);
             Input.Rumble(RumbleStrength.Strong, RumbleLength.Medium);
             SceneAs<Level>().Shake();
@@ -115,11 +118,24 @@ public class MusicalZipMover : ZipMover {
             // Reset Stage
             CanPlayResetSound = true;
             sfx.Stop();
-            if(!string.IsNullOrEmpty(MusicParam) && !ResetType) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode);
+            if(!string.IsNullOrEmpty(MusicParam) && !ResetType) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode,Mode,ResetValue);
             StopPlayerRunIntoAnimation = true;
             StartShaking(0.2f);
             streetlight.SetAnimationFrame(1);
             yield return 0.5f;
         }
+    }
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public override void Removed(Scene scene)
+    {
+        base.Removed(scene);
+        if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode,Mode,ResetValue);
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public override void SceneEnd(Scene scene)
+    {
+        base.SceneEnd(scene);
+        if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode,Mode,ResetValue);
     }
 }

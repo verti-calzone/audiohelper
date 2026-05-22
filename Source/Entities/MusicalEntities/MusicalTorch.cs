@@ -17,7 +17,8 @@ public class MusicalTorch : Entity {
     public bool StayLit;
     public string ActivateSound;
     public string MusicParam;
-    public float ParamValue;
+    public float ParamValue, ResetValue;
+    private int Mode = 0;
     public bool IncMode;
     public Musicalizer Musicalizer;
 
@@ -45,6 +46,8 @@ public class MusicalTorch : Entity {
         ActivateSound = data.Attr("ActivationSound");
         MusicParam = data.Attr("MusicParameter");
         ParamValue = data.Float("ParameterValue");
+        ResetValue = data.Float("ParameterResetValue");
+        Mode = data.Int("Mode");
         IncMode = data.Bool("IncrementMode");
 
         if(!string.IsNullOrEmpty(MusicParam)) Musicalizer = new Musicalizer();
@@ -76,7 +79,7 @@ public class MusicalTorch : Entity {
         if (!lit)
         {
             if (!string.IsNullOrEmpty(ActivateSound)) Audio.Play(ActivateSound, Position);
-            if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.SetParameter(MusicParam,ParamValue,IncMode);
+            if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.SetParameter(MusicParam,ParamValue,IncMode,Mode);
             lit = true;
             bloom.Visible = true;
             light.Visible = true;
@@ -100,6 +103,11 @@ public class MusicalTorch : Entity {
     public override void Removed(Scene scene)
     {
         base.Removed(scene);
-        if(!StayLit && !string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode);
+        if(!StayLit && !string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode,Mode,ResetValue);
+    }
+    public override void SceneEnd(Scene scene)
+    {
+        base.SceneEnd(scene);
+        if(!StayLit && !string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode,Mode,ResetValue);
     }
 }

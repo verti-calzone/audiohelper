@@ -40,25 +40,39 @@ public class Bell : Entity {
         Collider = new Circle(12f);
         Collider.Position.Y = 8;
         Add(new PlayerCollider(OnPlayer));
+        Add(new HoldableCollider(OnHoldable));
+        Add(new SeekerCollider(OnSeeker));
         Depth = 2000;
     }
 
-    [MethodImpl(MethodImplOptions.NoInlining)]
     private void OnPlayer(Player player)
     {
-        if(Ready)
-        {
-            Speed = (float)Math.Sqrt(player.Speed.X*player.Speed.X+player.Speed.Y*player.Speed.Y) + 500*VolumeBoost;
-            if(Speed < 200) Speed = 200;
-            else if(Speed > 500) Speed = 500;
-            //Logger.Info("audiohelper","rang a bell with speed: "+Speed+" and speed param: "+Speed*0.002);
-            if (!string.IsNullOrEmpty(Sound)) sfx.Play(Sound,"pitch",Pitch,"speed",Speed*0.002f,false);
-            AngularMomentum = 0.01f*Speed;
-            if(Math.Sign(player.Speed.X) == 1) AngularMomentum *= -1;
-            if(!string.IsNullOrEmpty(SetFlag)) SceneAs<Level>().Session.SetFlag(SetFlag);
-            Ready = false;
-        }
+        if(Ready) Ring(player.Speed.X,player.Speed.Y);
         Waiting = true;
+    }
+
+    private void OnHoldable(Holdable holdable)
+    {
+        if(Ready) Ring(holdable.GetSpeed().X,holdable.GetSpeed().Y);
+        Waiting = true;
+    }
+
+    private void OnSeeker(Seeker seeker)
+    {
+        if(Ready) Ring(seeker.Speed.X,seeker.Speed.Y);
+        Waiting = true;
+    }
+
+    public virtual void Ring(float xSpeed, float ySpeed)
+    {
+        Speed = (float)Math.Sqrt(xSpeed*xSpeed+ySpeed*ySpeed) + 500*VolumeBoost;
+        if(Speed < 200) Speed = 200;
+        else if(Speed > 500) Speed = 500;
+        if (!string.IsNullOrEmpty(Sound)) sfx.Play(Sound,"pitch",Pitch,"speed",Speed*0.002f,false);
+        AngularMomentum = 0.01f*Speed;
+        if(Math.Sign(xSpeed) == 1) AngularMomentum *= -1;
+        if(!string.IsNullOrEmpty(SetFlag)) SceneAs<Level>().Session.SetFlag(SetFlag);
+        Ready = false;
     }
     [MethodImpl(MethodImplOptions.NoInlining)]
 	public override void Update()

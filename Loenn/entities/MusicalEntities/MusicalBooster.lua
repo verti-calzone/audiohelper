@@ -1,7 +1,21 @@
 local MusicalBooster = {}
 
+local modeNames = {
+    {"Get Reset Value", 1},
+    {"Set Reset Value", 2},
+    {"Increment Mode", 3}
+}
+
 MusicalBooster.name = "audiohelper/MusicalBooster"
 MusicalBooster.depth = -8500
+MusicalBooster.fieldInformation = {
+    Mode = {
+        minimum = 0,
+        maximum = 1,
+        options = modeNames,
+        editable = false
+    }
+}
 MusicalBooster.placements = {
     name = "musicalbooster",
     data = {
@@ -13,7 +27,9 @@ MusicalBooster.placements = {
         SpawnSound = "event:/game/04_cliffside/greenbooster_reappear",
         MusicParameter = "",
         ParameterValue = 0,
-        IncrementMode = false;
+        IncrementMode = false,
+        ParameterResetValue = 0,
+        Mode = 2
     }
 }
 function MusicalBooster.texture(room, entity)

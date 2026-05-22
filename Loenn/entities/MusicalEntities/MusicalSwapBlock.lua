@@ -22,6 +22,12 @@ local themeTextures = {
     }
 }
 
+local modeNames = {
+    {"Get Reset Value", 1},
+    {"Set Reset Value", 2},
+    {"Increment Mode", 3}
+}
+
 local nodeFrameColor = {1.0, 1.0, 1.0, 0.7}
 
 local frameNinePatchOptions = {
@@ -61,6 +67,12 @@ MusicalSwapBlock.fieldInformation = {
     theme = {
         options = enums.swap_block_themes,
         editable = false
+    },
+    Mode = {
+        minimum = 0,
+        maximum = 1,
+        options = modeNames,
+        editable = false
     }
 }
 MusicalSwapBlock.placements = {
@@ -79,7 +91,9 @@ MusicalSwapBlock.placements = {
         MusicParameter = "",
         ParameterValue = 0,
         ResetBeforeReturn = true,
-        IncrementMode = false;
+        IncrementMode = false,
+        ParameterResetValue = 0,
+        Mode = 2
     }}
 MusicalSwapBlock.warnBelowSize = {16, 16}
 

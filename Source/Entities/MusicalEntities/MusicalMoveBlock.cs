@@ -21,7 +21,8 @@ public class MusicalMoveBlock : MoveBlock {
     public string ReformSound;
     public string ReappearSound;
     public string MusicParam;
-    public float ParamValue;
+    public float ParamValue, ResetValue;
+    private int Mode = 0;
     public bool IncMode;
     public bool DepthFix = false;
     public Musicalizer Musicalizer;
@@ -37,6 +38,8 @@ public class MusicalMoveBlock : MoveBlock {
         ReappearSound = data.Attr("ReappearSound");
         MusicParam = data.Attr("MusicParameter");
         ParamValue = data.Float("MusicParameterValue");
+        ResetValue = data.Float("ParameterResetValue");
+        Mode = data.Int("Mode");
         IncMode = data.Bool("IncrementMode");
         DepthFix = data.Bool("DepthFix");
         Get<Coroutine>().Replace(MusicalController());
@@ -55,7 +58,7 @@ public class MusicalMoveBlock : MoveBlock {
                 yield return null;
             }
             if (!string.IsNullOrEmpty(ActivateSound)) Audio.Play(ActivateSound, Position);
-            if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.SetParameter(MusicParam,ParamValue,IncMode);
+            if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.SetParameter(MusicParam,ParamValue,IncMode,Mode);
             state = MovementState.Moving;
             StartShaking(0.2f);
             ActivateParticles();
@@ -178,7 +181,7 @@ public class MusicalMoveBlock : MoveBlock {
             }
             if (!string.IsNullOrEmpty(BreakSound)) Audio.Play(BreakSound, Position);
             moveSfx?.Stop();
-            if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode);
+            if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode,Mode,ResetValue);
             state = MovementState.Breaking;
             speed = targetSpeed = 0f;
             angle = targetAngle = homeAngle;
@@ -253,13 +256,13 @@ public class MusicalMoveBlock : MoveBlock {
     public override void Removed(Scene scene)
     {
         base.Removed(scene);
-        if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode);
+        if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode,Mode,ResetValue);
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
     public override void SceneEnd(Scene scene)
     {
         base.SceneEnd(scene);
-        if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode);
+        if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode,Mode,ResetValue);
     }
 }

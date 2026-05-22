@@ -19,9 +19,9 @@ public class MusicalBooster : Booster {
     public string ExitSound;
     public string SpawnSound;
     public string MusicParam;
-    public float ParamValue;
-
+    public float ParamValue, ResetValue;
     public bool IncMode = false;
+    private int Mode = 0;
     public Musicalizer Musicalizer;
     public MusicalBooster(EntityData data, Vector2 offset) : base(data.Position + offset, data.Bool("red"))
     {
@@ -32,6 +32,8 @@ public class MusicalBooster : Booster {
         SpawnSound = data.Attr("SpawnSound");
         MusicParam = data.Attr("MusicParameter");
         ParamValue = data.Float("ParameterValue");
+        ResetValue = data.Float("ParameterResetValue");
+        Mode = data.Int("Mode");
         IncMode = data.Bool("IncrementMode");
         Get<PlayerCollider>().OnCollide = MusicalOnPlayer;
         if(!string.IsNullOrEmpty(MusicParam)) Musicalizer = new Musicalizer();
@@ -59,7 +61,7 @@ public class MusicalBooster : Booster {
             if(!string.IsNullOrEmpty(LoopSound)) loopingSfx.Play(LoopSound);
             loopingSfx.DisposeOnTransition = false;
         }
-        if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.SetParameter(MusicParam,ParamValue,IncMode);
+        if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.SetParameter(MusicParam,ParamValue,IncMode,Mode);
         BoostingPlayer = true;
         Tag = (int)Tags.Persistent | (int)Tags.TransitionUpdate;
         sprite.Play("spin");
@@ -72,7 +74,7 @@ public class MusicalBooster : Booster {
     new public void PlayerReleased()
     {
         if(!string.IsNullOrEmpty(ExitSound)) Audio.Play(ExitSound, sprite.RenderPosition);
-        if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode);
+        if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode,Mode,ResetValue);
         sprite.Play("pop");
         cannotUseTimer = 0f;
         respawnTimer = 1f;
@@ -105,5 +107,19 @@ public class MusicalBooster : Booster {
     {
         if (self is MusicalBooster MusicalBooster) MusicalBooster.Respawn();
         else orig(self);
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public override void Removed(Scene scene)
+    {
+        base.Removed(scene);
+        if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode,Mode,ResetValue);
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public override void SceneEnd(Scene scene)
+    {
+        base.SceneEnd(scene);
+        if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode,Mode,ResetValue);
     }
 }

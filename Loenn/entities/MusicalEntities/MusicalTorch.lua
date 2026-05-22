@@ -1,11 +1,23 @@
 local MusicalTorch = {}
 
+local modeNames = {
+    {"Get Reset Value", 1},
+    {"Set Reset Value", 2},
+    {"Increment Mode", 3}
+}
+
 MusicalTorch.name = "audiohelper/MusicalTorch"
 MusicalTorch.depth = -8500
 MusicalTorch.texture = "objects/temple/torch00"
 MusicalTorch.fieldInformation = {
     Colour = {
         fieldType = "color"
+    },
+    Mode = {
+        minimum = 0,
+        maximum = 1,
+        options = modeNames,
+        editable = false
     }
 }
 MusicalTorch.placements = {
@@ -20,6 +32,8 @@ MusicalTorch.placements = {
         MusicParameter = "",
         ParameterValue = 0.0,
         IncrementMode = false,
+        ParameterResetValue = 0,
+        Mode = 2
     }
 }
 

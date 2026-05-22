@@ -10,12 +10,24 @@ local axesOptions = {
     Horizontal = "horizontal"
 }
 
+local modeNames = {
+    {"Get Reset Value", 1},
+    {"Set Reset Value", 2},
+    {"Increment Mode", 3}
+}
+
 MusicalKevin.name = "audiohelper/MusicalKevin"
 MusicalKevin.depth = 0
 MusicalKevin.warnBelowSize = {24, 24}
 MusicalKevin.fieldInformation = {
     axes = {
         options = axesOptions,
+        editable = false
+    },
+    Mode = {
+        minimum = 0,
+        maximum = 1,
+        options = modeNames,
         editable = false
     }
 }
@@ -34,7 +46,9 @@ MusicalKevin.placements = {
         RestSound = "event:/game/06_reflection/crushblock_rest",
         MusicParameter = "",
         ParameterValue = 0,
-        IncrementMode = false;
+        IncrementMode = false,
+        ParameterResetValue = 0,
+        Mode = 2
     }
 }
 

@@ -1,5 +1,5 @@
 local drawableSprite = require("structs.drawable_sprite")
-local Bell = {}
+local MusicalBell = {}
 local noteNames = {
     {"E6", 24},
     {"D#/Eb6", 23},
@@ -27,14 +27,19 @@ local noteNames = {
     {"F4", 1},
     {"E4",  0},
 }
+local modeNames = {
+    {"Get Reset Value", 1},
+    {"Set Reset Value", 2},
+    {"Increment Mode", 3}
+}
 local sounds ={
     "event:/vert_audiohelper/bell",
     "event:/vert_audiohelper/chime"
 }
 
-Bell.name = "audiohelper/Bell"
-Bell.depth = -8500
-Bell.fieldInformation = {
+MusicalBell.name = "audiohelper/MusicalBell"
+MusicalBell.depth = -8500
+MusicalBell.fieldInformation = {
     pitch = {
         fieldType = "integer",
         options = noteNames,
@@ -50,22 +55,33 @@ Bell.fieldInformation = {
     VolumeBoost = {
        minimum = 0,
        maximum = 1
+    },
+    Mode = {
+        minimum = 0,
+        maximum = 1,
+        options = modeNames,
+        editable = false
     }
 }
-Bell.placements = {
-    name = "bell",
+MusicalBell.placements = {
+    name = "musicalbell",
     data = {
         sound = "event:/vert_audiohelper/bell",
         pitch = 0,
         colour = "c0c0c0",
         VolumeBoost = 0,
-        SetFlag = ""
+        SetFlag = "",
+        MusicParameter = "",
+        ParameterValue = 0,
+        ParameterResetValue = 0,
+        Timer = 1.0,
+        Mode = 2
     }
 }
-function Bell.sprite(room, entity)
+function MusicalBell.sprite(room, entity)
     local sprite = drawableSprite.fromTexture("objects/audiohelper/bell/idle00", entity)
     sprite:setJustification(0.5, 0.167)
     return sprite
 end
 
-return Bell
+return MusicalBell

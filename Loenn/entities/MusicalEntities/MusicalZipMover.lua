@@ -21,6 +21,12 @@ local themeTextures = {
     }
 }
 
+local modeNames = {
+    {"Get Reset Value", 1},
+    {"Set Reset Value", 2},
+    {"Increment Mode", 3}
+}
+
 local blockNinePatchOptions = {
     mode = "border",
     borderMode = "repeat"
@@ -42,6 +48,12 @@ MusicalZipMover.fieldInformation = {
     theme = {
         options = themes,
         editable = false
+    },
+    Mode = {
+        minimum = 0,
+        maximum = 1,
+        options = modeNames,
+        editable = false
     }
 }
 MusicalZipMover.placements = {
@@ -62,7 +74,9 @@ MusicalZipMover.placements = {
         MusicParameter = "",
         ParameterValue = 0,
         ResetBeforeReturn = true,
-        IncrementMode = false;
+        IncrementMode = false,
+        ParameterResetValue = 0,
+        Mode = 2
     }
 }
 

@@ -5,6 +5,12 @@ local coreStates = {
     ["React to Core Mode"] = 2,
 }
 
+local modeNames = {
+    {"Get Reset Value", 1},
+    {"Set Reset Value", 2},
+    {"Increment Mode", 3}
+}
+
 MusicalBumper.name = "audiohelper/MusicalBumper"
 MusicalBumper.depth = -8500
 MusicalBumper.nodeLimits = {0, 1}

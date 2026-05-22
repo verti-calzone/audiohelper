@@ -6,6 +6,23 @@ entities.audiohelper/Bell.placements.description.bell=Plays a note when the play
 entities.audiohelper/Bell.attributes.description.VolumeBoost=Adds a bit of volume to the bell by pretending the player has more speed. Set to 0 for base behaviour. Set to 1 to have all rings act as if the player is at the max speed
 entities.audiohelper/Bell.attributes.description.SetFlag=Sets a flag when the bell is rung. Leave blank to not set a flag
 
+# Musical Bell
+entities.audiohelper/MusicalBell.placements.name.musicalbell=Musical Bell
+entities.audiohelper/MusicalBell.placements.description.musicalbell=Bell that affects a music parameter
+entities.audiohelper/MusicalBell.attributes.description.VolumeBoost=Adds a bit of volume to the bell by pretending the player has more speed. Set to 0 for base behaviour. Set to 1 to have all rings act as if the player is at the max speed
+entities.audiohelper/MusicalBell.attributes.description.SetFlag=Sets a flag when the bell is rung. Leave blank to not set a flag
+entities.audiohelper/MusicalBell.attributes.description.MusicParameter=Music parameter to adjust when rung, resetting after the time specified
+entities.audiohelper/MusicalBell.attributes.description.IncrementMode=Increment the music parameter by the amount given, instead of setting it to that amount
+entities.audiohelper/MusicalBell.attributes.description.Timer=How long until the parameter resets
+
+# Music Parameter Sound Source
+entities.audiohelper/MusicParameterSoundSource.placements.name.musicparametersoundsource=Music Parameter Sound Source
+entities.audiohelper/MusicParameterSoundSource.placements.description.musicparametersoundsource=Fades a music parameter as the player gets closer to this entity, mimicking a sound source entity
+entities.audiohelper/MusicParameterSoundSource.attributes.description.MusicParameter=Music parameter to set
+entities.audiohelper/MusicParameterSoundSource.attributes.description.EdgeValue=Value to set the parameter to at the edge of the radius
+entities.audiohelper/MusicParameterSoundSource.attributes.description.CentreValue=Value to set the parameter to at the centre of the radius
+entities.audiohelper/MusicParameterSoundSource.attributes.description.Radius=Radius of the area in tiles where the parameter should be affected
+
 
 
 # ONDASH ENTITIES
@@ -36,7 +53,7 @@ entities.audiohelper/PlaySoundOnDirectionalDash.attributes.description.eventDL=E
 # CONTROLLER ENTITIES
 
 # Custom Cassette Block Manager
-entities.audiohelper/CustomCassetteBlockManager.placements.name.customcassetteblockmanager=Custom Cassette Block Manager
+entities.audiohelper/CustomCassetteBlockManager.placements.name.customcassetteblockmanager=Custom Cassette Block Manager (WIP)
 entities.audiohelper/CustomCassetteBlockManager.placements.description.customcassetteblockmanager=Flag-toggled controller that gives more control over cassette music
 entities.audiohelper/CustomCassetteBlockManager.attributes.description.Tempo=Tempo of the music, referring to the speed of the ticking metornome
 entities.audiohelper/CustomCassetteBlockManager.attributes.description.CountInLength=Length of the "count-in" where the blocks tick before the music enters. Measured in notes, not ticks of the metronome
@@ -76,6 +93,11 @@ entities.audiohelper/Muter.placements.name.muter=Muter
 entities.audiohelper/Muter.placements.description.muter=Mutes all instances of a particular FMOD event
 entities.audiohelper/Muter.attributes.description.EventToMute=FMOD event path of the event to mute
 
+# Bus Muter
+entities.audiohelper/BusMuter.placements.name.busmuter=Bus Muter
+entities.audiohelper/BusMuter.placements.description.busmuter=Flag-toggled controller that mutes all sounds in the specified bus
+entities.audiohelper/BusMuter.attributes.description.Flag=When this flag is set, all sounds in the bus will be muted
+
 
 
 # MUSICAL ENTITIES
@@ -89,7 +111,7 @@ entities.audiohelper/MusicalBooster.attributes.description.LoopSound=Red booster
 entities.audiohelper/MusicalBooster.attributes.description.ExitSound=FMOD event to play when boosting is finished. Leave blank for no sound to occur
 entities.audiohelper/MusicalBooster.attributes.description.SpawnSound=FMOD event to play when the booster respawns. Leave blank for no sound to occur
 entities.audiohelper/MusicalBooster.attributes.description.MusicParameter=Music parameter to adjust while boosting, resetting once you leave the booster. Leave empty to not affect music
-entities.audiohelper/MusicalBooster.attributes.description.IncrementMode=Increment the music parameter by the amount given, instead of setting it to that amount
+entities.audiohelper/MusicalBooster.attributes.description.Mode=Handles how to reset the music parameter. "Get" mode stores the previous parameter value before setting the parameter (prone to cause issues if more than one entity uses the same parameter). "Set" mode uses the value defined in the "Reset Parameter Value" field. Increment mode will add the "Parameter Value" to the parameter, then subtract it when resetting
 
 # Musical Bumper
 entities.audiohelper/MusicalBumper.placements.name.musicalbumper=Musical Bumper
@@ -98,7 +120,7 @@ entities.audiohelper/MusicalBumper.attributes.description.BumpSound=FMOD event t
 entities.audiohelper/MusicalBumper.attributes.description.FireSound=FMOD event to play when the player dies to the bumper. Leave blank for no sound to occur
 entities.audiohelper/MusicalBumper.attributes.description.SpawnSound=FMOD event to play when the bumper returns from its inactive state. Leave blank for no sound to occur
 entities.audiohelper/MusicalBumper.attributes.description.MusicParameter=Music parameter to adjust while boosting, resetting once you leave the booster. Leave empty to not affect music
-entities.audiohelper/MusicalBumper.attributes.description.IncrementMode=Increment the music parameter by the amount given, instead of setting it to that amount
+entities.audiohelper/MusicalBumper.attributes.description.Mode=Handles how to reset the music parameter. "Get" mode stores the previous parameter value before setting the parameter (prone to cause issues if more than one entity uses the same parameter). "Set" mode uses the value defined in the "Reset Parameter Value" field. Increment mode will add the "Parameter Value" to the parameter, then subtract it when resetting
 entities.audiohelper/MusicalBumper.attributes.description.CoreState=How core mode affects this bumper
 
 # Musical Swap Block
@@ -112,7 +134,7 @@ entities.audiohelper/MusicalSwapBlock.attributes.description.ReturnEndSound=FMOD
 entities.audiohelper/MusicalSwapBlock.attributes.description.EndMoveSoundWithParameter=Ends the move sound by setting an "end" parameter to 1 instead of stopping the looping event. Useful if you're using an event that needs a special ending, rather than fading out. Not recommended unless you know what you're doing in FMOD
 entities.audiohelper/MusicalSwapBlock.attributes.description.EndReturnSoundWithParameter=Ends the return sound by setting an "end" parameter to 1 instead of stopping the looping event, which is how vanilla does it. Useful if you're using an event that needs a special ending, rather than fading out. Not recommended unless you know what you're doing in FMOD
 entities.audiohelper/MusicalSwapBlock.attributes.description.MusicParameter=Music parameter to adjust while the block is activated. Leave empty to not affect music
-entities.audiohelper/MusicalSwapBlock.attributes.description.IncrementMode=Increment the music parameter by the amount given, instead of setting it to that amount
+entities.audiohelper/MusicalSwapBlock.attributes.description.Mode=Handles how to reset the music parameter. "Get" mode stores the previous parameter value before setting the parameter (prone to cause issues if more than one entity uses the same parameter). "Set" mode uses the value defined in the "Reset Parameter Value" field. Increment mode will add the "Parameter Value" to the parameter, then subtract it when resetting
 entities.audiohelper/MusicalSwapBlock.attributes.description.ResetBeforeReturn=Resets the parameter once the swapblock starts retracting, instead of when it returns to its home
 
 # Musical Move Block
@@ -124,7 +146,7 @@ entities.audiohelper/MusicalMoveBlock.attributes.description.BreakSound=FMOD eve
 entities.audiohelper/MusicalMoveBlock.attributes.description.ReformSound=FMOD event to play while the block reforms. Leave blank for no sound to occur
 entities.audiohelper/MusicalMoveBlock.attributes.description.ReappearSound=FMOD event to play when the block finishes reappearing. Leave blank for no sound to occur
 entities.audiohelper/MusicalMoveBlock.attributes.description.MusicParameter=Music parameter to adjust while the block is activated. Leave empty to not affect music
-entities.audiohelper/MusicalMoveBlock.attributes.description.IncrementMode=Increment the music parameter by the amount given, instead of setting it to that amount
+entities.audiohelper/MusicalMoveBlock.attributes.description.Mode=Handles how to reset the music parameter. "Get" mode stores the previous parameter value before setting the parameter (prone to cause issues if more than one entity uses the same parameter). "Set" mode uses the value defined in the "Reset Parameter Value" field. Increment mode will add the "Parameter Value" to the parameter, then subtract it when resetting
 
 # Musical Kevin
 entities.audiohelper/MusicalKevin.placements.name.musicalkevin=Musical Kevin
@@ -136,7 +158,7 @@ entities.audiohelper/MusicalKevin.attributes.description.ReturnSound=Looping FMO
 entities.audiohelper/MusicalKevin.attributes.description.WaypointSound=FMOD event to play when the Kevin reaches each waypoint on its way home. Leave blank for no sound to occur
 entities.audiohelper/MusicalKevin.attributes.description.RestSound=FMOD event to play when the Kevin returns to its home. Leave blank for no sound to occur
 entities.audiohelper/MusicalKevin.attributes.description.MusicParameter=Music parameter to adjust while the Kevin is activated. Leave empty to not affect music
-entities.audiohelper/MusicalKevin.attributes.description.IncrementMode=Increment the music parameter by the amount given, instead of setting it to that amount
+entities.audiohelper/MusicalKevin.attributes.description.Mode=Handles how to reset the music parameter. "Get" mode stores the previous parameter value before setting the parameter (prone to cause issues if more than one entity uses the same parameter). "Set" mode uses the value defined in the "Reset Parameter Value" field. Increment mode will add the "Parameter Value" to the parameter, then subtract it when resetting
 
 # Musical Zip Mover
 entities.audiohelper/MusicalZipMover.placements.name.musicalzipmover=Musical Zip Mover
@@ -149,7 +171,7 @@ entities.audiohelper/MusicalZipMover.attributes.description.ImpactSound=FMOD eve
 entities.audiohelper/MusicalZipMover.attributes.description.ReturnSound=Looping FMOD event to play while the Kevin is moving back to its home. Leave blank for no sound to occur
 entities.audiohelper/MusicalZipMover.attributes.description.ResetSound=FMOD event to play when the zip mover returns to its home. Leave blank for no sound to occur
 entities.audiohelper/MusicalZipMover.attributes.description.MusicParameter=Music parameter to adjust while the zip mover is activated. Leave empty to not affect music
-entities.audiohelper/MusicalZipMover.attributes.description.IncrementMode=Increment the music parameter by the amount given, instead of setting it to that amount
+entities.audiohelper/MusicalZipMover.attributes.description.Mode=Handles how to reset the music parameter. "Get" mode stores the previous parameter value before setting the parameter (prone to cause issues if more than one entity uses the same parameter). "Set" mode uses the value defined in the "Reset Parameter Value" field. Increment mode will add the "Parameter Value" to the parameter, then subtract it when resetting
 entities.audiohelper/MusicalZipMover.attributes.description.ResetBeforeReturn=Resets the parameter once the zip mover reaches its node, instead of when it returns to its home
 
 # Musical Torch
@@ -162,7 +184,7 @@ entities.audiohelper/MusicalTorch.attributes.description.Colour=Colour of the li
 entities.audiohelper/MusicalTorch.attributes.description.StayLit=Whether or not the light stays lit over respawn/room reload. Will reset the music parameter as well if not checked
 entities.audiohelper/MusicalTorch.attributes.description.ActivateSound=FMOD event to play when the torch activates. Leave blank for no sound to occur
 entities.audiohelper/MusicalTorch.attributes.description.MusicParameter=Music parameter to adjust when the torch is activated. Leave empty to not affect music
-entities.audiohelper/MusicalTorch.attributes.description.IncrementMode=Increment the music parameter by the amount given, instead of setting it to that amount
+entities.audiohelper/MusicalTorch.attributes.description.Mode=Handles how to reset the music parameter. "Get" mode stores the previous parameter value before setting the parameter (prone to cause issues if more than one entity uses the same parameter). "Set" mode uses the value defined in the "Reset Parameter Value" field. Increment mode will add the "Parameter Value" to the parameter, then subtract it when resetting
 
 # Sample Trigger
 triggers.audiohelper/SampleTrigger.placements.name.normal=Sample Trigger

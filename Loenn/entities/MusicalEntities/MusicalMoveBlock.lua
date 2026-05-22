@@ -8,12 +8,24 @@ local moveBlockDirections = {
     "Up", "Down", "Left", "Right"
 }
 
+local modeNames = {
+    {"Get Reset Value", 1},
+    {"Set Reset Value", 2},
+    {"Increment Mode", 3}
+}
+
 MusicalMoveBlock.name = "audiohelper/MusicalMoveBlock"
 MusicalMoveBlock.depth = 8995
 MusicalMoveBlock.warnBelowSize = {16, 16}
 MusicalMoveBlock.fieldInformation = {
     direction = {
         options = moveBlockDirections,
+        editable = false
+    },
+    Mode = {
+        minimum = 0,
+        maximum = 1,
+        options = modeNames,
         editable = false
     }
 }
@@ -34,6 +46,8 @@ MusicalMoveBlock.placements = {
         MusicParameterValue = 0,
         IncrementMode = false,
         DepthFix = false,
+        ParameterResetValue = 0,
+        Mode = 2
     }            
 }
 

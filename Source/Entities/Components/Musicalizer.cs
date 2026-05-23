@@ -69,7 +69,6 @@ public class Musicalizer : Component {
 				//Logger.Info("audiohelper","resetting get mode");
 				break;
 			case 2: // Resets to the reset value
-				Audio.CurrentMusicEventInstance.getParameterValue(Parameter, out OldParameter, out _);
 				Audio.SetMusicParam(Parameter,ResetParameterValue);
 				//Logger.Info("audiohelper","resetting reset mode");
 				break;

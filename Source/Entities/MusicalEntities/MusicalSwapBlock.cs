@@ -161,20 +161,20 @@ public class MusicalSwapBlock : SwapBlock {
     [MethodImpl(MethodImplOptions.NoInlining)]
     public override void Removed(Scene scene)
     {
-        base.Removed(scene);
         Audio.Stop(startSfx);
         Audio.Stop(moveSfx);
         Audio.Stop(returnSfx);
         if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode,Mode,ResetValue);
+        base.Removed(scene);
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
     public override void SceneEnd(Scene scene)
     {
-        base.SceneEnd(scene);
         Audio.Stop(startSfx);
         Audio.Stop(moveSfx);
         Audio.Stop(returnSfx);
         if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode,Mode,ResetValue);
+        base.SceneEnd(scene);
     }
 }

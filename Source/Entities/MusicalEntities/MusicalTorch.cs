@@ -102,12 +102,12 @@ public class MusicalTorch : Entity {
     }
     public override void Removed(Scene scene)
     {
-        base.Removed(scene);
         if(!StayLit && !string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode,Mode,ResetValue);
+        base.Removed(scene);
     }
     public override void SceneEnd(Scene scene)
     {
-        base.SceneEnd(scene);
         if(!StayLit && !string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode,Mode,ResetValue);
+        base.SceneEnd(scene);
     }
 }

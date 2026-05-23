@@ -22,8 +22,7 @@ public class MusicParameterSoundSource : Entity {
         EdgeValue = data.Float("EdgeValue");
         CentreValue = data.Float("CentreValue");
         Radius = data.Float("Radius");
-        Collider = new Circle(Radius*8);
-        Add(new PlayerCollider(OnPlayer));
+        Add(new PlayerCollider(OnPlayer, new Circle(Radius*8)));
         Collider = new Hitbox(4,4,-2,-2);
     }
 

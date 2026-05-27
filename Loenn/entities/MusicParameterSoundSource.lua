@@ -1,8 +1,10 @@
 local drawableSprite = require("structs.drawable_sprite")
+local drawableFunc = require("structs.drawable_function")
 local utils = require("utils")
+local drawing = require("utils.drawing")
 
+---@type EntityHandler<Entity>
 local MusicParameterSoundSource = {}
-
 MusicParameterSoundSource.name = "audiohelper/MusicParameterSoundSource"
 MusicParameterSoundSource.depth = 0
 MusicParameterSoundSource.placements = {
@@ -15,11 +17,15 @@ MusicParameterSoundSource.placements = {
     }
 }
 
-function MusicParameterSoundSource.draw(room, entity, viewport)
-    local MusicParameterSoundSourceSprite = drawableSprite.fromTexture("objects/audiohelper/MusicParameterSoundSource", entity)
----@diagnostic disable-next-line: undefined-global
-    love.graphics.circle("line", entity.x, entity.y, entity.Radius*8)
-    MusicParameterSoundSourceSprite:draw()
+function MusicParameterSoundSource.sprite(room, entity)
+    local sprite = drawableSprite.fromTexture("objects/audiohelper/MusicParameterSoundSource", entity)
+    local circle = drawableFunc.fromFunction(function()
+        drawing.callKeepOriginalColor(function()
+            love.graphics.setColor {1,1,1,0.5}
+            love.graphics.circle("line", entity.x, entity.y, entity.Radius*8 or 0);
+        end)
+    end)
+    return {sprite,circle}
 end
 
 function MusicParameterSoundSource.selection(room, entity)

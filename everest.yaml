@@ -1,6 +1,6 @@
 - DLL: bin/audiohelper.dll
   Name: audiohelper
-  Version: 0.1.7
+  Version: 0.2.0
   Dependencies:
     - Name: Everest
       Version: 1.6194.0

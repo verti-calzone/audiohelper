@@ -18,13 +18,14 @@ public class Bell : Entity {
     public string SetFlag;
     public bool Ready = true;
     public bool Waiting = false;
-    public float Timer = 1f;
+    public float Timer = 0.1f;
     public float Speed;
     public float Angle;
     public float AngularMomentum;
     public float Inertia;
     public float InertiaBase = 10;
     public MultiParameterSoundSource sfx;
+    private Collider MainCollider;
     public Bell(EntityData data, Vector2 offset, EntityID id) : base(data.Position + offset)
     {
         Sound = data.Attr("sound");
@@ -63,11 +64,16 @@ public class Bell : Entity {
         Waiting = true;
     }
 
+    private void OnChaser()
+    {
+        if(Ready) Ring(200,0);
+        Waiting = true;
+    }
+
     public virtual void Ring(float xSpeed, float ySpeed)
     {
         Speed = (float)Math.Sqrt(xSpeed*xSpeed+ySpeed*ySpeed) + 500*VolumeBoost;
-        if(Speed < 200) Speed = 200;
-        else if(Speed > 500) Speed = 500;
+        Speed = Calc.Clamp(Speed, 200f, 500f);
         if (!string.IsNullOrEmpty(Sound)) sfx.Play(Sound,"pitch",Pitch,"speed",Speed*0.002f,false);
         AngularMomentum = 0.01f*Speed;
         if(Math.Sign(xSpeed) == 1) AngularMomentum *= -1;
@@ -78,16 +84,25 @@ public class Bell : Entity {
 	public override void Update()
 	{
 		base.Update();
-        if (!Waiting)
-        {
-            if(Timer > 0f) Timer -= Engine.DeltaTime;
-        }
-        else Waiting = false;
-        if(Timer <= 0f)
-        {
-            Ready = true;
-            Timer = 1f;
-        }
+
+        MainCollider = Collider;
+        Collider = new Circle(16f);
+        foreach(BadelineOldsite chaser in SceneAs<Level>().Tracker.GetEntities<BadelineOldsite>()) if(Collider.Collide(chaser)) OnChaser();
+        Collider = MainCollider;
+
+        // if (!Waiting)
+        // {
+        //     if(Timer > 0f) Timer -= Engine.DeltaTime;
+        // }
+        // else Waiting = false;
+        // if(Timer <= 0f)
+        // {
+        //     Ready = true;
+        //     Timer = 0.1f;
+        // }
+
+        if (!Waiting) Ready = true;
+        Waiting = false;
 
 
         if(Math.Abs(AngularMomentum)<=0.01 && Math.Abs(Angle)<=0.1f)
@@ -108,26 +123,11 @@ public class Bell : Entity {
         }
         AngularMomentum -= Inertia * Engine.DeltaTime;
         sprite.Rotation = Angle;
-        if (Angle > 0.3f)
-        {
-            sprite.Play("left1");
-        }
-        else if (Angle > 0.2f)
-        {
-            sprite.Play("left0");
-        }
-        else if (Angle > -0.2f)
-        {
-            sprite.Play("idle");
-        }
-        else if (Angle > -0.3f)
-        {
-            sprite.Play("right0");
-        }
-        else
-        {
-            sprite.Play("right1");
-        }
+        if (Angle > 0.3f) sprite.Play("left1");
+        else if (Angle > 0.2f) sprite.Play("left0");
+        else if (Angle > -0.2f) sprite.Play("idle");
+        else if (Angle > -0.3f) sprite.Play("right0");
+        else sprite.Play("right1");
     }
   public override void Render()
   {

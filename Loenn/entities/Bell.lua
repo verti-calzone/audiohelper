@@ -64,6 +64,7 @@ Bell.placements = {
 }
 function Bell.sprite(room, entity)
     local sprite = drawableSprite.fromTexture("objects/audiohelper/bell/idle00", entity)
+    sprite:setColor(entity.colour)
     sprite:setJustification(0.5, 0.167)
     return sprite
 end

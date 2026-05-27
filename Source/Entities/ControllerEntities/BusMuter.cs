@@ -26,14 +26,14 @@ public class BusMuter : Entity {
     {
         base.Added(scene);
         if(SceneAs<Level>().Session.GetFlag(Flag)) Audio.BusMuted(Bus, true);
-        Logger.Info("audiohelper","Muting bus named "+Bus);
+        //Logger.Info("audiohelper","Muting bus named "+Bus);
     }
     public override void Update()
     {
         base.Update();
         if(SceneAs<Level>().Session.GetFlag(Flag) && !PrevFlag) {
             Audio.BusMuted(Bus, true);
-            Logger.Info("audiohelper","Muting bus named "+Bus);
+            //Logger.Info("audiohelper","Muting bus named "+Bus);
         }
         else if(!SceneAs<Level>().Session.GetFlag(Flag) && PrevFlag) Audio.BusMuted(Bus, false);
         PrevFlag = SceneAs<Level>().Session.GetFlag(Flag);

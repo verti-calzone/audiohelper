@@ -13,9 +13,8 @@ namespace Celeste.Mod.audiohelper.Entities;
 
 [CustomEntity("audiohelper/CustomCassetteBlockManager")]
 [Tracked]
-[TrackedAs(typeof(CassetteBlockManager))]
 
-public class CustomCassetteBlockManager : Entity {
+public class CustomCassetteBlockManager : CassetteBlockManager {
     // data variables
     public float Tempo;
     public int CountInLength;
@@ -52,11 +51,12 @@ public class CustomCassetteBlockManager : Entity {
     [SpeedrunToolIop.Static]
     public static int ActiveBlock;
     public EntityID id;
-    
+
+    [SpeedrunToolIop.Static]
     public static bool CountingIn = true;
     public bool CanStart = false;
 
-  public CustomCassetteBlockManager(EntityData data, Vector2 offset, EntityID id) : base(data.Position + offset)
+  public CustomCassetteBlockManager(EntityData data, Vector2 offset, EntityID id) : base()
     {
         // Global tag allows the manager to stay active across respawn
         base.Tag = Tags.Global;
@@ -94,16 +94,29 @@ public class CustomCassetteBlockManager : Entity {
     public override void Added(Scene scene)
     {
         base.Added(scene);
-        //scene.Entities.UpdateLists();
         // Removes self if already present
         foreach(CustomCassetteBlockManager ccbm in scene.Tracker.GetEntities<CustomCassetteBlockManager>()) if(ccbm != this && ccbm.id.Key == id.Key) RemoveSelf();
     }
     public override void Awake(Scene scene)
     {
         base.Awake(scene);
-        
+
+        Logger.Info("audiohelper",scene.Entities.AmountOf<CassetteBlockManager>()+" many cbms");
+
         // remove the vanilla manager. further vanilla managers will be made on reload, but an ILHook prevents those from being created as long as a custom manager exists
-        scene.Entities.FindFirst<CassetteBlockManager>()?.RemoveSelf();
+        foreach(CassetteBlockManager cbm in scene.Entities.FindAll<CassetteBlockManager>())
+        {
+            if(cbm is not CustomCassetteBlockManager)
+            {
+                cbm.RemoveSelf();
+                Logger.Info("audiohelper","removing a cbm of type: "+cbm.GetType());
+            }
+            else
+            {
+                Logger.Info("audiohelper","not removing a seen cbm of type: "+cbm.GetType());
+            }
+
+        }
 
         // Setting up the EventInstance
         if(!string.IsNullOrEmpty(SongName)) Song = Audio.CreateInstance(SongName);
@@ -130,15 +143,15 @@ public class CustomCassetteBlockManager : Entity {
         // Adds a starter entity to call OnlevelStart 
         if(scene.Tracker.GetEntity<CustomCassetteBlockManagerStarter>() is null) scene.Add(new CustomCassetteBlockManagerStarter());
     }
-    public void OnLevelStart()
+    public void CCBMOnLevelStart()
     {
         // If you respawn *more* than halfway until the next swap, then set the active block to be *three* swaps before the starting colour
         if (Note % (NotesPerTick * TicksPerSwap) > NotesPerTick * TicksPerSwap / 2) ActiveBlock = (StartingColour - 3 + MaxBlocks) % MaxBlocks;
         // If you respawn *less* than halfway until the next swap, then set the active block to be *two* swaps before the starting colour
         else ActiveBlock = (StartingColour - 2 + MaxBlocks) % MaxBlocks;
-        if((UsesFlag && SceneAs<Level>().Session.GetFlag(FlagName)) || !UsesFlag) SilentUpdateBlocks();
+        if((UsesFlag && SceneAs<Level>().Session.GetFlag(FlagName)) || !UsesFlag) CCBMSilentUpdateBlocks();
     }
-    private void SilentUpdateBlocks()
+    private void CCBMSilentUpdateBlocks()
     {   
         foreach (CassetteBlock entity in base.Scene.Tracker.GetEntities<CassetteBlock>())
         {
@@ -152,7 +165,7 @@ public class CustomCassetteBlockManager : Entity {
     public override void Update()
     {
         base.Update();
-        AdvanceMusic(Engine.DeltaTime);
+        CCBMAdvanceMusic(Engine.DeltaTime);
         UpdateSnapshot();
         foreach(CustomCassetteBlockManager ccbm in Scene.Tracker.GetEntities<CustomCassetteBlockManager>())
         {
@@ -164,7 +177,7 @@ public class CustomCassetteBlockManager : Entity {
         foreach (CassetteListener component in base.Scene.Tracker.GetComponents<CassetteListener>()) component.SetActivated(false);
     }
 
-    public void AdvanceMusic(float time)
+    public void CCBMAdvanceMusic(float time)
     {
         if((UsesFlag && SceneAs<Level>().Session.GetFlag(FlagName)) || !UsesFlag){
         
@@ -192,14 +205,14 @@ public class CustomCassetteBlockManager : Entity {
             {
                 ActiveBlock++;
                 ActiveBlock %= MaxBlocks;
-                SetActiveIndex(ActiveBlock);
+                CCBMSetActiveIndex(ActiveBlock);
                 if (!string.IsNullOrEmpty(SwapSound)) Audio.Play(SwapSound);
                 Input.Rumble(RumbleStrength.Medium, RumbleLength.Short);
             }
             else
             {
                 // if one note before a swap, warn the blocks that are about to swap
-                if ((Note + 1) % (NotesPerTick * TicksPerSwap) == 0) SetWillActivate((ActiveBlock + 1) % MaxBlocks);
+                if ((Note + 1) % (NotesPerTick * TicksPerSwap) == 0) CCBMSetWillActivate((ActiveBlock + 1) % MaxBlocks);
                 // if a tick (but not a swap!), play the sound
                 if (Note % NotesPerTick == 0 && !string.IsNullOrEmpty(TickSound)) Audio.Play(TickSound);
             }
@@ -222,13 +235,13 @@ public class CustomCassetteBlockManager : Entity {
         note += LoopStart;
         (!string.IsNullOrEmpty(SongName)? Song : Audio.CurrentMusicEventInstance)?.setParameterValue(SongParam, note+1);
     }
-    public void SetActiveIndex(int index)
+    public void CCBMSetActiveIndex(int index)
     {
         // Controls which blocks are currently active
         foreach (CassetteBlock entity in base.Scene.Tracker.GetEntities<CassetteBlock>()) entity.Activated = entity.Index == index;
         foreach (CassetteListener component in base.Scene.Tracker.GetComponents<CassetteListener>()) component.SetActivated(component.Index == index);
     }
-    public void SetWillActivate(int index)
+    public void CCBMSetWillActivate(int index)
     {
         // Controls which blocks will (de)activate on the next note (used for the bobbing animation)
         foreach (CassetteBlock entity in base.Scene.Tracker.GetEntities<CassetteBlock>()) if (entity.Index == index || entity.Activated) entity.WillToggle();
@@ -273,6 +286,7 @@ public class CustomCassetteBlockManager : Entity {
     }
     public override void Removed(Scene scene)
     {
+        //Logger.Info("audiohelper","this ccbm is being removed!");
         base.Removed(scene);
         if (!string.IsNullOrEmpty(SongName)) Audio.Stop(Song);
         if(scene.Entities.AmountOf<CustomCassetteBlockManager>() == 0)

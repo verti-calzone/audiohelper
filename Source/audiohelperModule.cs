@@ -37,7 +37,7 @@ public class audiohelperModule : EverestModule {
 
     private static void CCBMFreeze(On.Celeste.Celeste.orig_Freeze orig, float time)
     {
-        if(Monocle.Engine.Scene != null) Monocle.Engine.Scene.Tracker.GetEntity<CustomCassetteBlockManager>()?.AdvanceMusic(time);
+        if(Monocle.Engine.Scene != null) Monocle.Engine.Scene.Tracker.GetEntity<CustomCassetteBlockManager>()?.CCBMAdvanceMusic(time);
         orig(time);
     }
     public static bool SuppressVanillaCassetteBlockManagerDelegate(bool orig, Level level)
@@ -98,7 +98,7 @@ public class audiohelperModule : EverestModule {
 
         On.Celeste.CrushBlock.Attack += MusicalKevin.MusicalKevinAttack;
 
-        On.Celeste.Celeste.Freeze += CCBMFreeze;
+        // On.Celeste.Celeste.Freeze += CCBMFreeze;
         SuppressVanillaCassetteBlockManager = new ILHook(typeof(Level).GetMethod("orig_LoadLevel", BindingFlags.Public | BindingFlags.Instance),IL_SuppressVanillaCassetteBlockManager);
         SuppressVanillaCassetteBlockManagerOnLevelStart = new ILHook(typeof(Level).GetMethod("orig_LoadLevel", BindingFlags.Public | BindingFlags.Instance),IL_SuppressVanillaCassetteBlockManagerOnLevelStart);
 
@@ -114,7 +114,7 @@ public class audiohelperModule : EverestModule {
 
         On.Celeste.CrushBlock.Attack -= MusicalKevin.MusicalKevinAttack;
 
-        On.Celeste.Celeste.Freeze -= CCBMFreeze;
+        // On.Celeste.Celeste.Freeze -= CCBMFreeze;
         SuppressVanillaCassetteBlockManager.Dispose();
         SuppressVanillaCassetteBlockManagerOnLevelStart.Dispose();
 

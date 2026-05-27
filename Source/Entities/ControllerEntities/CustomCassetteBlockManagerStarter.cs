@@ -13,10 +13,9 @@ public class CustomCassetteBlockManagerStarter : Entity {
     public override void Awake(Scene scene)
     {
         base.Awake(scene);
-        foreach(CustomCassetteBlockManager ccbm in scene.Tracker.GetEntities<CustomCassetteBlockManager>()) ccbm.OnLevelStart();
+        foreach(CustomCassetteBlockManager ccbm in scene.Tracker.GetEntities<CustomCassetteBlockManager>()) ccbm.CCBMOnLevelStart();
 
-        foreach(CassetteBlockManager cbm in scene.Tracker.GetEntities<CassetteBlockManager>()) cbm.RemoveSelf();
-        foreach(CassetteBlockManager cbm in scene.Entities.FindAll<CassetteBlockManager>()) cbm.RemoveSelf();
+        foreach(CassetteBlockManager cbm in scene.Entities.FindAll<CassetteBlockManager>()) if(cbm is not CustomCassetteBlockManager) {cbm.RemoveSelf(); Logger.Info("audiohelper","starter is removing a cbm");}
     }
 
     public override void Removed(Scene scene)

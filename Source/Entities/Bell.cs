@@ -90,17 +90,6 @@ public class Bell : Entity {
         foreach(BadelineOldsite chaser in SceneAs<Level>().Tracker.GetEntities<BadelineOldsite>()) if(Collider.Collide(chaser)) OnChaser();
         Collider = MainCollider;
 
-        // if (!Waiting)
-        // {
-        //     if(Timer > 0f) Timer -= Engine.DeltaTime;
-        // }
-        // else Waiting = false;
-        // if(Timer <= 0f)
-        // {
-        //     Ready = true;
-        //     Timer = 0.1f;
-        // }
-
         if (!Waiting) Ready = true;
         Waiting = false;
 

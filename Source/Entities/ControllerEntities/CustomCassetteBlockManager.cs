@@ -11,7 +11,7 @@ using System;
 
 namespace Celeste.Mod.audiohelper.Entities;
 
-[CustomEntity("audiohelper/CustomCassetteBlockManager")]
+[CustomEntity("audiohelper/CustomCassetteBlockManagerNEW")]
 [Tracked]
 
 public class CustomCassetteBlockManager : CassetteBlockManager {

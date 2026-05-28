@@ -42,10 +42,10 @@ public class audiohelperModule : EverestModule {
     }
     public static bool SuppressVanillaCassetteBlockManagerDelegate(bool orig, Level level)
     {
-        Logger.Info("audiohelper","running delegate: SuppressVanillaCassetteBlockManagerDelegate");
+        //Logger.Info("audiohelper","running delegate: SuppressVanillaCassetteBlockManagerDelegate");
         if(CustomCassetteBlockManager.IsActive(level)) 
         {
-            Logger.Info("audiohelper","suppressing cbm");
+            //Logger.Info("audiohelper","suppressing cbm");
             return false;
         }
         else return orig;
@@ -67,10 +67,10 @@ public class audiohelperModule : EverestModule {
     public static ILHook SuppressVanillaCassetteBlockManager;
     public static bool SuppressVanillaCassetteBlockManagerOnLevelStartDelegate(bool orig, Level level)
     {
-        Logger.Info("audiohelper","running delegate: SuppressVanillaCassetteBlockManagerOnLevelStartDelegate");
+        //Logger.Info("audiohelper","running delegate: SuppressVanillaCassetteBlockManagerOnLevelStartDelegate");
         if(CustomCassetteBlockManager.IsActive(level)) 
         {
-            Logger.Info("audiohelper","suppressing cbm on levelstart");
+            //Logger.Info("audiohelper","suppressing cbm on levelstart");
             return false;
         }
         else return orig;
@@ -91,6 +91,8 @@ public class audiohelperModule : EverestModule {
     }
     public static ILHook SuppressVanillaCassetteBlockManagerOnLevelStart;
 
+    public static ILHook CassetteLoopControllerHook;
+
     public override void Load() {
         On.Celeste.Booster.PlayerBoosted += MusicalBooster.MusicalBoosterStart;
         On.Celeste.Booster.PlayerReleased += MusicalBooster.MusicalBoosterRelease;
@@ -98,11 +100,15 @@ public class audiohelperModule : EverestModule {
 
         On.Celeste.CrushBlock.Attack += MusicalKevin.MusicalKevinAttack;
 
-        // On.Celeste.Celeste.Freeze += CCBMFreeze;
+        On.Celeste.Celeste.Freeze += CCBMFreeze;
         SuppressVanillaCassetteBlockManager = new ILHook(typeof(Level).GetMethod("orig_LoadLevel", BindingFlags.Public | BindingFlags.Instance),IL_SuppressVanillaCassetteBlockManager);
         SuppressVanillaCassetteBlockManagerOnLevelStart = new ILHook(typeof(Level).GetMethod("orig_LoadLevel", BindingFlags.Public | BindingFlags.Instance),IL_SuppressVanillaCassetteBlockManagerOnLevelStart);
 
         On.Celeste.Audio.GetEventDescription += AdvancedAudioReplacer.OnGetEventDescription;
+
+        // CassetteLoopControllerHook = new ILHook(typeof(CassetteBlockManager).GetMethod("AdvanceMusic", BindingFlags.Public | BindingFlags.Instance),CassetteLoopController.IL_CassetteLoopController);
+
+        IL.Celeste.CassetteBlockManager.AdvanceMusic += CassetteLoopController.IL_CassetteLoopController;
 
         SpeedrunToolIop.srtloaduseapi();
     }
@@ -114,11 +120,15 @@ public class audiohelperModule : EverestModule {
 
         On.Celeste.CrushBlock.Attack -= MusicalKevin.MusicalKevinAttack;
 
-        // On.Celeste.Celeste.Freeze -= CCBMFreeze;
+        On.Celeste.Celeste.Freeze -= CCBMFreeze;
         SuppressVanillaCassetteBlockManager.Dispose();
         SuppressVanillaCassetteBlockManagerOnLevelStart.Dispose();
 
         On.Celeste.Audio.GetEventDescription -= AdvancedAudioReplacer.OnGetEventDescription;
+
+        //CassetteLoopControllerHook.Dispose();
+
+        IL.Celeste.CassetteBlockManager.AdvanceMusic -= CassetteLoopController.IL_CassetteLoopController;
 
         SpeedrunToolIop.Unload();
     }

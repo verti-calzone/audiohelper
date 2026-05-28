@@ -98,6 +98,12 @@ entities.audiohelper/BusMuter.placements.name.busmuter=Bus Muter
 entities.audiohelper/BusMuter.placements.description.busmuter=Flag-toggled controller that mutes all sounds in the specified bus
 entities.audiohelper/BusMuter.attributes.description.Flag=When this flag is set, all sounds in the bus will be muted
 
+# Cassette Loop Controller
+entities.audiohelper/CassetteLoopController.placements.name.cassetteloopcontroller=Cassette Loop Controller
+entities.audiohelper/CassetteLoopController.placements.description.cassetteloopcontroller=Defines a new loop region for the current cassette song, toggled by a flag
+entities.audiohelper/CassetteLoopController.attributes.description.LoopStart=First note to play after taking the loop. These values are 1-indexed, so they match the numbers associated with each note inside FMOD. /n For example, the vanilla loop would be 1-256, not 0-255
+entities.audiohelper/CassetteLoopController.attributes.description.LoopEnd=last note to play before taking the loop. These values are 1-indexed, so they match the numbers associated with each note inside FMOD. /n For example, the vanilla loop would be 1-256, not 0-255
+
 
 
 # MUSICAL ENTITIES

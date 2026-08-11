@@ -1,0 +1,20 @@
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.Tracing;
+using Celeste.Mod.Entities;
+using FMOD.Studio;
+using Microsoft.Xna.Framework;
+using Monocle;
+
+namespace Celeste.Mod.audiohelper.Entities;
+
+[CustomEntity("audiohelper/CassetteTrackSpinner")]
+[Tracked]
+public class CassetteTrackSpinner : TrackSpinner {
+    public CassetteTrackSpinner(EntityData data, Vector2 offset) : base(data,offset)
+    {
+        Add(new CassetteMover());
+        
+    }
+
+}

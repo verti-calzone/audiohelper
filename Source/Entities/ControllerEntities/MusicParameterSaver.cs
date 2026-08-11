@@ -8,22 +8,28 @@ using Monocle;
 
 namespace Celeste.Mod.audiohelper.Entities;
 
-[CustomEntity("audiohelper/Muter")]
+[CustomEntity("audiohelper/MusicParameterSaver")]
 [Tracked]
-public class Muter : SimpleAudioReplacer {
 
-    public Muter(EntityData data, Vector2 offset) : base(data,offset){
-        OldEvent = data.Attr("EventToMute");
-        NewEvent = "event:/char/madeline/footstep";
-	}
+public class MusicParameterSaver : Entity {
+
+    public MusicParameterSaver(EntityData data, Vector2 offset){}
 
     public override void Added(Scene scene)
     {
-        EventPairs[OldEvent] = this;
         base.Added(scene);
     }
     public override void Update()
     {
         base.Update();
+    }
+
+    public override void Removed(Scene scene)
+    {
+        base.Removed(scene);
+    }
+    public override void SceneEnd(Scene scene)
+    {
+        base.SceneEnd(scene);
     }
 }

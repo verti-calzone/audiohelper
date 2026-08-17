@@ -74,7 +74,6 @@ MusicalZipMover.placements = {
         MusicParameter = "",
         ParameterValue = 0,
         ResetBeforeReturn = true,
-        IncrementMode = false,
         ParameterResetValue = 0,
         Mode = 2
     }

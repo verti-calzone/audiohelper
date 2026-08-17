@@ -107,7 +107,7 @@ public class MusicalTorch : Entity {
     }
     public override void SceneEnd(Scene scene)
     {
-        if(!StayLit && !string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode,Mode,ResetValue);
+        //if(!StayLit && !string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode,Mode,ResetValue);
         base.SceneEnd(scene);
     }
 }

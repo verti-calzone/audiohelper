@@ -27,7 +27,6 @@ MusicalBooster.placements = {
         SpawnSound = "event:/game/04_cliffside/greenbooster_reappear",
         MusicParameter = "",
         ParameterValue = 0,
-        IncrementMode = false,
         ParameterResetValue = 0,
         Mode = 2
     }

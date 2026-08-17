@@ -31,7 +31,6 @@ MusicalTorch.placements = {
         ActivationSound = "event:/game/05_mirror_temple/torch_activate",
         MusicParameter = "",
         ParameterValue = 0.0,
-        IncrementMode = false,
         ParameterResetValue = 0,
         Mode = 2
     }

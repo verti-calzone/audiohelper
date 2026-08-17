@@ -40,14 +40,13 @@ public class AdvancedAudioReplacer : Entity {
         Mode = data.Int("Mode");
         IncMode = data.Bool("IncrementMode");
         if(!string.IsNullOrEmpty(MusicParam)) Musicalizer = new Musicalizer();
-	}
 
-    public override void Added(Scene scene)
-    {
-        base.Added(scene);
-        if (SceneAs<Level>().Session.GetFlag(FlagName) || string.IsNullOrEmpty(FlagName)) EventPairs[OldEvent] = this;
-        OldFlag = SceneAs<Level>().Session.GetFlag(FlagName);
-    }
+        Level level = Engine.Scene as Level;
+        if (level == null) level = (Engine.Scene as LevelLoader)?.Level;
+
+        if (level.Session.GetFlag(FlagName) || string.IsNullOrEmpty(FlagName))EventPairs[OldEvent] = this;
+        OldFlag = level.Session.GetFlag(FlagName);
+	}
 
     public override void Update()
     {

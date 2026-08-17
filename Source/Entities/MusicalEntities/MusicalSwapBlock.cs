@@ -174,7 +174,7 @@ public class MusicalSwapBlock : SwapBlock {
         Audio.Stop(startSfx);
         Audio.Stop(moveSfx);
         Audio.Stop(returnSfx);
-        if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode,Mode,ResetValue);
+        //if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode,Mode,ResetValue);
         base.SceneEnd(scene);
     }
 }

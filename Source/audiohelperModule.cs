@@ -106,9 +106,10 @@ public class audiohelperModule : EverestModule {
 
         On.Celeste.Audio.GetEventDescription += AdvancedAudioReplacer.OnGetEventDescription;
 
-        // CassetteLoopControllerHook = new ILHook(typeof(CassetteBlockManager).GetMethod("AdvanceMusic", BindingFlags.Public | BindingFlags.Instance),CassetteLoopController.IL_CassetteLoopController);
-
         IL.Celeste.CassetteBlockManager.AdvanceMusic += CassetteLoopController.IL_CassetteLoopController;
+
+        On.Celeste.CassetteBlockManager.SilentUpdateBlocks += CassetteMover.OnSilentUpdateBlocks;
+        IL.Celeste.CassetteBlockManager.AdvanceMusic += CassetteMover.IL_AdvanceMusic;
 
         SpeedrunToolIop.srtloaduseapi();
     }
@@ -126,9 +127,10 @@ public class audiohelperModule : EverestModule {
 
         On.Celeste.Audio.GetEventDescription -= AdvancedAudioReplacer.OnGetEventDescription;
 
-        //CassetteLoopControllerHook.Dispose();
-
         IL.Celeste.CassetteBlockManager.AdvanceMusic -= CassetteLoopController.IL_CassetteLoopController;
+
+        On.Celeste.CassetteBlockManager.SilentUpdateBlocks -= CassetteMover.OnSilentUpdateBlocks;
+        IL.Celeste.CassetteBlockManager.AdvanceMusic -= CassetteMover.IL_AdvanceMusic;
 
         SpeedrunToolIop.Unload();
     }

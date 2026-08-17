@@ -135,7 +135,7 @@ public class MusicalZipMover : ZipMover {
     [MethodImpl(MethodImplOptions.NoInlining)]
     public override void SceneEnd(Scene scene)
     {
-        if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode,Mode,ResetValue);
+        //if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode,Mode,ResetValue);
         base.SceneEnd(scene);
     }
 }

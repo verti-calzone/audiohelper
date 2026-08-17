@@ -44,7 +44,6 @@ MusicalMoveBlock.placements = {
         ReappearSound = "event:/game/04_cliffside/arrowblock_reappear",
         MusicParameter = "",
         MusicParameterValue = 0,
-        IncrementMode = false,
         DepthFix = false,
         ParameterResetValue = 0,
         Mode = 2

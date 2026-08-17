@@ -112,14 +112,14 @@ public class MusicalBooster : Booster {
     [MethodImpl(MethodImplOptions.NoInlining)]
     public override void Removed(Scene scene)
     {
-        base.Removed(scene);
         if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode,Mode,ResetValue);
+        base.Removed(scene);
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
     public override void SceneEnd(Scene scene)
     {
-        if(!string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode,Mode,ResetValue);
+        //if (!string.IsNullOrEmpty(MusicParam)) Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode,Mode,ResetValue);
         base.SceneEnd(scene);
     }
 }

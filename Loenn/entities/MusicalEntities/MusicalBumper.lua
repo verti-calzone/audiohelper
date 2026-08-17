@@ -21,6 +21,12 @@ MusicalBumper.fieldInformation = {
         options = coreStates,
         editable = false,
     },
+    Mode = {
+        minimum = 0,
+        maximum = 1,
+        options = modeNames,
+        editable = false
+    }
 }
 MusicalBumper.placements = {
     name = "musicalbumper",
@@ -30,9 +36,9 @@ MusicalBumper.placements = {
         SpawnSound = "event:/game/06_reflection/pinballbumper_reset",
         MusicParameter = "",
         ParameterValue = 0,
-        IncrementMode = false;
         CoreState = 2,
-        BigShake = false;
+        BigShake = false,
+        Mode = 2,
     }
 }
 function MusicalBumper.texture(room, entity)

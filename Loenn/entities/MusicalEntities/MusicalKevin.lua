@@ -46,7 +46,6 @@ MusicalKevin.placements = {
         RestSound = "event:/game/06_reflection/crushblock_rest",
         MusicParameter = "",
         ParameterValue = 0,
-        IncrementMode = false,
         ParameterResetValue = 0,
         Mode = 2
     }

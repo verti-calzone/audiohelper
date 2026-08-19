@@ -110,6 +110,7 @@ public class audiohelperModule : EverestModule {
 
         On.Celeste.CassetteBlockManager.SilentUpdateBlocks += CassetteMover.OnSilentUpdateBlocks;
         IL.Celeste.CassetteBlockManager.AdvanceMusic += CassetteMover.IL_AdvanceMusic;
+        IL.Celeste.Celeste.Freeze += CassetteMover.IL_Freeze;
 
         SpeedrunToolIop.srtloaduseapi();
     }
@@ -131,6 +132,7 @@ public class audiohelperModule : EverestModule {
 
         On.Celeste.CassetteBlockManager.SilentUpdateBlocks -= CassetteMover.OnSilentUpdateBlocks;
         IL.Celeste.CassetteBlockManager.AdvanceMusic -= CassetteMover.IL_AdvanceMusic;
+        IL.Celeste.Celeste.Freeze -= CassetteMover.IL_Freeze;
 
         SpeedrunToolIop.Unload();
     }

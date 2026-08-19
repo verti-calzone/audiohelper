@@ -7,7 +7,7 @@ using System;
 namespace Celeste.Mod.audiohelper.Entities;
 
 [CustomEntity("audiohelper/Bell")]
-[Tracked]
+[Tracked(true)]
 
 public class Bell : Entity {
     public Sprite sprite;

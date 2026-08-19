@@ -25,6 +25,8 @@ public class CassetteMover : Entity {
 	public enum Speeds {SlowContinuous, SlowStop, FastContinuous, FastStop, Custom}
 	public Easers Easer;
 	public Speeds Speed;
+	public string CustomSpeed;
+	public int CustomTicksPerWait, CustomTicksPerMove = 1;
 	public CassetteBlockManager cbm;
 	public CassetteListener cassetteListener;
 	public float TickTimer;
@@ -33,8 +35,21 @@ public class CassetteMover : Entity {
   	public CassetteMover(EntityData data, Vector2 offset)
 	{
 		Add(cassetteListener = new CassetteListener(0)); // creates a cbm if one is not already present, and lets this entity set a custom tempo
-		//Position = offset;
-	}
+    }
+
+    public override void Added(Scene scene)
+    {
+		base.Added(scene);
+        if (Speed == Speeds.Custom)
+        {
+            string[] CustomSpeeds = CustomSpeed?.Split(',');
+			if (CustomSpeeds.Length != 2) return;
+            int.TryParse(CustomSpeeds[0], out CustomTicksPerWait);
+            int.TryParse(CustomSpeeds[1], out CustomTicksPerMove);
+            if (CustomTicksPerWait < 0) CustomTicksPerWait = 0;
+            if (CustomTicksPerMove <= 0) CustomTicksPerMove = 1;
+        }
+    }
 
     public void FakeAwake(int BpT, int TpS, float tempoMult)
     {
@@ -59,14 +74,14 @@ public class CassetteMover : Entity {
                 TicksPerWait = TpS - 1;
                 break;
 			case Speeds.Custom:
-				// TicksPerMove = CustomTicksPerMove;
-                // TicksPerWait = CustomTicksPerWait;
+				TicksPerMove = CustomTicksPerMove;
+                TicksPerWait = CustomTicksPerWait;
                 break;
         }
 		TickCounterLength = TicksPerMove + TicksPerWait;
     }
 
-	public void SilentUpdate(int TicksUntilReset, int BpT, int TpS, float tempoMult)
+	public virtual void SilentUpdate(int TicksUntilReset, int BpT, int TpS, float tempoMult)
     {
         FakeAwake(BpT, TpS, tempoMult);
 
@@ -91,13 +106,17 @@ public class CassetteMover : Entity {
     public override void Update()
 	{
 		base.Update();
-        if (Moving)
-		{
-			Progress = Calc.Approach(Progress, 1, Engine.DeltaTime / (TicksPerMove*TickTimer));
-            Move();
-		}
-
+        ElapseTime(Engine.DeltaTime);
     }
+
+	public void ElapseTime(float time)
+	{
+		if (Moving)
+			{
+				Progress = Calc.Approach(Progress, 1, time / (TicksPerMove*TickTimer));
+				Move();
+			}
+	}
 
     public void Tick()
 	{
@@ -135,8 +154,7 @@ public class CassetteMover : Entity {
 
 	// // HOOKS // //
 
-
-	public static void OnSilentUpdateBlocks(On.Celeste.CassetteBlockManager.orig_SilentUpdateBlocks orig, CassetteBlockManager cbm)
+    public static void OnSilentUpdateBlocks(On.Celeste.CassetteBlockManager.orig_SilentUpdateBlocks orig, CassetteBlockManager cbm)
     {
         orig(cbm);
 		int TicksUntilReset = -1; // starts at -1 because the while loop always adds one more than it needs to
@@ -156,11 +174,8 @@ public class CassetteMover : Entity {
 			TicksUntilReset++;
         }
 
-		Logger.Info("audiohelper", TicksUntilReset + " Ticks until Reset");
-
 		foreach(CassetteMover mover in cbm.Scene.Tracker.GetEntities<CassetteMover>()) mover.SilentUpdate(TicksUntilReset, BpT, TpS, cbm.tempoMult);
     }
-
 	public static void AdvanceMusicDelegate(CassetteBlockManager cbm)
     {
         int BpT = DynamicData.For(cbm).Get<int>("beatsPerTick");
@@ -180,4 +195,20 @@ public class CassetteMover : Entity {
         }
         else throw new Exception("Audiohelper: Could not make AdvanceMusic hook!");
     }
+	public static void FreezeDelegate(float time)
+		{
+			Engine.Scene.Tracker.GetEntity<CassetteMover>()?.ElapseTime(time);
+		}
+	public static void IL_Freeze(ILContext il)
+	{
+		ILCursor cursor = new ILCursor(il);
+
+		if (cursor.TryGotoNextBestFit(MoveType.After,
+			instr => instr.MatchCallvirt<CassetteBlockManager>("AdvanceMusic")))
+		{
+			cursor.EmitLdarg0();
+			cursor.EmitDelegate(FreezeDelegate);
+		}
+		else throw new Exception("Audiohelper: Could not make CassetteMover Freeze hook!");
+	}
 }

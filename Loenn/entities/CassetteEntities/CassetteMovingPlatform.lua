@@ -35,7 +35,7 @@ CassetteMovingPlatform.placements = {
         Tempo = 1.0,
         Offset = 0,
         CustomSpeed = "",
-        Width = 16
+        width = 16
     },
 }
 

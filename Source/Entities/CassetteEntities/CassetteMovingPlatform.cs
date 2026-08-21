@@ -8,7 +8,6 @@ using FMOD.Studio;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Monocle;
-using static Celeste.Mod.audiohelper.Entities.CassetteTrackSpinner;
 
 namespace Celeste.Mod.audiohelper.Entities;
 
@@ -47,6 +46,7 @@ public class CassetteMovingPlatform : JumpThru
         sfx.Position.X += Width / 2;
         sfx2.Position.X += Width / 2;
         sound = Calc.Random.Choose(true, false);
+        Add(new LightOcclude(0.5f));
 
         // sending data to the base
         mover.vertexList.Add(data.Position + offset);
@@ -66,6 +66,8 @@ public class CassetteMovingPlatform : JumpThru
             Vector2 start = mover.vertices[i];
             Vector2 end = mover.vertices[(i+1) % mover.vertices.Length];
             scene.Add(new MovingPlatformLine(new Vector2(start.X+Width/2, start.Y + 4), new Vector2(end.X+Width/2, end.Y + 4)));
+
+            // todo: make custom MovingPlatformLine class (low priority)
         }
     }
 
@@ -87,7 +89,6 @@ public class CassetteMovingPlatform : JumpThru
         offset.Y = yOffset;
 
         MoveTo(newPosition + offset);
-        Logger.Info("audiohelper", "position is " + (newPosition + offset));
     }
 
     public override void Render()
@@ -101,6 +102,7 @@ public class CassetteMovingPlatform : JumpThru
     public void OnMove(Vector2 destination)
     {
         newPosition = destination;
+        MoveTo(newPosition + offset);
     }
     public void StartMove()
     {

@@ -1,0 +1,51 @@
+local CassetteMovingSolid = {}
+local easers = {
+    ["Sine In Out"] = 0,
+    ["Cube In"] = 1
+}
+
+local speeds = {
+    ["Slow Continuous"] = 0,
+    ["Slow Stop"] = 1,
+    ["Fast Continuous"] = 2,
+    ["Fast Stop"] = 3,
+    ["Custom"] = 4
+}
+
+CassetteMovingSolid.name = "audiohelper/CassetteMovingSolid"
+CassetteMovingSolid.depth = -50
+CassetteMovingSolid.nodeLimits = {1, -1}
+CassetteMovingSolid.nodeLineRenderType = "line"
+CassetteMovingSolid.fieldInformation = {
+    Easer = {
+        options = easers,
+        editable = false,
+    },
+    Speed = {
+        options = speeds,
+        editable = false,
+    },
+}
+CassetteMovingSolid.placements = {
+    name = "cassettemovingsolid",
+    data = {
+        Easer = 0,
+        Speed = 3,
+        Texture = "",
+        Tempo = 1.0,
+        Offset = 0,
+        CustomSpeed = "",
+        width = 16,
+        height = 16
+    },
+}
+
+-- function CassetteMovingPlatform.texture(room, entity)
+--     return textureStyles[entity.Style]
+-- end
+
+function CassetteMovingSolid.nodeColor()
+    return {1.0, 1.0, 1.0, 0.5}
+end
+
+return CassetteMovingSolid

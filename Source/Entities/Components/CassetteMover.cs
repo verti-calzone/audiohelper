@@ -103,7 +103,7 @@ public class CassetteMover : Component {
 
 		if (((tickCounter - 1 + tickCounterLength) % tickCounterLength ) >= ticksPerWait) // if the object is supposed to be moving when the tickcounter is at its current value
 		{
-			activeVertex++; // set it ahead one vertex
+			activeVertex++;
 			activeVertex %= vertices.Length;
 		}
         NewPosition(vertices[activeVertex]);
@@ -145,8 +145,7 @@ public class CassetteMover : Component {
 
     public void Move()
 	{
-		Vector2 interimPosition = Vector2.Lerp(vertices[activeVertex], vertices[(activeVertex + 1) % vertices.Length], easer == Easers.SineInOut ? Ease.SineInOut(progress) : Ease.CubeIn(progress));
-		NewPosition(interimPosition);
+		NewPosition(Vector2.Lerp(vertices[activeVertex], vertices[(activeVertex + 1) % vertices.Length], easer == Easers.SineInOut ? Ease.SineInOut(progress) : Ease.CubeIn(progress)));
 	}
 	public void NewPosition(Vector2 newPosition)
 	{

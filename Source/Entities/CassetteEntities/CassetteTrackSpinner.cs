@@ -1,10 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.Tracing;
-using System.Reflection.Metadata;
 using Celeste.Mod.Entities;
-using CelesteMod.Publicizer;
-using FMOD.Studio;
 using Microsoft.Xna.Framework;
 using Monocle;
 
@@ -63,13 +57,11 @@ public class CassetteTrackSpinner : Entity {
         {
             Add(dust = new DustGraphic(ignoreSolids: true));
             dust.eyesMoveByRotation = true;
-            particle = dustParticle;   
         }
         else // fallback to blade
         {
             Add(sprite = GFX.SpriteBank.Create("templeBlade"));
             sprite.Play("idle");
-            particle = bladeParticle;
         }
         Add(new MirrorReflection());
         Depth = -50;
@@ -88,13 +80,10 @@ public class CassetteTrackSpinner : Entity {
     public override void Update()
     {
         base.Update();
-        if (mover.moving && base.Scene.OnInterval(0.04f))
+        if (mover.moving && Scene.OnInterval(0.04f))
         {
             if (Style == Styles.Starfish) SceneAs<Level>().ParticlesBG.Emit(starfishParticle[colourID], 1, Position, Vector2.One * 3f);
-            else if (Style == Styles.Dust)
-            {
-                SceneAs<Level>().ParticlesBG.Emit(dustParticle, 1, Position, Vector2.One * 4f);
-            }
+            else if (Style == Styles.Dust) SceneAs<Level>().ParticlesBG.Emit(dustParticle, 1, Position, Vector2.One * 4f);
             else SceneAs<Level>().ParticlesBG.Emit(bladeParticle, 2, Position, Vector2.One * 3f); // fallback to blade
         }
     }

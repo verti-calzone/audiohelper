@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Tracing;
-using System.Reflection.Metadata;
-using Celeste.Mod.Entities;
-using CelesteMod.Publicizer;
-using FMOD.Studio;
+﻿using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Monocle;
 
 namespace Celeste.Mod.audiohelper.Entities;
@@ -48,7 +41,7 @@ public class CassetteMovingPlatform : JumpThru
         sound = Calc.Random.Choose(true, false);
         Add(new LightOcclude(0.5f));
 
-        // sending data to the base
+        // sending data to the mover
         mover.vertexList.Add(data.Position + offset);
         foreach (Vector2 node in data.Nodes) mover.vertexList.Add(node + offset);
         mover.vertices = mover.vertexList.ToArray();
@@ -74,7 +67,6 @@ public class CassetteMovingPlatform : JumpThru
     public override void Update()
     {
         base.Update();
-        Vector2 dummy = Position;
         if (HasPlayerRider())
         {
             sinkTimer = 0.2f;

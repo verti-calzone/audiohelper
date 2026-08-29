@@ -96,7 +96,7 @@ public class CassetteMovingBlockPath : Entity
     {
 		for (int i = 0; i < length; i++)
 		{
-			sprites[i].Position = pathVertices[i] + positionOffset;
+			sprites[i].Position = pathVertices[i] + positionOffset + Vector2.One*1000;
         }
         base.Render();
     }

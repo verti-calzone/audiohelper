@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Monocle;
+using static MonoMod.InlineRT.MonoModRule;
 
 namespace Celeste.Mod.audiohelper.Entities;
 
@@ -17,17 +20,41 @@ public class CassetteMovingBlock : Solid
     public Vector2 newPosition, offset;
 
     // audiovisuals
-    public MTexture[,] solidNineSlice, cutoutNineSlice;
-    public MTexture paddingTexture;
+    public MTexture[,] nineSlice;
+    public MTexture cutoutTexture, rimTexture;
     public Sprite spinner;
-    public Vector2 iconOffset;
     public SoundSource sfx;
     public float rate;
     public bool bigSprite;
+    public string texture;
+    //public VirtualRenderTarget blockTexture;
 
-    public static ParticleType P_SlowStop;
-// constructor
-public CassetteMovingBlock(EntityData data, Vector2 offset) : base(data.Position + offset, data.Width, data.Height, safe: false)
+    public static readonly ParticleType P_SlowStop = new ParticleType
+    {
+        Color = Calc.HexToColor("ffe0d3"),
+        Size = 1f,
+        FadeMode = ParticleType.FadeModes.Late,
+        SpeedMin = 20f,
+        SpeedMax = 50f,
+        SpeedMultiplier = 0.1f,
+        DirectionRange = 0.6981317f,
+        LifeMin = 0.5f,
+        LifeMax = 1.2f
+    };
+    public static readonly BlendState subtract = new BlendState
+    {
+        ColorBlendFunction = BlendFunction.ReverseSubtract,
+        AlphaBlendFunction = BlendFunction.ReverseSubtract,
+        ColorSourceBlend = Blend.One,
+        ColorDestinationBlend = Blend.One,
+        AlphaSourceBlend = Blend.One,
+        AlphaDestinationBlend = Blend.One
+    };
+
+    public static Dictionary<(string, Vector2), VirtualRenderTarget> textureDictionary = new();
+
+    // constructor
+    public CassetteMovingBlock(EntityData data, Vector2 offset) : base(data.Position + offset, data.Width, data.Height, safe: false)
     {
         // data
         Add(mover = new CassetteMover(OnMove, StartMove, EndMove, SilentUpdate));
@@ -37,6 +64,7 @@ public CassetteMovingBlock(EntityData data, Vector2 offset) : base(data.Position
         mover.customSpeed = data.Attr("CustomSpeed");
         listener.Tempo = data.Float("Tempo");
         mover.tickOffset = data.Int("Offset");
+        texture = data.Attr("spriteName");
 
         // audio
         SurfaceSoundIndex = 35;
@@ -44,70 +72,77 @@ public CassetteMovingBlock(EntityData data, Vector2 offset) : base(data.Position
         sfx.Position = Center;
 
         // vfx
-        P_SlowStop = new ParticleType
-        {
-            Color = Calc.HexToColor("ffe0d3"),
-            Size = 1f,
-            FadeMode = ParticleType.FadeModes.Late,
-            SpeedMin = 20f,
-            SpeedMax = 50f,
-            SpeedMultiplier = 0.1f,
-            DirectionRange = 0.6981317f,
-            LifeMin = 0.5f,
-            LifeMax = 1.2f
-        };
         Add(new LightOcclude(1f));
         Depth = Depths.FGTerrain + 1;
-
-        // textures
-        MTexture mTexture = GFX.Game["objects/audiohelper/cassettemovingblock/" + data.Attr("spriteName")];
-        solidNineSlice = new MTexture[3, 3];
-        for (int num = 0; num < 3; num++)
-        {
-            for (int num2 = 0; num2 < 3; num2++) solidNineSlice[num, num2] = mTexture.GetSubtexture(new Rectangle(num * 8, num2 * 8, 8, 8));
-        }
-        MTexture mTexture2 = GFX.Game["objects/audiohelper/cassettemovingblock/" + data.Attr("spriteName")+"_cutout"];
-        cutoutNineSlice = new MTexture[3, 3];
-        for (int num = 0; num < 3; num++)
-        {
-            for (int num2 = 0; num2 < 3; num2++) cutoutNineSlice[num, num2] = mTexture2.GetSubtexture(new Rectangle(num * 8, num2 * 8, 8, 8));
-        }
-
-        // padding texture
-        string paddingSize;
-        bool evenWidth = false, evenHeight = false;
-
-        if (int.IsEvenInteger((int)(Width / 8))) evenWidth = true;
-        if (int.IsEvenInteger((int)(Height / 8))) evenHeight = true;
-
-        if (Width <= 24 && Height <= 24) paddingSize = "1x1"; // 3x3 or smaller
-        else if (Width == 16) paddingSize = "1x2"; // 2x4+ edge case
-        else if (Height == 16) paddingSize = "2x1"; // 4+x2 edge case
-        else if (Width == 24 && evenHeight) paddingSize = "1x2"; // 3xEven
-        else if (evenWidth && Height == 24) paddingSize = "2x1"; // Evenx3
-        else if ((Width == 24 && !evenHeight) || (!evenWidth && Height == 24)) paddingSize = "1x1"; // 3xOdd and Oddx3
-
-        else if (evenWidth && evenHeight) paddingSize = "2x2";
-        else if (!evenWidth && evenHeight) paddingSize = "3x2";
-        else if (evenWidth && !evenHeight) paddingSize = "2x3";
-        else paddingSize = "3x3";
-
-        paddingTexture = GFX.Game["objects/audiohelper/cassettemovingblock/padding_" + data.Attr("spriteName") + "/" + paddingSize];
 
         // spinner sprite
         if (Width > 24 && Height > 24) bigSprite = true;
         else bigSprite = false;
 
         Add(spinner = GFX.SpriteBank.Create(bigSprite ? "audiohelper_cassette_spool_big" : "audiohelper_cassette_spool"));
-        spinner.Position = (iconOffset = new Vector2(Width / 2f, Height / 2f));
-        spinner.Stop();
+        spinner.Position = Center - Position;
+        spinner.Stop(); // i have to stop it before i can restart it on a random frame. tiny unoptimization but oh well
         spinner.Play("spin", randomizeFrame: true);
         spinner.Rate = 0f;
+        spinner.UseRawDeltaTime = true;
+
+        if (!textureDictionary.ContainsKey((texture, new Vector2(Width, Height))))
+        {
+            BakeTextures(texture);
+        }
+        
 
         // sending data to the mover
         mover.vertexList.Add(data.Position + offset);
         foreach (Vector2 node in data.Nodes) mover.vertexList.Add(node + offset);
         mover.vertices = mover.vertexList.ToArray();
+    }
+
+    public void BakeTextures(string name)
+    {
+        
+        VirtualRenderTarget blockTexture = VirtualContent.CreateRenderTarget("cmb-rendertarget", (int)Width, (int)Height);
+        Engine.Graphics.GraphicsDevice.SetRenderTarget(blockTexture);
+
+        Draw.SpriteBatch.Begin();
+        MTexture mTexture = GFX.Game["objects/audiohelper/cassettemovingblock/" + name];
+        nineSlice = new MTexture[3, 3];
+        for (int num = 0; num < 3; num++)
+        {
+            for (int num2 = 0; num2 < 3; num2++)
+            {
+                nineSlice[num, num2] = mTexture.GetSubtexture(new Rectangle(num * 8, num2 * 8, 8, 8));
+            }
+        }
+
+        float colCount = Width / 8f - 1f;
+        float rowCount = Height / 8f - 1f;
+
+        for (int col = 0; col <= colCount; col++)
+        {
+            for (int row = 0; row <= rowCount; row++)
+            {
+                int colTile = ((col < colCount) ? Math.Min(col, 1) : 2);
+                int rowTile = ((row < rowCount) ? Math.Min(row, 1) : 2);
+                nineSlice[colTile, rowTile].Draw(new Vector2(col * 8, row * 8));
+            }
+        }
+        Draw.SpriteBatch.End();
+
+        Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, subtract);
+        cutoutTexture = GFX.Game["objects/audiohelper/cassettemovingblock/cutout_" + (bigSprite ? "big" : "small")];
+        cutoutTexture.DrawCentered(Center - Position);
+        Draw.SpriteBatch.End();
+
+        Draw.SpriteBatch.Begin();
+        bool useAlt = false;
+        if (Height == 16 || (Width == 16 && Height == 24)) useAlt = true;
+        string alt = useAlt ? "_alt" : string.Empty;
+        rimTexture = GFX.Game["objects/audiohelper/cassettemovingblock/" + name + "_rim_" + (bigSprite ? "big" : "small") + alt];
+        rimTexture.DrawCentered(Center - Position);
+        Draw.SpriteBatch.End();
+
+        textureDictionary.Add((name, new Vector2(Width, Height)), blockTexture);
     }
 
     public override void Added(Scene scene)
@@ -122,33 +157,11 @@ public CassetteMovingBlock(EntityData data, Vector2 offset) : base(data.Position
 
     public override void Render()
     {
-        float colCount = Width / 8f - 1f;
-        float rowCount = Height / 8f - 1f;
-
-        bool isInCentreColumn, isInCentreRow;
-        float range = bigSprite ? 1f : 0.5f;
-
-        for (int col = 0; col <= colCount; col++)
-        {
-            if (Math.Abs(col - colCount/2) <= range) isInCentreColumn = true;
-            else isInCentreColumn = false;
-
-            for (int row = 0; row <= rowCount; row++)
-            {
-                if (isInCentreColumn && Math.Abs(row - rowCount/2) <= range) isInCentreRow = true;
-                else isInCentreRow = false;
-
-                int colTile = ((col < colCount) ? Math.Min(col, 1) : 2);
-                int rowTile = ((row < rowCount) ? Math.Min(row, 1) : 2);                
-
-                if (isInCentreColumn && isInCentreRow) cutoutNineSlice[colTile, rowTile].Draw(Position + base.Shake + new Vector2(col * 8, row * 8));
-                else solidNineSlice[colTile, rowTile].Draw(Position + base.Shake + new Vector2(col * 8, row * 8));
-
-            }
-        }
-        paddingTexture.DrawCentered(Center+Shake);
-        spinner.Render();
         base.Render();
+        spinner.Render();
+
+        textureDictionary.TryGetValue((texture, new Vector2(Width, Height)), out var vrt);
+        Draw.SpriteBatch?.Draw((RenderTarget2D)vrt, Position + Shake, Color.White);
     }
 
     public void OnMove(Vector2 destination)
@@ -185,6 +198,12 @@ public CassetteMovingBlock(EntityData data, Vector2 offset) : base(data.Position
         Scene.Add(path = new CassetteMovingBlockPath(this, mover.ticksPerWait * mover.tickTimer));
     }
 
+    public override void SceneEnd(Scene scene)
+    {
+        base.SceneEnd(scene);
+
+        //dictionary.Dispose();
+    }
     private void StopParticles(Vector2 travelDirection, bool intense)
     {
         Level level = SceneAs<Level>();

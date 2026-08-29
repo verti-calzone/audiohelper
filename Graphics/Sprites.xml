@@ -14,7 +14,7 @@
     </audiohelper_cassette_spool>
     <audiohelper_cassette_spool_big path="objects/audiohelper/cassettemovingblock/spool_big/" start="spin">
         <Center/>
-        <Loop id="spin" path="spin" delay="0.05" frames="00-05" />
+        <Loop id="spin" path="spin" delay="0.05" frames="00-07" />
     </audiohelper_cassette_spool_big>
     <audiohelper_cassette_endpoint path="objects/audiohelper/cassettemovingblock/spool/" start="spin">
         <Center/>

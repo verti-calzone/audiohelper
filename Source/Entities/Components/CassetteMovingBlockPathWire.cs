@@ -10,14 +10,14 @@ namespace Celeste.Mod.audiohelper.Entities;
 [Tracked]
 
 public class CassetteMovingBlockPathWire : Component {
-    public SimpleCurve curve;
-    public Vector2 midPoint, midPointDown, offset;
-    public float baseOffset;
+    public SimpleCurve curve1, curve2;
+    public Vector2 start, end, midPoint, midPointDown, offset, vector, perpendicular;
+    public Vector2 sag = new Vector2(0f, 4f);
     public Color colour = Calc.HexToColor("201828");
     public float tightTimer, looseTimer;
     public float progress;
 
-public delegate float Easer(float t);
+    public delegate float Easer(float t);
     public static Easer Taut = delegate (float t)
     {
         if(t<0.25) return 4*t;
@@ -33,24 +33,32 @@ public delegate float Easer(float t);
         return (float)(e + c*b);
     };
 
-    public CassetteMovingBlockPathWire(Vector2 start, Vector2 end, float sag) : base(active: true, visible: true)
+    public CassetteMovingBlockPathWire(Vector2 startPoint, Vector2 endPoint, float shift) : base(active: true, visible: true)
     {
-        curve = new SimpleCurve(start, end, Vector2.Zero);
+        start = startPoint;
+        end = endPoint;
+        
+        vector = end - start;
+        perpendicular = vector.Perpendicular().SafeNormalize() * shift;
+
+        curve1 = new SimpleCurve(start + perpendicular, end + perpendicular, Vector2.Zero);
+        curve2 = new SimpleCurve(start - perpendicular, end - perpendicular, Vector2.Zero);
+
         midPoint = (start + end) / 2;
-        baseOffset = sag;
-        midPointDown = new Vector2(midPoint.X, midPoint.Y + baseOffset);
-        offset = midPointDown;
+        offset = sag;
+        midPointDown = midPoint + offset;
+
     }
 
-    public void Tighten(float time)
+    public void Tighten()
     {
-        tightTimer = time;
+        tightTimer = 0.5f;
         looseTimer = 0;
         progress = 0;
     }
-    public void Loosen(float time)
+    public void Loosen()
     {
-        looseTimer = time;
+        looseTimer = 1f;
         tightTimer = 0;
         progress = 0;
     }
@@ -60,13 +68,13 @@ public delegate float Easer(float t);
         if (tightTimer > 0)
         {
             progress = Calc.Approach(progress, 1, Engine.DeltaTime / tightTimer);
-            offset = Vector2.Lerp(midPointDown, midPoint, Taut(progress));
+            offset = Vector2.Lerp(sag, Vector2.Zero, Taut(progress));
             tightTimer -= Engine.DeltaTime;
         }
         else if (looseTimer > 0)
         {
             progress = Calc.Approach(progress, 1, Engine.DeltaTime / looseTimer);
-            offset = Vector2.Lerp(midPoint, midPointDown, Sag(progress));
+            offset = Vector2.Lerp(Vector2.Zero, sag, Sag(progress));
             tightTimer -= Engine.DeltaTime;
         }
         base.Update();
@@ -76,14 +84,17 @@ public delegate float Easer(float t);
     {
         if (IsVisible())
         {
-            curve.Control = offset;
-            curve.Render(colour,8,2f);
+            curve1.Control = midPoint + offset + perpendicular;
+            curve1.Render(colour, 8, 2f);
+
+            curve2.Control = midPoint + offset - perpendicular;
+            curve2.Render(colour, 8, 2f);
         }
         base.Render();
     }
 
     private bool IsVisible()
     {
-        return CullHelper.IsCurveVisible(curve, 2f);
+        return CullHelper.IsCurveVisible(curve1, 2f) || CullHelper.IsCurveVisible(curve2, 2f);
     }
 }

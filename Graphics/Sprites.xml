@@ -8,21 +8,21 @@
         <Anim id="right0" path="right" delay="0.1" frames="00" />
         <Anim id="right1" path="right" delay="0.1" frames="01" />
     </audiohelper_bell>
-    <audiohelper_cassette_spool path="objects/audiohelper/cassettemovingblock/spool/" start="spin">
+    <cassettemovingblock_spool_small_default path="objects/audiohelper/cassettemovingblock/default/spool_small/" start="spin">
         <Center/>
-        <Loop id="spin" path="spin" delay="0.08" frames="00-04" />
-    </audiohelper_cassette_spool>
-    <audiohelper_cassette_spool_big path="objects/audiohelper/cassettemovingblock/spool_big/" start="spin">
+        <Loop id="spin" path="spin" delay="0.06" frames="00-04" />
+    </cassettemovingblock_spool_small_default>
+    <cassettemovingblock_spool_big_default path="objects/audiohelper/cassettemovingblock/default/spool_big/" start="spin">
         <Center/>
-        <Loop id="spin" path="spin" delay="0.05" frames="00-07" />
-    </audiohelper_cassette_spool_big>
-    <audiohelper_cassette_endpoint path="objects/audiohelper/cassettemovingblock/spool/" start="spin">
+        <Loop id="spin" path="spin" delay="0.04" frames="00-07" />
+    </cassettemovingblock_spool_big_default>
+    <cassettemovingblock_gear_small_default path="objects/audiohelper/cassettemovingblock/default/gear_small/" start="spin">
         <Center/>
-        <Loop id="spin" path="spin" delay="0.04" frames="00-04" />
-    </audiohelper_cassette_endpoint>
-    <audiohelper_cassette_endpoint_big path="objects/audiohelper/cassettemovingblock/spool_big/" start="spin">
+        <Loop id="spin" path="spin" delay="0.06" frames="00-04" />
+    </cassettemovingblock_gear_small_default>
+    <cassettemovingblock_gear_big_default path="objects/audiohelper/cassettemovingblock/default/gear_big/" start="spin">
         <Center/>
-        <Loop id="spin" path="spin" delay="0.03" frames="00-04" />
-    </audiohelper_cassette_endpoint_big>
+        <Loop id="spin" path="spin" delay="0.04" frames="00-07" />
+    </cassettemovingblock_gear_big_default>
 </Sprites>
 

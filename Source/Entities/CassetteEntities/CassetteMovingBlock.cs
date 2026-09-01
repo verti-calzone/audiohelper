@@ -16,18 +16,17 @@ public class CassetteMovingBlock : Solid
     public CassetteMover mover;
     public CassetteMovingBlockPath path;
 
-    public float yOffset, sinkTimer;
-    public Vector2 newPosition, offset;
+    public Vector2 newPosition, offset, prevPosition;
+    public float rate;
+    public bool intense = false;
 
     // audiovisuals
     public MTexture[,] nineSlice;
     public MTexture cutoutTexture, rimTexture;
-    public Sprite spinner;
-    public SoundSource sfx;
-    public float rate;
+    public Sprite spool;
     public bool bigSprite;
-    public string texture;
-    //public VirtualRenderTarget blockTexture;
+    public string texture, sprite;
+    public Color colour;
 
     public static readonly ParticleType P_SlowStop = new ParticleType
     {
@@ -56,40 +55,35 @@ public class CassetteMovingBlock : Solid
     // constructor
     public CassetteMovingBlock(EntityData data, Vector2 offset) : base(data.Position + offset, data.Width, data.Height, safe: false)
     {
-        // data
+        // functional components
         Add(mover = new CassetteMover(OnMove, StartMove, EndMove, SilentUpdate));
         Add(listener = new CassetteListener(0));
+
+        // data
         mover.easer = data.Enum<CassetteMover.Easers>("Easer", CassetteMover.Easers.SineInOut);
         mover.speed = data.Enum<CassetteMover.Speeds>("Speed", CassetteMover.Speeds.FastStop);
         mover.customSpeed = data.Attr("CustomSpeed");
         listener.Tempo = data.Float("Tempo");
         mover.tickOffset = data.Int("Offset");
-        texture = data.Attr("spriteName");
-
-        // audio
-        SurfaceSoundIndex = 35;
-        Add(sfx = new SoundSource());
-        sfx.Position = Center;
+        texture = data.Attr("Texture", "default");
+        colour = data.HexColor("Colour", Calc.HexToColor("ffffff"));
+        SurfaceSoundIndex = data.Int("SoundIndex", 35);
 
         // vfx
         Add(new LightOcclude(1f));
         Depth = Depths.FGTerrain + 1;
+        if (mover.easer == CassetteMover.Easers.CubeIn)intense = true;
 
         // spinner sprite
         if (Width > 24 && Height > 24) bigSprite = true;
         else bigSprite = false;
 
-        Add(spinner = GFX.SpriteBank.Create(bigSprite ? "audiohelper_cassette_spool_big" : "audiohelper_cassette_spool"));
-        spinner.Position = Center - Position;
-        spinner.Stop(); // i have to stop it before i can restart it on a random frame. tiny unoptimization but oh well
-        spinner.Play("spin", randomizeFrame: true);
-        spinner.Rate = 0f;
-        spinner.UseRawDeltaTime = true;
+        Add(spool = GFX.SpriteBank.Create("cassettemovingblock_spool_" + (bigSprite ? "big_" : "small_") + texture));
+        spool.Position = Center - Position;
+        spool.Rate = 0f;
+        spool.UseRawDeltaTime = true;
 
-        if (!textureDictionary.ContainsKey((texture, new Vector2(Width, Height))))
-        {
-            BakeTextures(texture);
-        }
+        if (!textureDictionary.ContainsKey((texture, new Vector2(Width, Height)))) BakeTextures(texture);
         
 
         // sending data to the mover
@@ -105,7 +99,7 @@ public class CassetteMovingBlock : Solid
         Engine.Graphics.GraphicsDevice.SetRenderTarget(blockTexture);
 
         Draw.SpriteBatch.Begin();
-        MTexture mTexture = GFX.Game["objects/audiohelper/cassettemovingblock/" + name];
+        MTexture mTexture = GFX.Game["objects/audiohelper/cassettemovingblock/" + name + "/block"];
         nineSlice = new MTexture[3, 3];
         for (int num = 0; num < 3; num++)
         {
@@ -130,7 +124,7 @@ public class CassetteMovingBlock : Solid
         Draw.SpriteBatch.End();
 
         Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, subtract);
-        cutoutTexture = GFX.Game["objects/audiohelper/cassettemovingblock/cutout_" + (bigSprite ? "big" : "small")];
+        cutoutTexture = GFX.Game["objects/audiohelper/cassettemovingblock/" + name + "/cutout_" + (bigSprite ? "big" : "small")];
         cutoutTexture.DrawCentered(Center - Position);
         Draw.SpriteBatch.End();
 
@@ -138,7 +132,7 @@ public class CassetteMovingBlock : Solid
         bool useAlt = false;
         if (Height == 16 || (Width == 16 && Height == 24)) useAlt = true;
         string alt = useAlt ? "_alt" : string.Empty;
-        rimTexture = GFX.Game["objects/audiohelper/cassettemovingblock/" + name + "_rim_" + (bigSprite ? "big" : "small") + alt];
+        rimTexture = GFX.Game["objects/audiohelper/cassettemovingblock/" + name + "/rim_" + (bigSprite ? "big" : "small") + alt];
         rimTexture.DrawCentered(Center - Position);
         Draw.SpriteBatch.End();
 
@@ -153,15 +147,25 @@ public class CassetteMovingBlock : Solid
     public override void Update()
     {
         base.Update();
+
+        float positionDifference = (prevPosition - Position).Length();
+        if (positionDifference != 0f) rate = Calc.ClampedMap(positionDifference, 0f, 5f, 1f, 2.5f);
+        else rate = 0f;
+
+        spool.Rate = rate;
+        path.spinRate = rate;
+
+        prevPosition = Position;
     }
 
     public override void Render()
     {
         base.Render();
-        spinner.Render();
+
+        spool.Render();
 
         textureDictionary.TryGetValue((texture, new Vector2(Width, Height)), out var vrt);
-        Draw.SpriteBatch?.Draw((RenderTarget2D)vrt, Position + Shake, Color.White);
+        Draw.SpriteBatch?.Draw((RenderTarget2D)vrt, Position + Shake, colour);
     }
 
     public void OnMove(Vector2 destination)
@@ -170,26 +174,19 @@ public class CassetteMovingBlock : Solid
     }
     public void StartMove()
     {
-        //sfx.Play("event:/game/05_mirror_temple/swapblock_move");
-        spinner.Rate = mover.easer == CassetteMover.Easers.CubeIn ? 1.5f : 1f;
-
         path.Start();
     }
 
     public void EndMove()
     {
-        bool intense = false;
-        if (mover.easer == CassetteMover.Easers.CubeIn)
-        {
-            StartShaking(0.15f);
-            intense = true;
-        }
-        Audio.Play("event:/game/05_mirror_temple/swapblock_move_end", Center);
+        if (intense) StartShaking(0.2f);
+        else StartShaking(0.1f);
+
+        Audio.Play("event:/vert_audiohelper/cassettemovingblock/end", Center);
 
         Vector2 travelDirection = mover.vertices[mover.activeVertex] - mover.vertices[(mover.activeVertex - 1 + mover.vertices.Length) % mover.vertices.Length];
         ImpactParticles(travelDirection, intense);
         StopParticles(travelDirection, intense);
-        spinner.Rate = 0f;
 
         path.Stop();
     }

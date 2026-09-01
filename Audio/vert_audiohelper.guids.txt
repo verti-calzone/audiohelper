@@ -1,11 +1,12 @@
-{2e39661f-797c-48ad-a87e-9affe6cc7da1} event:/vert_audiohelper/zip/activate
-{c11f4860-8bc0-4cd9-a440-e719ca4b99aa} event:/vert_audiohelper/zip/impact
-{b0843a2d-c16b-403e-9933-a96a99338a2f} event:/vert_audiohelper/zip/reset
-{3bc6799a-1d39-45e2-896b-74b46cbde1bb} event:/vert_audiohelper/zip/return
+{deb8e9d5-f72c-449a-b4bb-a2712c6850b7} event:/vert_audiohelper/cassettemovingblock/end
 {d637c241-6b66-48ef-b53b-b0b7f2c85aff} event:/vert_audiohelper/movingplatform/move_1
 {57ca65cd-62b1-42ee-b83f-04592a34ee29} event:/vert_audiohelper/movingplatform/move_1_end
 {df7f237e-e190-4399-99f6-784f20d46b91} event:/vert_audiohelper/movingplatform/move_2
 {35fe9cf6-7494-45b2-ac02-46b0bd8d7349} event:/vert_audiohelper/movingplatform/move_2_end
+{2e39661f-797c-48ad-a87e-9affe6cc7da1} event:/vert_audiohelper/zip/activate
+{c11f4860-8bc0-4cd9-a440-e719ca4b99aa} event:/vert_audiohelper/zip/impact
+{b0843a2d-c16b-403e-9933-a96a99338a2f} event:/vert_audiohelper/zip/reset
+{3bc6799a-1d39-45e2-896b-74b46cbde1bb} event:/vert_audiohelper/zip/return
 {f57f3eb1-4ce6-405c-b071-9df0cea9d0d7} event:/vert_audiohelper/bell
 {ecdb20d3-b95b-4fb3-9ea8-bd446b390a61} event:/vert_audiohelper/chime
 {87f1b05a-0ce0-4456-b027-062b00e870ae} bank:/vert_audiohelper

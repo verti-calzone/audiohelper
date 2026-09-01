@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Monocle;
 
 namespace Celeste.Mod.audiohelper.Entities;
@@ -10,17 +12,17 @@ namespace Celeste.Mod.audiohelper.Entities;
 
 public class CassetteMovingBlockPath : Entity
 {
-	public Vector2[] pathVertices, pathVectors, pathPerpendicularNormals;
+	public Vector2[] pathVertices;
 	public Vector2 positionOffset;
-	public CassetteMovingBlockPathWire[] wires1, wires2;
+    public List<CassetteMovingBlockPathWire> wireList = [];
 	public int length;
-	public float shift, waitTime;
-    public float wireSag = 4f;
+	public float waitTime, spinRate;
 
-	public Sprite[] sprites;
+
+	public List<Sprite> spriteList = [];
 	public CassetteMovingBlock cmb;
 
-    public bool sparking;
+    public bool spinning;
     public static ParticleType P_Sparks;
 
     public CassetteMovingBlockPath(CassetteMovingBlock block, float time) : base()
@@ -28,43 +30,50 @@ public class CassetteMovingBlockPath : Entity
 		cmb = block;
         waitTime = time;
 		pathVertices = cmb.mover.vertices;
-		positionOffset = new Vector2(cmb.Width / 2, cmb.Height / 2);
+		positionOffset = cmb.Center - cmb.Position;
 		length = pathVertices.Length;
-		pathVectors = new Vector2[length];
-        pathPerpendicularNormals = new Vector2[length];
-        sprites = new Sprite[length];
-		shift = cmb.bigSprite ? 8 : 4;
 
         Depth = Depths.BGDecals - 1;
 
-        for (int i = 0; i < length; i++)
-		{
-			pathVectors[i] = pathVertices[(i+1) % length] - pathVertices[i];
-			pathPerpendicularNormals[i] = pathVectors[i].Perpendicular().SafeNormalize();
-        }
-		int numWires;
-        if (length > 2)
-        {
-			wires1 = new CassetteMovingBlockPathWire[length];
-            wires2 = new CassetteMovingBlockPathWire[length];
-			numWires = length;
-        }
-        else
-        {
-            wires1 = new CassetteMovingBlockPathWire[1];
-            wires2 = new CassetteMovingBlockPathWire[1];
-			numWires = 1;
-        }
-        for (int i = 0; i < numWires; i++)
-        {
-			Add(wires1[i] = new CassetteMovingBlockPathWire(pathVertices[i] + positionOffset + pathPerpendicularNormals[i] * shift, pathVertices[(i + 1) % length] + positionOffset + pathPerpendicularNormals[i] * shift, wireSag));
-            Add(wires2[i] = new CassetteMovingBlockPathWire(pathVertices[i] + positionOffset - pathPerpendicularNormals[i] * shift, pathVertices[(i + 1) % length] + positionOffset - pathPerpendicularNormals[i] * shift, wireSag));
-        }
+
+
+        // create wires
         for (int i = 0; i < length; i++)
         {
-            Add(sprites[i] = GFX.SpriteBank.Create(cmb.bigSprite ? "audiohelper_cassette_endpoint_big" : "audiohelper_cassette_endpoint"));
-            sprites[i].Rate = 0f;
-            sprites[i].Color = Color.Gray;
+            bool makeNewWire = true;
+            int i1 = (i+1) % length;
+
+            for (int j = 0; j < i; j++)
+            {
+                if ((pathVertices[i] == pathVertices[j] && pathVertices[i1] == pathVertices[j+1]) || (pathVertices[i] == pathVertices[j+1] && pathVertices[i1] == pathVertices[j]))
+                {
+                    makeNewWire = false;
+                }
+            }
+            if (makeNewWire && pathVertices[i] != pathVertices[i1])
+            {
+                CassetteMovingBlockPathWire wire = new(pathVertices[i] + positionOffset, pathVertices[i1] + positionOffset, cmb.bigSprite ? 6 : 4);
+                Add(wire);
+                wireList.Add(wire);
+            }
+        }
+
+        // create sprites
+        for (int i = 0; i < length; i++)
+        {
+            bool makeNewSprite = true;
+            for (int j = 0; j < i; j++)
+            {
+                if (pathVertices[i] == pathVertices[j]) makeNewSprite = false;
+            }
+            if (makeNewSprite)
+            {
+                Sprite sprite = GFX.SpriteBank.Create("cassettemovingblock_gear_" + (cmb.bigSprite ? "big_" : "small_") + cmb.texture);
+                Add(sprite);
+                sprite.Position = pathVertices[i] + positionOffset;
+                sprite.Rate = 0f;
+                spriteList.Add(sprite);
+            }
         }
 
         P_Sparks = new ParticleType
@@ -81,37 +90,45 @@ public class CassetteMovingBlockPath : Entity
     }
 	public override void Update()
 	{
-        if (sparking && Scene.OnInterval(0.1f))
+        if (spinning)
         {
-            for (int i = 0; i < length; i++)
+            Level level = SceneAs<Level>();
+            float angle = -0.25f;
+            if (Scene.OnInterval(cmb.bigSprite ? 0.2f : 0.3f))
             {
-                SceneAs<Level>().ParticlesBG.Emit(CassetteMovingBlockPath.P_Sparks, 2, pathVertices[i] + positionOffset + pathPerpendicularNormals[i] * (shift + 1), Vector2.One, pathVectors[i].Angle() + MathF.PI - 0.5f);
-                SceneAs<Level>().ParticlesBG.Emit(CassetteMovingBlockPath.P_Sparks, 2, pathVertices[i] + positionOffset - pathPerpendicularNormals[i] * (shift + 1), Vector2.One, pathVectors[i].Angle() - 0.5f);
-
+                foreach (CassetteMovingBlockPathWire wire in wireList)
+                {
+                    level.ParticlesBG.Emit(CassetteMovingBlockPath.P_Sparks, 2, wire.curve1.Begin, Vector2.One, wire.vector.Angle() + MathF.PI + angle);
+                    level.ParticlesBG.Emit(CassetteMovingBlockPath.P_Sparks, 2, wire.curve2.Begin, Vector2.One, wire.vector.Angle() + angle);
+                }
+            }
+            else if(Scene.OnInterval(cmb.bigSprite ? 0.1f : 0.15f))
+            {
+                foreach (CassetteMovingBlockPathWire wire in wireList)
+                {
+                    level.ParticlesBG.Emit(CassetteMovingBlockPath.P_Sparks, 2, wire.curve1.End, Vector2.One, wire.vector.Angle() + MathF.PI + angle);
+                    level.ParticlesBG.Emit(CassetteMovingBlockPath.P_Sparks, 2, wire.curve2.End, Vector2.One, wire.vector.Angle() + angle);
+                }
             }
         }
+
+        foreach (Sprite sprite in spriteList) sprite.Rate = spinRate;
+
         base.Update();
 	}
     public override void Render()
     {
-		for (int i = 0; i < length; i++)
-		{
-			sprites[i].Position = pathVertices[i] + positionOffset + Vector2.One*1000;
-        }
+        foreach(Sprite sprite in spriteList) sprite.Render();
         base.Render();
     }
 	public void Start()
 	{
-		foreach (Sprite endpoint in sprites) endpoint.Rate = 1f;
-		foreach (CassetteMovingBlockPathWire cmbpw in wires1) cmbpw.Tighten(0.5f);
-        foreach (CassetteMovingBlockPathWire cmbpw in wires2) cmbpw.Tighten(0.5f);
-        sparking = true;
+		foreach (CassetteMovingBlockPathWire wire in wireList) wire.Tighten();
+        spinning = true;
     }
 	public void Stop()
 	{
-        foreach (Sprite endpoint in sprites) endpoint.Rate = 0f;
-        foreach (CassetteMovingBlockPathWire cmbpw in wires1) cmbpw.Loosen(1f);
-        foreach (CassetteMovingBlockPathWire cmbpw in wires2) cmbpw.Loosen(1f);
-        sparking = false;
+        foreach (CassetteMovingBlockPathWire wire in wireList) wire.Loosen();
+        spinning = false;
     }
 }

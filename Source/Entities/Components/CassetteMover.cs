@@ -13,8 +13,8 @@ public class CassetteMover : CassetteTickReader
 {
 	public Vector2[] vertices;
 	public List<Vector2> vertexList = [];
-	public float progress;
-	public bool moving = false, frozen = false;
+	public float progress, easedProgress;
+	public bool moving = false, frozen = false, skipNextEnd = false;
 	public int activeVertex, tickOffset = 0;
 
 	public enum Easers { SineInOut, CubeIn }
@@ -140,7 +140,8 @@ public class CassetteMover : CassetteTickReader
 
 	public void Move()
 	{
-		NewPosition(Vector2.Lerp(vertices[activeVertex], vertices[(activeVertex + 1) % vertices.Length], easer == Easers.SineInOut ? Ease.SineInOut(progress) : Ease.CubeIn(progress)));
+		easedProgress = easer == Easers.SineInOut ? Ease.SineInOut(progress) : Ease.CubeIn(progress);
+		NewPosition(Vector2.Lerp(vertices[activeVertex], vertices[(activeVertex + 1) % vertices.Length], easedProgress));
 	}
 	public void NewPosition(Vector2 newPosition)
 	{
@@ -149,17 +150,28 @@ public class CassetteMover : CassetteTickReader
 
 	public void StartMove()
 	{
-		startMoveAction();
+        if (vertices[activeVertex] == vertices[(activeVertex + 1) % vertices.Length])
+        {
+            skipNextEnd = true;
+            return;
+        }
+
+        startMoveAction();
 	}
 
 	public void EndMove()
 	{
-		Move();
+        Move();
 		progress = 0;
 		moving = false;
 		activeVertex++;
 		activeVertex %= vertices.Length;
 
+		if (skipNextEnd)
+        {
+            skipNextEnd = false;
+            return;
+        }
 		endMoveAction();
 	}
 }

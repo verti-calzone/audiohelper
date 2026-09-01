@@ -32,8 +32,8 @@ public class CassetteMovingPlatform : JumpThru
         listener.Tempo = data.Float("Tempo");
         mover.tickOffset = data.Int("Offset");
 
-        texture = data.Attr("Texture");
-        SurfaceSoundIndex = 5;
+        texture = data.Attr("texture", "default");
+        SurfaceSoundIndex = data.Int("SoundIndex", 5);
         Add(sfx = new SoundSource());
         Add(sfx2 = new SoundSource());
         sfx.Position.X += Width / 2;
@@ -85,10 +85,10 @@ public class CassetteMovingPlatform : JumpThru
 
     public override void Render()
     {
-        textures[0].Draw(Position);
-        for (int i = 8; (float)i < Width - 8f; i += 8) textures[1].Draw(Position + new Vector2(i, 0f));
-        textures[3].Draw(Position + new Vector2(Width - 8f, 0f));
-        textures[2].Draw(Position + new Vector2(Width / 2f - 4f, 0f));
+        textures[0].Draw(Position + Shake);
+        for (int i = 8; (float)i < Width - 8f; i += 8) textures[1].Draw(Position + Shake + new Vector2(i, 0f));
+        textures[3].Draw(Position + Shake + new Vector2(Width - 8f, 0f));
+        textures[2].Draw(Position + Shake + new Vector2(Width / 2f - 4f, 0f));
     }
 
     public void OnMove(Vector2 destination)
@@ -105,6 +105,8 @@ public class CassetteMovingPlatform : JumpThru
     public void EndMove()
     {
         sfx2.Play(sound ? "event:/vert_audiohelper/movingplatform/move_1_end" : "event:/vert_audiohelper/movingplatform/move_2_end");
+
+        if (mover.easer == CassetteMover.Easers.CubeIn) StartShaking(0.1f);
     }
     public void SilentUpdate() { }
 

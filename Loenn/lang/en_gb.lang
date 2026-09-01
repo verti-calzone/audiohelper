@@ -25,6 +25,43 @@ entities.audiohelper/MusicParameterSoundSource.attributes.description.Radius=Rad
 
 
 
+# CASSETTE READERS
+
+# Cassette Moving Block
+entities.audiohelper/CassetteMovingBlock.placements.name.cassettemovingblock=Cassette Moving Block
+entities.audiohelper/CassetteMovingBlock.placements.description.cassettemovingblock=Block that moves between its nodes in time with cassette music
+entities.audiohelper/CassetteMovingBlock.attributes.description.Easer=How the block moves between its nodes
+entities.audiohelper/CassetteMovingBlock.attributes.description.Speed=How quickly the block moves between nodes. \n"Fast" speeds take a single "tick", "Slow" speeds take a single "swap". \nUse "custom" speed for more control
+entities.audiohelper/CassetteMovingBlock.attributes.description.CustomSpeed=Only used for the "custom" speed. Written in the form "a,b", where "a" is the number of ticks \nto wait at each node, and "b" is the number of ticks it takes to move to the next node
+entities.audiohelper/CassetteMovingBlock.attributes.description.Tempo=Custom cassette tempo. Along with other cassette entities, the first non-1.0 value in the entity load order will be used
+entities.audiohelper/CassetteMovingBlock.attributes.description.Offset=By default, the block will arrive at it's home node exactly when the blocks turn blue for the \nfirst time after load. Use this value to shift how many ticks early/late it will arrive
+entities.audiohelper/CassetteMovingBlock.attributes.description.Texture=Sprites to use for the block, spools, and gears, relative to objects/audiohelper/cassettemovingblock/.\nIf respriting, copy and rename the *entire* "default" folder, but do not rename any of the assets inside. \nNew sprites will need to be added to your sprites.xml for the spools and gears, see the audiohelper sprites.xml for reference
+entities.audiohelper/CassetteMovingBlock.attributes.description.Colour=Tint of the block
+entities.audiohelper/CassetteMovingBlock.attributes.description.SoundIndex=What footstep/wallclimb sounds to use
+
+# Cassette Moving Platform
+entities.audiohelper/CassetteMovingPlatform.placements.name.cassettemovingplatform=Cassette Moving Platform
+entities.audiohelper/CassetteMovingPlatform.placements.description.cassettemovingplatform=Platform that moves between its nodes in time with cassette music
+entities.audiohelper/CassetteMovingPlatform.attributes.description.Easer=How the platform moves between its nodes
+entities.audiohelper/CassetteMovingPlatform.attributes.description.Speed=How quickly the platform moves between nodes. \n"Fast" speeds take a single "tick", "Slow" speeds take a single "swap". \nUse "custom" speed for more control
+entities.audiohelper/CassetteMovingPlatform.attributes.description.CustomSpeed=Only used for the "custom" speed. Written in the form "a,b", where "a" is the number of ticks \nto wait at each node, and "b" is the number of ticks it takes to move to the next node
+entities.audiohelper/CassetteMovingPlatform.attributes.description.Tempo=Custom cassette tempo. Along with other cassette entities, the first non-1.0 value in the entity load order will be used
+entities.audiohelper/CassetteMovingPlatform.attributes.description.Offset=By default, the platform will arrive at it's home node exactly when the blocks turn blue for the \nfirst time after load. Use this value to shift how many ticks early/late it will arrive
+entities.audiohelper/CassetteMovingPlatform.attributes.description.texture=Sprite to use, relative to objects/woodPlatform/
+entities.audiohelper/CassetteMovingPlatform.attributes.description.SoundIndex=What footstep/wallclimb sounds to use
+
+# Cassette Moving Platform
+entities.audiohelper/CassetteTrackSpinner.placements.name.cassettetrackspinner=Cassette Track Spinner
+entities.audiohelper/CassetteTrackSpinner.placements.description.cassettetrackspinner=Track spinner that moves between its nodes in time with cassette music
+entities.audiohelper/CassetteTrackSpinner.attributes.description.Easer=How the track spinner moves between its nodes
+entities.audiohelper/CassetteTrackSpinner.attributes.description.Speed=How quickly the track spinner moves between nodes. \n"Fast" speeds take a single "tick", "Slow" speeds take a single "swap". \nUse "custom" speed for more control
+entities.audiohelper/CassetteTrackSpinner.attributes.description.CustomSpeed=Only used for the "custom" speed. Written in the form "a,b", where "a" is the number of ticks \nto wait at each node, and "b" is the number of ticks it takes to move to the next node
+entities.audiohelper/CassetteTrackSpinner.attributes.description.Tempo=Custom cassette tempo. Along with other cassette entities, the first non-1.0 value in the entity load order will be used
+entities.audiohelper/CassetteTrackSpinner.attributes.description.Offset=By default, the track spinner will arrive at it's home node exactly when the blocks turn blue for the \nfirst time after load. Use this value to shift how many ticks early/late it will arrive
+entities.audiohelper/CassetteTrackSpinner.attributes.description.Style=Type of track spinner to use
+
+
+
 # ONDASH ENTITIES
 
 # Play Sound On Dash

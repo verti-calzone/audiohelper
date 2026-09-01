@@ -141,6 +141,10 @@ entities.audiohelper/CassetteLoopController.placements.description.cassetteloopc
 entities.audiohelper/CassetteLoopController.attributes.description.LoopStart=First note to play after taking the loop. These values are 1-indexed, so they match the numbers associated with each note inside FMOD. /n For example, the vanilla loop would be 1-256, not 0-255
 entities.audiohelper/CassetteLoopController.attributes.description.LoopEnd=last note to play before taking the loop. These values are 1-indexed, so they match the numbers associated with each note inside FMOD. /n For example, the vanilla loop would be 1-256, not 0-255
 
+# Pause Music On Pause
+entities.audiohelper/PauseMusicOnPause.placements.name.pausemusiconpause=Pause Music On Pause Controller
+entities.audiohelper/PauseMusicOnPause.placements.description.pausemusiconpause=Flag-toggled controller that makes all music pause when the game pauses
+entities.audiohelper/PauseMusicOnPause.attributes.description.Flag=When this flag is set, music will pause when the game is paused
 
 
 # MUSICAL ENTITIES

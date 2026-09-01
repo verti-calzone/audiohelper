@@ -106,6 +106,8 @@ public class audiohelperModule : EverestModule {
 
         On.Celeste.Audio.GetEventDescription += AdvancedAudioReplacer.OnGetEventDescription;
 
+        On.Celeste.Level.StartPauseEffects += PauseMusicOnPause.OnStartPauseEffects;
+
         IL.Celeste.CassetteBlockManager.AdvanceMusic += CassetteLoopController.IL_CassetteLoopController;
 
         On.Celeste.CassetteBlockManager.SilentUpdateBlocks += CassetteMover.OnSilentUpdateBlocks;
@@ -127,6 +129,8 @@ public class audiohelperModule : EverestModule {
         SuppressVanillaCassetteBlockManagerOnLevelStart.Dispose();
 
         On.Celeste.Audio.GetEventDescription -= AdvancedAudioReplacer.OnGetEventDescription;
+
+        On.Celeste.Level.StartPauseEffects -= PauseMusicOnPause.OnStartPauseEffects;
 
         IL.Celeste.CassetteBlockManager.AdvanceMusic -= CassetteLoopController.IL_CassetteLoopController;
 

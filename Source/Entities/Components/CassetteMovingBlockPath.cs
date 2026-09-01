@@ -52,7 +52,7 @@ public class CassetteMovingBlockPath : Entity
             }
             if (makeNewWire && pathVertices[i] != pathVertices[i1])
             {
-                CassetteMovingBlockPathWire wire = new(pathVertices[i] + positionOffset, pathVertices[i1] + positionOffset, cmb.bigSprite ? 6 : 4);
+                CassetteMovingBlockPathWire wire = new(pathVertices[i] + positionOffset, pathVertices[i1] + positionOffset, cmb.bigSprite ? 7.5f : 4);
                 Add(wire);
                 wireList.Add(wire);
             }

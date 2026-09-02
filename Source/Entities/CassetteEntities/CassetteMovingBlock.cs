@@ -139,11 +139,6 @@ public class CassetteMovingBlock : Solid
         textureDictionary.Add((name, new Vector2(Width, Height)), blockTexture);
     }
 
-    public override void Added(Scene scene)
-    {
-        base.Added(scene);
-    }
-
     public override void Update()
     {
         base.Update();
@@ -153,6 +148,7 @@ public class CassetteMovingBlock : Solid
         else rate = 0f;
 
         spool.Rate = rate;
+
         path.spinRate = rate;
 
         prevPosition = Position;
@@ -190,17 +186,13 @@ public class CassetteMovingBlock : Solid
 
         path.Stop();
     }
-    public void SilentUpdate()
+    public override void Added(Scene scene)
     {
-        Scene.Add(path = new CassetteMovingBlockPath(this, mover.ticksPerWait * mover.tickTimer));
+        base.Added(scene);
+        Scene.Add(path = new CassetteMovingBlockPath(this));
     }
 
-    public override void SceneEnd(Scene scene)
-    {
-        base.SceneEnd(scene);
-
-        //dictionary.Dispose();
-    }
+    public void SilentUpdate() { }
     private void StopParticles(Vector2 travelDirection, bool intense)
     {
         Level level = SceneAs<Level>();

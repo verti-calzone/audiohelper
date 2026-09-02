@@ -16,7 +16,7 @@ public class CassetteMovingBlockPath : Entity
 	public Vector2 positionOffset;
     public List<CassetteMovingBlockPathWire> wireList = [];
 	public int length;
-	public float waitTime, spinRate;
+	public float spinRate;
 
 
 	public List<Sprite> spriteList = [];
@@ -25,10 +25,9 @@ public class CassetteMovingBlockPath : Entity
     public bool spinning;
     public static ParticleType P_Sparks;
 
-    public CassetteMovingBlockPath(CassetteMovingBlock block, float time) : base()
+    public CassetteMovingBlockPath(CassetteMovingBlock block) : base()
 	{
 		cmb = block;
-        waitTime = time;
 		pathVertices = cmb.mover.vertices;
 		positionOffset = cmb.Center - cmb.Position;
 		length = pathVertices.Length;
@@ -130,5 +129,13 @@ public class CassetteMovingBlockPath : Entity
 	{
         foreach (CassetteMovingBlockPathWire wire in wireList) wire.Loosen();
         spinning = false;
+    }
+
+    // HOOK //
+
+    public static void OnStopBlocks(On.Celeste.CassetteBlockManager.orig_StopBlocks orig, CassetteBlockManager cbm)
+    {
+        orig(cbm);
+        foreach (CassetteMovingBlockPath cmbp in cbm.Scene.Tracker.GetEntities<CassetteMovingBlockPath>()) cmbp.spinning = false;
     }
 }

@@ -110,9 +110,11 @@ public class audiohelperModule : EverestModule {
 
         IL.Celeste.CassetteBlockManager.AdvanceMusic += CassetteLoopController.IL_CassetteLoopController;
 
-        On.Celeste.CassetteBlockManager.SilentUpdateBlocks += CassetteMover.OnSilentUpdateBlocks;
-        IL.Celeste.CassetteBlockManager.AdvanceMusic += CassetteMover.IL_AdvanceMusic;
-        IL.Celeste.Celeste.Freeze += CassetteMover.IL_Freeze;
+        On.Celeste.CassetteBlockManager.SilentUpdateBlocks += CassetteTickReader.OnSilentUpdateBlocks;
+        IL.Celeste.CassetteBlockManager.AdvanceMusic += CassetteTickReader.IL_AdvanceMusic;
+        IL.Celeste.Celeste.Freeze += CassetteTickReader.IL_Freeze;
+
+        On.Celeste.CassetteBlockManager.StopBlocks += CassetteMovingBlockPath.OnStopBlocks;
 
         SpeedrunToolIop.srtloaduseapi();
     }
@@ -134,9 +136,11 @@ public class audiohelperModule : EverestModule {
 
         IL.Celeste.CassetteBlockManager.AdvanceMusic -= CassetteLoopController.IL_CassetteLoopController;
 
-        On.Celeste.CassetteBlockManager.SilentUpdateBlocks -= CassetteMover.OnSilentUpdateBlocks;
-        IL.Celeste.CassetteBlockManager.AdvanceMusic -= CassetteMover.IL_AdvanceMusic;
-        IL.Celeste.Celeste.Freeze -= CassetteMover.IL_Freeze;
+        On.Celeste.CassetteBlockManager.SilentUpdateBlocks -= CassetteTickReader.OnSilentUpdateBlocks;
+        IL.Celeste.CassetteBlockManager.AdvanceMusic -= CassetteTickReader.IL_AdvanceMusic;
+        IL.Celeste.Celeste.Freeze -= CassetteTickReader.IL_Freeze;
+
+        On.Celeste.CassetteBlockManager.StopBlocks -= CassetteMovingBlockPath.OnStopBlocks;
 
         SpeedrunToolIop.Unload();
     }

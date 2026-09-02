@@ -12,7 +12,7 @@ public class CassetteMovingPlatform : JumpThru
     public CassetteMover mover;
 
     public float yOffset, sinkTimer;
-    public Vector2 newPosition, offset;
+    public Vector2 newPosition, positionOffset;
 
     // audiovisuals
     public string texture;
@@ -45,6 +45,8 @@ public class CassetteMovingPlatform : JumpThru
         mover.vertexList.Add(data.Position + offset);
         foreach (Vector2 node in data.Nodes) mover.vertexList.Add(node + offset);
         mover.vertices = mover.vertexList.ToArray();
+
+        newPosition = Position;
     }
 
     public override void Added(Scene scene)
@@ -78,9 +80,9 @@ public class CassetteMovingPlatform : JumpThru
             yOffset = Calc.Approach(yOffset, 3f, 50f * Engine.DeltaTime);
         }
         else yOffset = Calc.Approach(yOffset, 0f, 20f * Engine.DeltaTime);
-        offset.Y = yOffset;
+        positionOffset.Y = yOffset;
 
-        MoveTo(newPosition + offset);
+        MoveTo(newPosition + positionOffset);
     }
 
     public override void Render()
@@ -94,7 +96,7 @@ public class CassetteMovingPlatform : JumpThru
     public void OnMove(Vector2 destination)
     {
         newPosition = destination;
-        MoveTo(newPosition + offset);
+        MoveTo(newPosition + positionOffset);
     }
     public void StartMove()
     {

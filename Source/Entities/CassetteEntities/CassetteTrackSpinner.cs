@@ -25,11 +25,12 @@ public class CassetteTrackSpinner : Entity {
     public Vector2 targetFacingAngle;
 
     // constructor
-    public CassetteTrackSpinner(EntityData data, Vector2 offset)
+    public CassetteTrackSpinner(EntityData data, Vector2 offset) : base(data.Position + offset)
     {
         // data
         Add(mover = new CassetteMover(OnMove, StartMove, EndMove, SilentUpdate));
         Add(listener = new CassetteListener(0));
+
         mover.easer = data.Enum<CassetteMover.Easers>("Easer", CassetteMover.Easers.SineInOut);
         mover.speed = data.Enum<CassetteMover.Speeds>("Speed", CassetteMover.Speeds.FastStop);
         mover.customSpeed = data.Attr("CustomSpeed");

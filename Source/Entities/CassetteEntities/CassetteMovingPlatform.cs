@@ -56,14 +56,15 @@ public class CassetteMovingPlatform : JumpThru
 
         textures = new MTexture[mTexture.Width / 8];
         for (int i = 0; i < textures.Length; i++) textures[i] = mTexture.GetSubtexture(i * 8, 0, 8, 8);
+
         for (int i = 0; i < mover.vertices.Length; i++)
         {
             Vector2 start = mover.vertices[i];
-            Vector2 end = mover.vertices[(i+1) % mover.vertices.Length];
-            scene.Add(new MovingPlatformLine(new Vector2(start.X+Width/2, start.Y + 4), new Vector2(end.X+Width/2, end.Y + 4)));
-
-            // todo: make custom MovingPlatformLine class (low priority)
+            Vector2 end = mover.vertices[(i + 1) % mover.vertices.Length];
+            scene.Add(new MovingPlatformLine(new Vector2(start.X + Width / 2, start.Y + 4), new Vector2(end.X + Width / 2, end.Y + 4)));
         }
+
+        //scene.Add(new CustomMovingPlatformLineRenderer(mover.vertices, Width, texture));
     }
 
     public override void Update()

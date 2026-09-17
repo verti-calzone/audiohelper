@@ -55,6 +55,8 @@ public class CassetteMovingBlock : Solid
     // constructor
     public CassetteMovingBlock(EntityData data, Vector2 offset) : base(data.Position + offset, data.Width, data.Height, safe: false)
     {
+        Tag = Tags.TransitionUpdate;
+        
         // functional components
         Add(mover = new CassetteMover(OnMove, StartMove, EndMove, SilentUpdate));
         Add(listener = new CassetteListener(0));

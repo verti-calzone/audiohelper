@@ -23,6 +23,8 @@ public class CassetteMovingPlatform : JumpThru
     // constructor
     public CassetteMovingPlatform(EntityData data, Vector2 offset) : base(data.Position + offset, data.Width, safe: false)
     {
+        Tag = Tags.TransitionUpdate;
+
         // data
         Add(mover = new CassetteMover(OnMove, StartMove, EndMove, SilentUpdate));
         Add(listener = new CassetteListener(0));

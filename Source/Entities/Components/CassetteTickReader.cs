@@ -29,7 +29,11 @@ public class CassetteTickReader : Component {
     public static void OnSilentUpdateBlocks(On.Celeste.CassetteBlockManager.orig_SilentUpdateBlocks orig, CassetteBlockManager cbm)
     {
         orig(cbm);
-		int ticksUntilReset = -1; // starts at -1 because the while loop always adds one more than it needs to
+
+        List<Component> ctrs = cbm.Scene.Tracker.GetComponents<CassetteTickReader>();
+        if (ctrs.Count == 0) return;
+
+        int ticksUntilReset = -1; // starts at -1 because the while loop always adds one more than it needs to
 		int BpT = DynamicData.For(cbm).Get<int>("beatsPerTick");
 		int TpS = DynamicData.For(cbm).Get<int>("ticksPerSwap");
 		int BpS = BpT*TpS;
@@ -46,7 +50,7 @@ public class CassetteTickReader : Component {
 			ticksUntilReset++;
         }
 
-		foreach(CassetteTickReader ctr in cbm.Scene.Tracker.GetComponents<CassetteTickReader>()) ctr.SilentUpdate(ticksUntilReset, BpT, TpS, cbm.tempoMult);
+		foreach(CassetteTickReader ctr in ctrs) ctr.SilentUpdate(ticksUntilReset, BpT, TpS, cbm.tempoMult);
     }
 	public static void AdvanceMusicDelegate(CassetteBlockManager cbm)
     {

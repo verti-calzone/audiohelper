@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
 using Monocle;
@@ -27,6 +28,8 @@ public class CassetteTrackSpinner : Entity {
     // constructor
     public CassetteTrackSpinner(EntityData data, Vector2 offset) : base(data.Position + offset)
     {
+        Tag = Tags.TransitionUpdate;
+
         // data
         Add(mover = new CassetteMover(OnMove, StartMove, EndMove, SilentUpdate));
         Add(listener = new CassetteListener(0));
@@ -113,14 +116,7 @@ public class CassetteTrackSpinner : Entity {
 
     public virtual void OnPlayer(Player player)
     {
-        if (player.Die((player.Position - Position).SafeNormalize()) != null)
-        {
-            mover.moving = false;
-            mover.frozen = true;
-        }
-        if (Style == Styles.Dust)
-        {
-            dust.OnHitPlayer();
-        }
+        if (player.Die((player.Position - Position).SafeNormalize()) != null) mover.frozen = true;
+        if (Style == Styles.Dust) dust.OnHitPlayer();
     }
 }

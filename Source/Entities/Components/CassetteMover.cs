@@ -14,7 +14,7 @@ public class CassetteMover : CassetteTickReader
 	public Vector2[] vertices;
 	public List<Vector2> vertexList = [];
 	public float progress, easedProgress;
-	public bool moving = false, frozen = false, skipNextEnd = false;
+	public bool moving = false, frozen = false, readyToLeave = false, skipNextEnd = false;
 	public int activeVertex, tickOffset = 0;
 
 	public enum Easers { SineInOut, CubeIn }
@@ -31,7 +31,7 @@ public class CassetteMover : CassetteTickReader
 	public Action<Vector2> moveAction;
 
 	public CassetteMover(Action<Vector2> OnMove, Action OnStartMove, Action OnEndMove, Action OnSilentUpdate) : base()
-	{
+	{		
 		moveAction = OnMove;
 		startMoveAction = OnStartMove;
 		endMoveAction = OnEndMove;
@@ -84,7 +84,11 @@ public class CassetteMover : CassetteTickReader
 
 	public override void SilentUpdate(int ticksUntilReset, int BpT, int TpS, float tempoMult)
 	{
-		FakeAwake(BpT, TpS, tempoMult);
+		// only run this on the mover's first SilentUpdate
+		if (readyToLeave) return;
+		readyToLeave = true;
+
+        FakeAwake(BpT, TpS, tempoMult);
 
 		// Applies offset here
 		ticksUntilReset += tickOffset;
@@ -109,6 +113,9 @@ public class CassetteMover : CassetteTickReader
 	public override void Update()
 	{
 		base.Update();
+
+		if (frozen) moving = false;
+
 		ElapseTime(Engine.DeltaTime);
 	}
 

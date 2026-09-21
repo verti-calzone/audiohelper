@@ -23,6 +23,12 @@ entities.audiohelper/MusicParameterSoundSource.attributes.description.EdgeValue=
 entities.audiohelper/MusicParameterSoundSource.attributes.description.CentreValue=Value to set the parameter to at the centre of the radius
 entities.audiohelper/MusicParameterSoundSource.attributes.description.Radius=Radius of the area in tiles where the parameter should be affected
 
+# Always Audible Winged Berry
+entities.audiohelper/AlwaysAudibleWingedBerry.placements.name.alwaysaudiblewingedberry=Always Audible Winged Berry
+entities.audiohelper/AlwaysAudibleWingedBerry.placements.description.alwaysaudiblewingedberry=A winged berry that can be heard flying away from anywhere in its room
+entities.audiohelper/AlwaysAudibleWingedBerry.attributes.description.IncludeFlapSound=If checked, the "wing flap" sound for this berry can also be heard anywhere in its room
+entities.audiohelper/AlwaysAudibleWingedBerry.attributes.description.order=Manually determines where in the order this berry is placed in on the pause menu during gameplay and in level select. Overrides Everest's automatic berry IDs. (Default = -1)
+entities.audiohelper/AlwaysAudibleWingedBerry.attributes.description.checkpointID=Manually determines which checkpoint this berry is in, showing up on the start menu during gameplay and level select. Overrides Everest's automatic berry IDs. (Default = -1)
 
 
 # CASSETTE READERS

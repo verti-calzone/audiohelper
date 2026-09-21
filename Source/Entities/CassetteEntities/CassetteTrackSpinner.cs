@@ -29,6 +29,7 @@ public class CassetteTrackSpinner : Entity {
     public CassetteTrackSpinner(EntityData data, Vector2 offset) : base(data.Position + offset)
     {
         Tag = Tags.TransitionUpdate;
+        AddTag(TagsExt.FreezeFrameUpdate);
 
         // data
         Add(mover = new CassetteMover(OnMove, StartMove, EndMove, SilentUpdate));

@@ -112,7 +112,6 @@ public class audiohelperModule : EverestModule {
 
         On.Celeste.CassetteBlockManager.SilentUpdateBlocks += CassetteTickReader.OnSilentUpdateBlocks;
         IL.Celeste.CassetteBlockManager.AdvanceMusic += CassetteTickReader.IL_AdvanceMusic;
-        IL.Celeste.Celeste.Freeze += CassetteTickReader.IL_Freeze;
 
         On.Celeste.CassetteBlockManager.StopBlocks += CassetteMovingBlockPath.OnStopBlocks;
 
@@ -138,7 +137,6 @@ public class audiohelperModule : EverestModule {
 
         On.Celeste.CassetteBlockManager.SilentUpdateBlocks -= CassetteTickReader.OnSilentUpdateBlocks;
         IL.Celeste.CassetteBlockManager.AdvanceMusic -= CassetteTickReader.IL_AdvanceMusic;
-        IL.Celeste.Celeste.Freeze -= CassetteTickReader.IL_Freeze;
 
         On.Celeste.CassetteBlockManager.StopBlocks -= CassetteMovingBlockPath.OnStopBlocks;
 

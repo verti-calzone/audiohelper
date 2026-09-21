@@ -24,6 +24,7 @@ public class CassetteMovingPlatform : JumpThru
     public CassetteMovingPlatform(EntityData data, Vector2 offset) : base(data.Position + offset, data.Width, safe: false)
     {
         Tag = Tags.TransitionUpdate;
+        AddTag(TagsExt.FreezeFrameUpdate);
 
         // data
         Add(mover = new CassetteMover(OnMove, StartMove, EndMove, SilentUpdate));

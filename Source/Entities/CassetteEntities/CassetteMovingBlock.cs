@@ -4,7 +4,6 @@ using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Monocle;
-using static MonoMod.InlineRT.MonoModRule;
 
 namespace Celeste.Mod.audiohelper.Entities;
 
@@ -56,6 +55,7 @@ public class CassetteMovingBlock : Solid
     public CassetteMovingBlock(EntityData data, Vector2 offset) : base(data.Position + offset, data.Width, data.Height, safe: false)
     {
         Tag = Tags.TransitionUpdate;
+        AddTag(TagsExt.FreezeFrameUpdate);
         
         // functional components
         Add(mover = new CassetteMover(OnMove, StartMove, EndMove, SilentUpdate));

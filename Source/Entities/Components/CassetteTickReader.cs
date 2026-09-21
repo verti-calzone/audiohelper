@@ -71,20 +71,4 @@ public class CassetteTickReader : Component {
         }
         else throw new Exception("Audiohelper: Could not make AdvanceMusic hook!");
     }
-	public static void FreezeDelegate(float time)
-		{
-		foreach (CassetteTickReader ctr in Engine.Scene.Tracker.GetComponents<CassetteTickReader>()) ctr.ElapseTime(time);
-		}
-	public static void IL_Freeze(ILContext il)
-	{
-		ILCursor cursor = new ILCursor(il);
-
-		if (cursor.TryGotoNextBestFit(MoveType.After,
-			instr => instr.MatchCallvirt<CassetteBlockManager>("AdvanceMusic")))
-		{
-			cursor.EmitLdarg0();
-			cursor.EmitDelegate(FreezeDelegate);
-		}
-		else throw new Exception("Audiohelper: Could not make CassetteMover Freeze hook!");
-	}
 }

@@ -27,7 +27,10 @@ public class CassetteMovingBlockPath : Entity
 
     public CassetteMovingBlockPath(CassetteMovingBlock block) : base()
 	{
-		cmb = block;
+        Tag = Tags.TransitionUpdate;
+        AddTag(TagsExt.FreezeFrameUpdate);
+
+        cmb = block;
 		pathVertices = cmb.mover.vertices;
 		positionOffset = cmb.Center - cmb.Position;
 		length = pathVertices.Length;

@@ -20,8 +20,6 @@ public class CassetteTickReader : Component {
 
     public virtual void SilentUpdate(int ticksUntilReset, int BpT, int TpS, float tempoMult){}
 
-    public virtual void ElapseTime(float time){}
-
     public virtual void Tick(){}
 
 	// // HOOKS // //

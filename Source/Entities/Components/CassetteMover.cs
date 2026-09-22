@@ -119,7 +119,7 @@ public class CassetteMover : CassetteTickReader
 		ElapseTime(Engine.DeltaTime);
 	}
 
-	public override void ElapseTime(float time)
+	public void ElapseTime(float time)
 	{
 		if (moving)
 		{

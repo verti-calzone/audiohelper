@@ -12,6 +12,9 @@ public class CassetteRotateSpinner : Entity {
     public CassetteListener listener;
     public CassetteRotator rotator;
 
+    public Vector2 pivot;
+    public bool fallen = false;
+
     // visuals
     public enum Styles { Blade, Dust, Starfish };
     public Styles Style;
@@ -32,14 +35,32 @@ public class CassetteRotateSpinner : Entity {
         AddTag(TagsExt.FreezeFrameUpdate);
 
         // data
-        Add(rotator = new CassetteRotator(OnMove, SilentUpdate, data.Position + offset, data.Float("AngleOffset"), data.Float("Radius"), data.Int("TicksPerCycle")));
+        Add(rotator = new CassetteRotator(OnMove, SilentUpdate, OnSwap, data.Float("AngleOffset"), data.Float("Radius"), data.Int("TicksPerCycle"), data.Bool("Clockwise")));
         Add(listener = new CassetteListener(0));
+        if (data.Bool("AttachToSolid"))
+        {
+            StaticMover staticMover = new StaticMover();
+            staticMover.SolidChecker = (Solid solid) => solid.CollidePoint(pivot);
+            staticMover.JumpThruChecker = (JumpThru jumpthru) => jumpthru.CollidePoint(pivot);
+            staticMover.OnMove = (Vector2 move) =>
+            {
+                pivot += move;
+                Position += move;
+            };
+            staticMover.OnDestroy = delegate
+            {
+                fallen = true;
+            };
+            Add(staticMover);
+        }
 
         listener.Tempo = data.Float("Tempo");
         Style = data.Enum<Styles>("Style", Styles.Blade);
 
         Collider = new ColliderList(new Circle(6f));
         Add(new PlayerCollider(OnPlayer));
+
+        pivot = data.Position + offset;
 
         // Creating the sprite
         if (Style == Styles.Starfish)
@@ -72,19 +93,39 @@ public class CassetteRotateSpinner : Entity {
         }
     }
 
+    public void OnSwap()
+    {
+        if (!rotator.frozen)
+        {
+            if (Style == Styles.Starfish)
+            {
+                colourID++;
+                colourID %= 3;
+                sprite.Play("spin" + colourID);
+            }
+            else if (Style == Styles.Dust) return;
+            else sprite.Play("spin"); // fallback to blade
+        }
+    }
+
     public override void Update()
     {
         base.Update();
-        if (rotator.moving && Scene.OnInterval(0.04f))
+        if (!rotator.frozen && Scene.OnInterval(0.04f))
         {
             if (Style == Styles.Starfish) SceneAs<Level>().ParticlesBG.Emit(starfishParticle[colourID], 1, Position, Vector2.One * 3f);
             else if (Style == Styles.Dust) SceneAs<Level>().ParticlesBG.Emit(dustParticle, 1, Position, Vector2.One * 4f);
             else SceneAs<Level>().ParticlesBG.Emit(bladeParticle, 2, Position, Vector2.One * 3f); // fallback to blade
         }
+        if (fallen)
+        {
+            pivot.Y += 160f * Engine.DeltaTime; // continues the fall after the block is gone
+            if (Y > ((Scene as Level).Bounds.Bottom + 32)) RemoveSelf();
+        }
     }
     public void OnMove(Vector2 destination)
     {
-        Position = destination;
+        Position = pivot + destination;
     }
 
     public virtual void OnPlayer(Player player)

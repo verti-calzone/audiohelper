@@ -4,12 +4,15 @@ using Monocle;
 
 namespace Celeste.Mod.audiohelper.Entities;
 
-[CustomEntity("audiohelper/CassetteMovingPlatform")]
+[CustomEntity("audiohelper/CassetteRotatingPlatform")]
 [Tracked]
-public class CassetteMovingPlatform : JumpThru
+public class CassetteRotatingPlatform : JumpThru
 {
     public CassetteListener listener;
-    public CassetteMover mover;
+    public CassetteRotator rotator;
+
+    public Vector2 pivot;
+    public float radius;
 
     public float yOffset, sinkTimer;
     public Vector2 newPosition, positionOffset;
@@ -17,39 +20,32 @@ public class CassetteMovingPlatform : JumpThru
     // audiovisuals
     public string texture;
     public MTexture[]  textures;
-    public SoundSource sfx, sfx2;
+    public SoundSource sfx;
     public bool soundChoice;
+    public float soundTimer;
 
     // constructor
-    public CassetteMovingPlatform(EntityData data, Vector2 offset) : base(data.Position + offset, data.Width, safe: false)
+    public CassetteRotatingPlatform(EntityData data, Vector2 offset) : base(data.Position + offset, data.Width, safe: false)
     {
         Tag = Tags.TransitionUpdate;
         AddTag(TagsExt.FreezeFrameUpdate);
 
         // data
-        Add(mover = new CassetteMover(OnMove, StartMove, EndMove, SilentUpdate));
+        radius = data.Float("Radius");
+        Add(rotator = new CassetteRotator(OnMove, SilentUpdate, OnSwap, data.Float("AngleOffset"), radius, data.Int("TicksPerCycle"), data.Bool("Clockwise")));
         Add(listener = new CassetteListener(0));
-        mover.easer = data.Enum<CassetteMover.Easers>("Easer", CassetteMover.Easers.SineInOut);
-        mover.speed = data.Enum<CassetteMover.Speeds>("Speed", CassetteMover.Speeds.FastStop);
-        mover.customSpeed = data.Attr("CustomSpeed");
         listener.Tempo = data.Float("Tempo");
-        mover.tickOffset = data.Int("Offset");
 
         texture = data.Attr("texture", "default");
         SurfaceSoundIndex = data.Int("SoundIndex", 5);
         Add(sfx = new SoundSource());
-        Add(sfx2 = new SoundSource());
         sfx.Position.X += Width / 2;
-        sfx2.Position.X += Width / 2;
         soundChoice = Calc.Random.Choose(true, false);
+        soundTimer = Calc.Random.Range(0, 3);
         Add(new LightOcclude(0.5f));
 
-        // sending data to the mover
-        mover.vertexList.Add(data.Position + offset);
-        foreach (Vector2 node in data.Nodes) mover.vertexList.Add(node + offset);
-        mover.vertices = mover.vertexList.ToArray();
-
-        newPosition = Position;
+        pivot = data.Position + offset;
+        positionOffset.X = -Width / 2;
     }
 
     public override void Added(Scene scene)
@@ -60,19 +56,15 @@ public class CassetteMovingPlatform : JumpThru
         textures = new MTexture[mTexture.Width / 8];
         for (int i = 0; i < textures.Length; i++) textures[i] = mTexture.GetSubtexture(i * 8, 0, 8, 8);
 
-        for (int i = 0; i < mover.vertices.Length; i++)
-        {
-            Vector2 start = mover.vertices[i];
-            Vector2 end = mover.vertices[(i + 1) % mover.vertices.Length];
-            scene.Add(new MovingPlatformLine(new Vector2(start.X + Width / 2, start.Y + 4), new Vector2(end.X + Width / 2, end.Y + 4)));
-        }
-
-        //scene.Add(new CustomMovingPlatformLineRenderer(mover.vertices, Width, texture));
+        scene.Add(new CassetteRotatingPlatformCircle(pivot, radius));
     }
 
     public override void Update()
     {
         base.Update();
+
+        soundTimer -= Engine.DeltaTime;
+
         if (HasPlayerRider())
         {
             sinkTimer = 0.2f;
@@ -85,8 +77,6 @@ public class CassetteMovingPlatform : JumpThru
         }
         else yOffset = Calc.Approach(yOffset, 0f, 20f * Engine.DeltaTime);
         positionOffset.Y = yOffset;
-
-        MoveTo(newPosition + positionOffset);
     }
 
     public override void Render()
@@ -100,21 +90,18 @@ public class CassetteMovingPlatform : JumpThru
     public void OnMove(Vector2 destination)
     {
         newPosition = destination;
-        MoveTo(newPosition + positionOffset);
-    }
-    public void StartMove()
-    {
-        soundChoice = !soundChoice;
-        sfx.Play(soundChoice ? "event:/vert_audiohelper/movingplatform/move_1" : "event:/vert_audiohelper/movingplatform/move_2");
-    }
-
-    public void EndMove()
-    {
-        sfx2.Play(soundChoice ? "event:/vert_audiohelper/movingplatform/move_1_end" : "event:/vert_audiohelper/movingplatform/move_2_end");
-
-        if (mover.easer == CassetteMover.Easers.CubeIn) StartShaking(0.1f);
+        MoveTo(pivot + newPosition + positionOffset);
     }
     public void SilentUpdate() { }
+    public void OnSwap()
+    {
+        if (soundTimer <= 0)
+        {
+            soundChoice = !soundChoice;
+            sfx.Play(soundChoice ? "event:/vert_audiohelper/movingplatform/move_1" : "event:/vert_audiohelper/movingplatform/move_2");
+            soundTimer = 3f;
+        }
+    }
 
     // fixes liftboost when horizontal only
     public override void MoveHExact(int move)

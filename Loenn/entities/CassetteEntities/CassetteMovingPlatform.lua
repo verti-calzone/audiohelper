@@ -1,7 +1,4 @@
 local resortPlatformHelper = require("helpers.resort_platforms")
-local drawableSprite = require("structs.drawable_sprite")
-local drawableLine = require("structs.drawable_line")
-local utils = require("utils")
 
 local textures = {
     "default", "cliffside"
@@ -23,6 +20,7 @@ local speeds = {
 
 CassetteMovingPlatform.name = "audiohelper/CassetteMovingPlatform"
 CassetteMovingPlatform.depth = -50
+CassetteMovingPlatform.warnBelowSize = {8, 8}
 CassetteMovingPlatform.nodeLimits = {1, -1}
 CassetteMovingPlatform.nodeLineRenderType = "line"
 CassetteMovingPlatform.fieldInformation = {

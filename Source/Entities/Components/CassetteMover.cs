@@ -16,13 +16,13 @@ public class CassetteMover : CassetteTickReader
 	public float progress, easedProgress;
 	public bool moving = false, frozen = false, readyToLeave = false, skipNextEnd = false;
 	public int activeVertex, tickOffset = 0;
+	public string customSpeed;
 
 	public enum Easers { SineInOut, CubeIn }
 	public enum Speeds { SlowContinuous, SlowStop, FastContinuous, FastStop, Custom }
 	public Easers easer;
 	public Speeds speed;
 
-	public string customSpeed;
 	public int customTicksPerWait, customTicksPerMove = 1;
 	public float tickTimer;
 	public int BpT, TpS, ticksPerMove, ticksPerWait, tickCounter, tickCounterLength;

@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.CompilerServices;
 using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
@@ -5,15 +6,15 @@ using Monocle;
 
 namespace Celeste.Mod.audiohelper.Entities;
 
-[CustomEntity("audiohelper/CassetteRotateSpinner")]
+[CustomEntity("audiohelper/CassetteRotatingSpinner")]
 [Tracked]
-public class CassetteRotateSpinner : Entity {
+public class CassetteRotatingSpinner : Entity {
 
     public CassetteListener listener;
     public CassetteRotator rotator;
 
     public Vector2 pivot;
-    public bool fallen = false;
+    public bool staticMoverDestroyed = false;
 
     // visuals
     public enum Styles { Blade, Dust, Starfish };
@@ -29,7 +30,7 @@ public class CassetteRotateSpinner : Entity {
     public Vector2 targetFacingAngle;
 
     // constructor
-    public CassetteRotateSpinner(EntityData data, Vector2 offset) : base(data.Position + offset)
+    public CassetteRotatingSpinner(EntityData data, Vector2 offset) : base(data.Position + offset)
     {
         Tag = Tags.TransitionUpdate;
         AddTag(TagsExt.FreezeFrameUpdate);
@@ -49,7 +50,7 @@ public class CassetteRotateSpinner : Entity {
             };
             staticMover.OnDestroy = delegate
             {
-                fallen = true;
+                staticMoverDestroyed = true;
             };
             Add(staticMover);
         }
@@ -87,10 +88,17 @@ public class CassetteRotateSpinner : Entity {
     {
         if (Style == Styles.Dust)
         {
-            Vector2 eyeDir = Vector2.One;
+            Vector2 eyeDir = GetEyeDir(rotator.loopProgress);
             dust.EyeDirection = eyeDir;
             dust.EyeTargetDirection = eyeDir;
         }
+    }
+
+    public Vector2 GetEyeDir(float progress)
+    {
+        bool clockwise = rotator.clockwise;
+        if (!clockwise) progress = 1 - progress;
+        return Calc.AngleToVector((progress + (clockwise ? 0.25f : -0.25f)) * 2 * MathF.PI + rotator.radianOffset, 1);
     }
 
     public void OnSwap()
@@ -117,11 +125,14 @@ public class CassetteRotateSpinner : Entity {
             else if (Style == Styles.Dust) SceneAs<Level>().ParticlesBG.Emit(dustParticle, 1, Position, Vector2.One * 4f);
             else SceneAs<Level>().ParticlesBG.Emit(bladeParticle, 2, Position, Vector2.One * 3f); // fallback to blade
         }
-        if (fallen)
+
+        if (staticMoverDestroyed)
         {
             pivot.Y += 160f * Engine.DeltaTime; // continues the fall after the block is gone
             if (Y > ((Scene as Level).Bounds.Bottom + 32)) RemoveSelf();
         }
+
+        if (Style == Styles.Dust) dust.EyeDirection = GetEyeDir(rotator.loopProgress);
     }
     public void OnMove(Vector2 destination)
     {

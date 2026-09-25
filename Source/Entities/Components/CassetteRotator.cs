@@ -14,7 +14,6 @@ public class CassetteRotator : CassetteTickReader
 {
     public float tickProgress = -1f, loopProgress, radius, radianOffset;
     public bool moving = false, frozen = false, readyToLeave = false, clockwise = true;
-    public int tickOffset = 0;
 
     public float tickTimer;
     public int BpT, ticksPerSwap, tickCounter = -1, ticksPerLoop, tickSwapCounter;

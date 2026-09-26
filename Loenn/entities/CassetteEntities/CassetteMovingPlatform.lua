@@ -22,7 +22,8 @@ CassetteMovingPlatform.name = "audiohelper/CassetteMovingPlatform"
 CassetteMovingPlatform.depth = -50
 CassetteMovingPlatform.warnBelowSize = {8, 8}
 CassetteMovingPlatform.nodeLimits = {1, -1}
-CassetteMovingPlatform.nodeLineRenderType = "line"
+CassetteMovingPlatform.nodeLineRenderType = "none"
+CassetteMovingPlatform.nodeVisibility = "always"
 CassetteMovingPlatform.fieldInformation = {
     Easer = {
         options = easers,
@@ -84,6 +85,9 @@ end
 function CassetteMovingPlatform.nodeSprite(room, entity, node)
     local sprites = {}
     resortPlatformHelper.addPlatformSprites(sprites, entity, node)
+    for _, sprite in ipairs(sprites) do
+        sprite.color = {1, 1, 1, 0.33}
+    end
     return sprites
 end
 

@@ -71,7 +71,8 @@ public class AdvancedAudioReplacer : Entity {
 
     public static EventDescription OnGetEventDescription(On.Celeste.Audio.orig_GetEventDescription orig, string path)
     {
-        if(EventPairs.TryGetValue(path,out var replacer))
+        if (path is null) return orig(path);
+        if (EventPairs.TryGetValue(path,out var replacer))
         {
             if(replacer is not SimpleAudioReplacer && !string.IsNullOrEmpty(replacer.MusicParam))
             {

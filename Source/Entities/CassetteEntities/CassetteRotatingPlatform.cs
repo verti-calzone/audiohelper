@@ -1,5 +1,6 @@
 ﻿using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Monocle;
 
 namespace Celeste.Mod.audiohelper.Entities;
@@ -10,8 +11,9 @@ public class CassetteRotatingPlatform : JumpThru
 {
     public CassetteListener listener;
     public CassetteRotator rotator;
+    public CassetteRotatingPlatformCircle circle;
 
-    public Vector2 pivot;
+    public Vector2 pivot, renderPosition;
     public float radius;
 
     public float yOffset, sinkTimer;
@@ -45,6 +47,7 @@ public class CassetteRotatingPlatform : JumpThru
         Add(new LightOcclude(0.5f));
 
         pivot = data.Position + offset;
+        renderPosition = pivot + 4 * Vector2.UnitY - new Vector2(radius + 1, radius + 1);
         positionOffset.X = -Width / 2;
     }
 
@@ -56,7 +59,7 @@ public class CassetteRotatingPlatform : JumpThru
         textures = new MTexture[mTexture.Width / 8];
         for (int i = 0; i < textures.Length; i++) textures[i] = mTexture.GetSubtexture(i * 8, 0, 8, 8);
 
-        scene.Add(new CassetteRotatingPlatformCircle(pivot, radius));
+        scene.Add(new CassetteRotatingPlatformCircle(pivot, texture == "cliffside", radius));
     }
 
     public override void Update()
@@ -84,7 +87,7 @@ public class CassetteRotatingPlatform : JumpThru
         textures[0].Draw(Position + Shake);
         for (int i = 8; (float)i < Width - 8f; i += 8) textures[1].Draw(Position + Shake + new Vector2(i, 0f));
         textures[3].Draw(Position + Shake + new Vector2(Width - 8f, 0f));
-        textures[2].Draw(Position + Shake + new Vector2(Width / 2f - 4f, 0f));
+        textures[2].Draw(Position + Shake + new Vector2(Width / 2f - 4f, 0f));        
     }
 
     public void OnMove(Vector2 destination)

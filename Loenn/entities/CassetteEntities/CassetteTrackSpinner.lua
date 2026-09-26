@@ -24,6 +24,8 @@ CassetteTrackSpinner.name = "audiohelper/CassetteTrackSpinner"
 CassetteTrackSpinner.depth = -50
 CassetteTrackSpinner.nodeLimits = {1, -1}
 CassetteTrackSpinner.nodeLineRenderType = "line"
+CassetteTrackSpinner.nodeVisibility = "always"
+CassetteTrackSpinner.nodeColor = {1, 1, 1, 0.5}
 CassetteTrackSpinner.fieldInformation = {
     Easer = {
         options = easers,
@@ -60,8 +62,8 @@ function CassetteTrackSpinner.texture(room, entity)
     return textureStyles[entity.Style]
 end
 
-function CassetteTrackSpinner.nodeColor()
-    return {1.0, 1.0, 1.0, 0.5}
+function CassetteTrackSpinner.nodeTexture(room, entity)
+    return CassetteTrackSpinner.texture(room, entity)
 end
 
 return CassetteTrackSpinner

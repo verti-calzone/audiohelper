@@ -12,6 +12,9 @@ local degToRad = math.pi / 180
 
 CassetteRotatingSpinner.name = "audiohelper/CassetteRotatingSpinner"
 CassetteRotatingSpinner.depth = -10100
+CassetteRotatingSpinner.nodeLimits = {1, 1}
+CassetteRotatingSpinner.nodeVisibility = "always"
+CassetteRotatingSpinner.nodeLineRenderType = false
 CassetteRotatingSpinner.fieldInformation = {
     Style = {
         options = styles,
@@ -55,11 +58,6 @@ local ccwStyles = {
 
 function CassetteRotatingSpinner.sprite(room, entity)
     local sprites = {}
-    if entity.Clockwise then
-        table.insert(sprites, drawableSprite.fromTexture(cwStyles[entity.Style], entity))
-    else
-        table.insert(sprites, drawableSprite.fromTexture(ccwStyles[entity.Style], entity))
-    end
     local spinnerSprite
     local addx = math.sin(entity.AngleOffset * degToRad) * entity.Radius
     local addy = -1 * (math.cos(entity.AngleOffset * degToRad) * entity.Radius)
@@ -68,7 +66,7 @@ function CassetteRotatingSpinner.sprite(room, entity)
     spinnerSprite.depth = -50
     table.insert(sprites, spinnerSprite)
 
-    local mainLine = drawableLine.fromPoints({entity.x, entity.y, entity.x + addx, entity.y + addy}, "202020", 1)
+    local mainLine = drawableLine.fromPoints({entity.x, entity.y, entity.x + addx, entity.y + addy}, "303030", 1)
     mainLine.depth = 5000
     table.insert(sprites, mainLine)
 
@@ -92,35 +90,86 @@ function CassetteRotatingSpinner.sprite(room, entity)
     return sprites
 end
 
+-- node is the pivot
+function CassetteRotatingSpinner.nodeTexture(room, entity)
+    if entity.Clockwise then
+        return cwStyles[entity.Style]
+    else
+        return ccwStyles[entity.Style]
+    end
+end
+
 function CassetteRotatingSpinner.selection(room, entity)
-    local nodeRect = {}
+    local pivotRectTable = {}
     
     local x, y = entity.x or 0, entity.y or 0
     local angle, radius = entity.AngleOffset, entity.Radius
-    local mainRectangle = utils.rectangle(x-8, y-8, 16, 16)
+    local pivotRectangle = utils.rectangle(x-8, y-8, 16, 16)
+    table.insert(pivotRectTable, pivotRectangle)
 
-    local spinnerx = x + math.sin(angle * degToRad) * radius
-    local spinnery = y + -1 * (math.cos(angle * degToRad) * radius)
-    local spinnerRectangle = utils.rectangle(spinnerx-8, spinnery-8, 16, 16)
-    table.insert(nodeRect, spinnerRectangle)
+    local objx = x + math.sin(angle * degToRad) * radius
+    local objy = y + -1 * (math.cos(angle * degToRad) * radius)
+    local objectRectangle = utils.rectangle(objx-8, objy-8, 16, 16)
 
-    return mainRectangle, nodeRect
+    return objectRectangle, pivotRectTable
 end
 
-local lastEntityX = 0
-local lastEntityY = 0
-
-function CassetteRotatingSpinner.onMove(room, entity, nodeIndex, offsetX, offsetY)
+function CassetteRotatingSpinner.move(room, entity, nodeIndex, offsetX, offsetY)
     if nodeIndex ~= 0 then
-        if entity.x == lastEntityX then -- checks to see if the entity has moved since the last time onMove was called. if it has, that means the main selection is being moved too, so we skip the following offset
-            entity.x = entity.x + offsetX
-        end
-        if entity.y == lastEntityY then
-            entity.y = entity.y + offsetY
+        entity.x = entity.x + offsetX
+        entity.y = entity.y + offsetY
+        entity.nodes[1].x = entity.x
+        entity.nodes[1].y = entity.y
+        return
+    end
+
+    local angle = entity.AngleOffset % 360
+    local above, vertical
+    if angle <= 45 or angle >= 315 then
+        above = true
+        vertical = true
+    elseif angle >= 135 and angle <= 225 then
+        above = false
+        vertical = true
+    else
+        vertical = false
+        if angle < 180 then
+            above = false
+        else
+            above = true
         end
     end
-    lastEntityX = entity.x
-    lastEntityY = entity.y
+
+    local offset
+    if vertical == true then
+        offset = offsetY
+    else
+        offset = offsetX
+    end
+    if entity.Radius == 0 then -- pass through 0 case
+        if (offset > 0 and above == true) or (offset < 0 and above == false) then
+            CassetteRotatingSpinner.flipAngle(entity)
+        end
+        entity.Radius = math.abs(offset)
+    elseif above == true then
+        if offset > entity.Radius then -- pass over 0 case
+            CassetteRotatingSpinner.flipAngle(entity)
+            entity.Radius = offset - entity.Radius
+        else
+            entity.Radius = entity.Radius - offset
+        end
+    elseif above == false then
+        if -offset > entity.Radius then -- pass over 0 case
+            CassetteRotatingSpinner.flipAngle(entity)
+            entity.Radius = -offset - entity.Radius
+        else
+            entity.Radius = entity.Radius + offset
+        end
+    end
+end
+
+function CassetteRotatingSpinner.flipAngle(entity)
+    entity.AngleOffset = (entity.AngleOffset + 180) % 360
 end
 
 function CassetteRotatingSpinner.delete(room, entity, nodeIndex)
@@ -133,16 +182,20 @@ function CassetteRotatingSpinner.delete(room, entity, nodeIndex)
     return true
 end
 
+-- todo: when this function gets a nodeIndex param, have the object run the current code, but the pivot change the rotate direction
 function CassetteRotatingSpinner.flip(room, entity, horizontal, vertical)
     if horizontal then
         entity.AngleOffset = -entity.AngleOffset % 360
-    elseif vertical then
+    else
         entity.AngleOffset = (180 - entity.AngleOffset) % 360
     end
+    return true
 end
 
+-- todo: when this function gets a nodeIndex param, have this only work when selecting the object
 function CassetteRotatingSpinner.rotate(room, entity, direction)
-    entity.AngleOffset = (entity.AngleOffset + 90 * direction) % 360
+    entity.AngleOffset = (entity.AngleOffset + 15 * direction) % 360
+    return true
 end
 
 return CassetteRotatingSpinner

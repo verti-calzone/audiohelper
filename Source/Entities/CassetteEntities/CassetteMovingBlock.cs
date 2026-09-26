@@ -20,8 +20,6 @@ public class CassetteMovingBlock : Solid
     public bool intense = false;
 
     // audiovisuals
-    public MTexture[,] nineSlice;
-    public MTexture cutoutTexture, rimTexture;
     public Sprite spool;
     public bool bigSprite;
     public string texture, sprite;
@@ -39,17 +37,6 @@ public class CassetteMovingBlock : Solid
         LifeMin = 0.5f,
         LifeMax = 1.2f
     };
-    public static readonly BlendState subtract = new BlendState
-    {
-        ColorBlendFunction = BlendFunction.ReverseSubtract,
-        AlphaBlendFunction = BlendFunction.ReverseSubtract,
-        ColorSourceBlend = Blend.One,
-        ColorDestinationBlend = Blend.One,
-        AlphaSourceBlend = Blend.One,
-        AlphaDestinationBlend = Blend.One
-    };
-
-    public static Dictionary<(string, Vector2), VirtualRenderTarget> textureDictionary = new();
 
     // constructor
     public CassetteMovingBlock(EntityData data, Vector2 offset) : base(data.Position + offset, data.Width, data.Height, safe: false)
@@ -85,60 +72,12 @@ public class CassetteMovingBlock : Solid
         spool.Rate = 0f;
         spool.UseRawDeltaTime = true;
 
-        if (!textureDictionary.ContainsKey((texture, new Vector2(Width, Height)))) BakeTextures(texture);
-        
+        if (!CassetteMovingBlockTexture.textureDictionary.ContainsKey((texture, new Vector2(Width, Height)))) CassetteMovingBlockTexture.BakeTextures(texture, this, bigSprite);
 
         // sending data to the mover
         mover.vertexList.Add(data.Position + offset);
         foreach (Vector2 node in data.Nodes) mover.vertexList.Add(node + offset);
         mover.vertices = mover.vertexList.ToArray();
-    }
-
-    public void BakeTextures(string name)
-    {
-        
-        VirtualRenderTarget blockTexture = VirtualContent.CreateRenderTarget("cmb-rendertarget", (int)Width, (int)Height);
-        Engine.Graphics.GraphicsDevice.SetRenderTarget(blockTexture);
-
-        Draw.SpriteBatch.Begin();
-        MTexture mTexture = GFX.Game["objects/audiohelper/cassettemovingblock/" + name + "/block"];
-        nineSlice = new MTexture[3, 3];
-        for (int num = 0; num < 3; num++)
-        {
-            for (int num2 = 0; num2 < 3; num2++)
-            {
-                nineSlice[num, num2] = mTexture.GetSubtexture(new Rectangle(num * 8, num2 * 8, 8, 8));
-            }
-        }
-
-        float colCount = Width / 8f - 1f;
-        float rowCount = Height / 8f - 1f;
-
-        for (int col = 0; col <= colCount; col++)
-        {
-            for (int row = 0; row <= rowCount; row++)
-            {
-                int colTile = ((col < colCount) ? Math.Min(col, 1) : 2);
-                int rowTile = ((row < rowCount) ? Math.Min(row, 1) : 2);
-                nineSlice[colTile, rowTile].Draw(new Vector2(col * 8, row * 8));
-            }
-        }
-        Draw.SpriteBatch.End();
-
-        Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, subtract);
-        cutoutTexture = GFX.Game["objects/audiohelper/cassettemovingblock/" + name + "/cutout_" + (bigSprite ? "big" : "small")];
-        cutoutTexture.DrawCentered(Center - Position);
-        Draw.SpriteBatch.End();
-
-        Draw.SpriteBatch.Begin();
-        bool useAlt = false;
-        if (Height == 16 || (Width == 16 && Height == 24)) useAlt = true;
-        string alt = useAlt ? "_alt" : string.Empty;
-        rimTexture = GFX.Game["objects/audiohelper/cassettemovingblock/" + name + "/rim_" + (bigSprite ? "big" : "small") + alt];
-        rimTexture.DrawCentered(Center - Position);
-        Draw.SpriteBatch.End();
-
-        textureDictionary.Add((name, new Vector2(Width, Height)), blockTexture);
     }
 
     public override void Update()
@@ -162,7 +101,7 @@ public class CassetteMovingBlock : Solid
 
         spool.Render();
 
-        textureDictionary.TryGetValue((texture, new Vector2(Width, Height)), out var vrt);
+        CassetteMovingBlockTexture.textureDictionary.TryGetValue((texture, new Vector2(Width, Height)), out var vrt);
         Draw.SpriteBatch?.Draw((RenderTarget2D)vrt, Position + Shake, colour);
     }
 

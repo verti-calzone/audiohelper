@@ -59,18 +59,26 @@ local ccwStyles = {
 function CassetteRotatingSpinner.sprite(room, entity)
     local sprites = {}
     local spinnerSprite
-    local addx = math.sin(entity.AngleOffset * degToRad) * entity.Radius
-    local addy = -1 * (math.cos(entity.AngleOffset * degToRad) * entity.Radius)
+    local radius, x, y = entity.Radius, entity.x, entity.y
+
+    local addx = math.sin(entity.AngleOffset * degToRad) * radius
+    local addy = -1 * (math.cos(entity.AngleOffset * degToRad) * radius)
+
     spinnerSprite = drawableSprite.fromTexture(textureStyles[entity.Style], entity)
     spinnerSprite:addPosition(addx, addy)
     spinnerSprite.depth = -50
     table.insert(sprites, spinnerSprite)
 
-    local mainLine = drawableLine.fromPoints({entity.x, entity.y, entity.x + addx, entity.y + addy}, "303030", 1)
+    CassetteRotatingSpinner.drawLines(sprites, radius, x, y, addx, addy)
+
+    return sprites
+end
+
+function CassetteRotatingSpinner.drawLines(sprites, radius, x, y, addx, addy)
+    local mainLine = drawableLine.fromPoints({x, y, x + addx, y + addy}, "303030", 1)
     mainLine.depth = 5000
     table.insert(sprites, mainLine)
 
-    local radius, x, y = entity.Radius or 16, entity.x or 0, entity.y or 0
     local segments = radius
     if segments < 8 then
         segments = 8
@@ -166,6 +174,20 @@ function CassetteRotatingSpinner.move(room, entity, nodeIndex, offsetX, offsetY)
             entity.Radius = entity.Radius + offset
         end
     end
+end
+
+function CassetteRotatingSpinner.updateMoveSelection(room, entity, nodeIndex, selection, offsetX, offsetY)
+    -- do normal motion for the pivot
+    if nodeIndex ~= 0 then
+        selection.x = selection.x + offsetX
+        selection.y = selection.y + offsetY
+        return
+    end
+
+    local x, y = entity.x or 0, entity.y or 0
+    local angle, radius = entity.AngleOffset, entity.Radius
+    selection.x = x + math.sin(angle * degToRad) * radius - 8
+    selection.y = y + -1 * (math.cos(angle * degToRad) * radius) -8
 end
 
 function CassetteRotatingSpinner.flipAngle(entity)

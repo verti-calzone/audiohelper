@@ -19,7 +19,6 @@ public class CassetteRotatingPlatformCircle : Entity
     public float radius;
     public CassetteRotatingPlatformCircle(Vector2 location, bool cliffside, float size) 
     {
-        pivot = location; // only used to compare locations to avoid stacking
         isCliffside = cliffside;
         radius = size;
         renderPosition = location + 4 * Vector2.UnitY - new Vector2(radius + 1, radius + 1);

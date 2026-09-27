@@ -17,7 +17,7 @@ public class CassetteRotatingPlatform : JumpThru
     public float radius;
 
     public float yOffset, sinkTimer;
-    public Vector2 newPosition, positionOffset;
+    public Vector2 positionOffset;
 
     // audiovisuals
     public string texture;
@@ -49,15 +49,15 @@ public class CassetteRotatingPlatform : JumpThru
         pivot = data.Position + offset;
         renderPosition = pivot + 4 * Vector2.UnitY - new Vector2(radius + 1, radius + 1);
         positionOffset.X = -Width / 2;
+
+        MTexture mTexture = GFX.Game["objects/woodPlatform/" + texture];
+        textures = new MTexture[mTexture.Width / 8];
+        for (int i = 0; i < textures.Length; i++) textures[i] = mTexture.GetSubtexture(i * 8, 0, 8, 8);
     }
 
     public override void Added(Scene scene)
     {
         base.Added(scene);
-        MTexture mTexture = GFX.Game["objects/woodPlatform/" + texture];
-
-        textures = new MTexture[mTexture.Width / 8];
-        for (int i = 0; i < textures.Length; i++) textures[i] = mTexture.GetSubtexture(i * 8, 0, 8, 8);
 
         scene.Add(new CassetteRotatingPlatformCircle(pivot, texture == "cliffside", radius));
     }
@@ -92,8 +92,7 @@ public class CassetteRotatingPlatform : JumpThru
 
     public void OnMove(Vector2 destination)
     {
-        newPosition = destination;
-        MoveTo(pivot + newPosition + positionOffset);
+        MoveTo(pivot + destination + positionOffset);
     }
     public void SilentUpdate() { }
     public void OnSwap()

@@ -45,8 +45,8 @@ function CassetteRotatingPlatform.sprite(room, entity)
     local sprites = {}
     local radius, x, y = entity.Radius or 16, entity.x or 0, entity.y or 0
 
-    local addx = math.sin(entity.AngleOffset * degToRad) * entity.Radius
-    local addy = -1 * (math.cos(entity.AngleOffset * degToRad) * entity.Radius)
+    local addx = math.sin(entity.AngleOffset * degToRad) * radius
+    local addy = -1 * (math.cos(entity.AngleOffset * degToRad) * radius)
 
 
     local platformData = {
@@ -56,11 +56,15 @@ function CassetteRotatingPlatform.sprite(room, entity)
     }
     resortPlatformHelper.addPlatformSprites(sprites, entity, platformData)
 
+    CassetteRotatingPlatform.drawLines(sprites, radius, x, y, addx, addy)
+
+    return sprites
+end
+
+function CassetteRotatingPlatform.drawLines(sprites, radius, x, y, addx, addy)
     local mainLine = drawableLine.fromPoints({x, y, x + addx, y + addy}, "303030", 1)
     mainLine.depth = 5000
     table.insert(sprites, mainLine)
-
-    -- drawing the circle
 
     local segments = radius
     if segments < 8 then

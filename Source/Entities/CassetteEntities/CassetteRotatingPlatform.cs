@@ -1,4 +1,5 @@
-﻿using Celeste.Mod.Entities;
+﻿using System.Collections.Generic;
+using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Monocle;
@@ -94,7 +95,21 @@ public class CassetteRotatingPlatform : JumpThru
     {
         MoveTo(pivot + destination + positionOffset);
     }
-    public void SilentUpdate() { }
+    public void SilentUpdate()
+    {
+        List<Component> sms = Scene.Tracker.GetComponents<StaticMover>();
+        if (sms.Count == 0) return;
+
+        foreach (StaticMover sm in sms)
+        {
+            if (sm.Platform == null && sm.IsRiding(this))
+            {
+                staticMovers.Add(sm);
+                sm.Platform = this;
+                if (sm.OnAttach != null) sm.OnAttach(this);
+            }
+        }
+    }
     public void OnSwap()
     {
         if (soundTimer <= 0)

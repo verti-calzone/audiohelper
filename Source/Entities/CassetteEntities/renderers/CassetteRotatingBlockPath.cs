@@ -13,49 +13,78 @@ namespace Celeste.Mod.audiohelper.Entities;
 [Tracked]
 public class CassetteRotatingBlockPath : Entity
 {
-    public static Dictionary<float, VirtualRenderTarget> textureDictionary = [];
+    public static Dictionary<(float, bool), VirtualRenderTarget> textureDictionary = [];
     public Vector2 pivot, renderPosition;
     public float radius;
     public bool big;
-    public int padding;
-    public static Color outerColour = Calc.HexToColor("302838");
-    public static Color innerColour = Calc.HexToColor("403848");
+    public int outerPadding, innerPadding;
+    public static Color outerColour = Calc.HexToColor("343440");
+    public static Color innerColour = Calc.HexToColor("4b4b59");
+    public static Color toothColour = Calc.HexToColor("606068");
     public CassetteRotatingBlockPath(Vector2 location, float size, bool bigSprite) 
     {
         radius = size;
         big = bigSprite;
-        padding = big ? 11 : 5;
-        renderPosition = location - new Vector2(radius + padding, radius + padding);
+        outerPadding = big ? 11 : 5;
+        innerPadding = big ? 9 : 4;
+        renderPosition = location - new Vector2(radius + outerPadding, radius + outerPadding);
         Depth = Depths.BGDecals - 1;
-        if (!textureDictionary.ContainsKey(radius)) BakeTextures(radius, big, padding);
+        if (!textureDictionary.ContainsKey((radius, big))) BakeTextures();
     }
-    public static void BakeTextures(float radius, bool big, int padding)
+    public void BakeTextures()
     {
-        int size = (int)(radius + padding) * 2;
-        int innerPadding = big ? 9 : 4;
+        int size = (int)(radius + outerPadding) * 2;
 
-        VirtualRenderTarget circleTexture = VirtualContent.CreateRenderTarget("crb-rendertarget", size, size);
-        Engine.Graphics.GraphicsDevice.SetRenderTarget(circleTexture);
+        VirtualRenderTarget pathTexture = VirtualContent.CreateRenderTarget("crb-rendertarget", size, size);
+        Engine.Graphics.GraphicsDevice.SetRenderTarget(pathTexture);
 
-        Vector2 localPivot = new(radius + padding, radius + padding);
+        Vector2 localPivot = new(radius + outerPadding, radius + outerPadding);
 
         int segments = (int)Calc.Clamp(radius / 4, 4, 16);
 
         Draw.SpriteBatch.Begin();
-        Draw.Circle(localPivot, radius + padding, outerColour, segments);
-        Draw.Circle(localPivot, radius + padding - 1, innerColour, segments);
 
+        DrawInners(localPivot + Vector2.UnitY, true, segments);
+        DrawInners(localPivot, false, segments);
+
+        Draw.Circle(localPivot, radius + outerPadding, outerColour, segments);
         Draw.Circle(localPivot, radius - innerPadding, outerColour, segments);
-        Draw.Circle(localPivot, radius - innerPadding + 1, innerColour, segments);
+
         Draw.SpriteBatch.End();
 
-        textureDictionary.Add(radius, circleTexture);
+        textureDictionary.Add((radius, big), pathTexture);
+    }
+
+    public void DrawInners(Vector2 centre, bool shadow, int segments)
+    {
+        Draw.Circle(centre, radius + outerPadding - 1, shadow ? Color.Black : innerColour, segments);
+        Draw.Circle(centre, radius - innerPadding + 1, shadow ? Color.Black : innerColour, segments);
+
+        DrawTeeth(centre, shadow ? Color.Black : toothColour, true);
+        DrawTeeth(centre, shadow ? Color.Black : toothColour, false);
+    }
+
+    public void DrawTeeth(Vector2 centre, Color colour, bool inner)
+    {
+        float circumfrence = (radius + (inner ? -innerPadding + 2 : outerPadding - 2)) * MathF.Tau;
+        int resolution = 6;
+
+        for (int i = 0; i < circumfrence/resolution; i++)
+        {
+            float startAngle = (MathF.Tau * i) / circumfrence * resolution;
+            float endAngle = (MathF.Tau * (i + 0.5f)) / circumfrence * resolution;
+
+            Vector2 start = Calc.AngleToVector(startAngle, radius + (inner ? -innerPadding + 2 : outerPadding - 2));
+            Vector2 end = Calc.AngleToVector(endAngle, radius + (inner ? -innerPadding + 2 : outerPadding - 2));
+
+            Draw.Line(centre + start, centre + end, colour);
+        }
     }
 
     public override void Render()
     {
         base.Render();
-        textureDictionary.TryGetValue(radius, out var vrt);
+        textureDictionary.TryGetValue((radius, big), out var vrt);
         Draw.SpriteBatch?.Draw((RenderTarget2D)vrt, renderPosition, Color.White);
     }
 }

@@ -48,21 +48,23 @@ function CassetteRotatingPlatform.sprite(room, entity)
     local addx = math.sin(entity.AngleOffset * degToRad) * radius
     local addy = -1 * (math.cos(entity.AngleOffset * degToRad) * radius)
 
+    local objx = math.floor(x + addx + 0.5)
+    local objy = math.floor(y + addy + 0.5)
 
     local platformData = {
-        x = x + addx - entity.width/2,
-        y = y + addy,
+        x = objx - entity.width/2,
+        y = objy,
         depth = -50
     }
     resortPlatformHelper.addPlatformSprites(sprites, entity, platformData)
 
-    CassetteRotatingPlatform.drawLines(sprites, radius, x, y, addx, addy)
+    CassetteRotatingPlatform.drawLines(sprites, radius, x, y, objx, objy)
 
     return sprites
 end
 
-function CassetteRotatingPlatform.drawLines(sprites, radius, x, y, addx, addy)
-    local mainLine = drawableLine.fromPoints({x, y, x + addx, y + addy}, "303030", 1)
+function CassetteRotatingPlatform.drawLines(sprites, radius, x, y, objx, objy)
+    local mainLine = drawableLine.fromPoints({x, y, objx, objy}, "303030", 1)
     mainLine.depth = 5000
     table.insert(sprites, mainLine)
 
@@ -101,9 +103,9 @@ function CassetteRotatingPlatform.selection(room, entity)
     local pivotRectangle = utils.rectangle(x-8, y, 16, 8)
     table.insert(pivotRectTable, pivotRectangle)
 
-    local objx = x + math.sin(angle * degToRad) * radius
-    local objy = y + -1 * (math.cos(angle * degToRad) * radius)
-    local objectRectangle = utils.rectangle(objx-width/2, objy, width, 8)
+    local objx = math.floor(x + math.sin(angle * degToRad) * radius - width/2 + 0.5)
+    local objy = math.floor(y + -1 * (math.cos(angle * degToRad) * radius) + 0.5)
+    local objectRectangle = utils.rectangle(objx, objy, width, 8)
 
     return objectRectangle, pivotRectTable
 end

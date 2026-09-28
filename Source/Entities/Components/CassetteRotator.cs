@@ -54,10 +54,11 @@ public class CassetteRotator : CassetteTickReader
         loopProgress = 0 - (ticksUntilReset / (float)ticksPerLoop);
         loopProgress %= 1;
         if (loopProgress < 0) loopProgress += 1;
-        Move(loopProgress);
 
-        // let the entity do CBM-dependant awake stuff
+        // moves to its "home" spot to attach static movers, then moves to where it needs to be to sync
+        Move(0);
         silentUpdateAction();
+        Move(loopProgress);
     }
 
     public override void Update()

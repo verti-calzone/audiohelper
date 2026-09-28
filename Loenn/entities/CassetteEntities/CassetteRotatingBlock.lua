@@ -52,10 +52,13 @@ function CassetteRotatingBlock.sprite(room, entity)
     local addx = math.sin(entity.AngleOffset * degToRad) * radius
     local addy = -1 * (math.cos(entity.AngleOffset * degToRad) * radius)
 
+    local objx = math.floor(x + addx - width/2 + 0.5)
+    local objy = math.floor(y + addy - height/2 + 0.5)
+
     local style = entity.Texture or "default"
     local frame = string.format(frameTexture, style)
 
-    local ninePatch = drawableNinePatch.fromTexture(frame, ninePatchOptions, x+addx-width/2, y+addy-height/2, width, height)
+    local ninePatch = drawableNinePatch.fromTexture(frame, ninePatchOptions, objx, objy, width, height)
     ninePatch:setColor(entity.Colour)
 
     local big = true
@@ -70,8 +73,8 @@ function CassetteRotatingBlock.sprite(room, entity)
     local smallGear = string.format(smallGearTexture, style)
     local bigGear = string.format(bigGearTexture, style)
     local blockData = {
-        x = x + addx,
-        y = y + addy,
+        x = math.floor(x + addx + 0.5),
+        y = math.floor(y + addy + 0.5),
         depth = -50
     }
     if big then
@@ -131,9 +134,9 @@ function CassetteRotatingBlock.selection(room, entity)
     local pivotRectangle = utils.rectangle(x-8, y-8, 16, 16)
     table.insert(pivotRectTable, pivotRectangle)
 
-    local objx = x + math.sin(angle * degToRad) * radius
-    local objy = y + -1 * (math.cos(angle * degToRad) * radius)
-    local objectRectangle = utils.rectangle(objx - width/2, objy - height/2, width, height)
+    local objx = math.floor(x + math.sin(angle * degToRad) * radius - width/2 + 0.5)
+    local objy = math.floor(y + -1 * (math.cos(angle * degToRad) * radius) - height/2 + 0.5)
+    local objectRectangle = utils.rectangle(objx, objy, width, height)
 
     return objectRectangle, pivotRectTable
 end

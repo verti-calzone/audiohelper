@@ -48,7 +48,7 @@ public class CassetteTickReader : Component {
 			ticksUntilReset++;
         }
 
-		foreach(CassetteTickReader ctr in ctrs) ctr.SilentUpdate(ticksUntilReset, BpT, TpS, cbm.tempoMult);
+		foreach (CassetteTickReader ctr in ctrs) ctr.SilentUpdate(ticksUntilReset, BpT, TpS, cbm.tempoMult);
     }
 	public static void AdvanceMusicDelegate(CassetteBlockManager cbm)
     {

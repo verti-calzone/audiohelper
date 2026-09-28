@@ -64,18 +64,25 @@ function CassetteRotatingSpinner.sprite(room, entity)
     local addx = math.sin(entity.AngleOffset * degToRad) * radius
     local addy = -1 * (math.cos(entity.AngleOffset * degToRad) * radius)
 
-    spinnerSprite = drawableSprite.fromTexture(textureStyles[entity.Style], entity)
-    spinnerSprite:addPosition(addx, addy)
-    spinnerSprite.depth = -50
+    local objx = math.floor(x + addx + 0.5)
+    local objy = math.floor(y + addy + 0.5)
+
+    local spinnerData = {
+        x = objx,
+        y = objy,
+        depth = -50
+    }
+
+    spinnerSprite = drawableSprite.fromTexture(textureStyles[entity.Style], spinnerData)
     table.insert(sprites, spinnerSprite)
 
-    CassetteRotatingSpinner.drawLines(sprites, radius, x, y, addx, addy)
+    CassetteRotatingSpinner.drawLines(sprites, radius, x, y, objx, objy)
 
     return sprites
 end
 
-function CassetteRotatingSpinner.drawLines(sprites, radius, x, y, addx, addy)
-    local mainLine = drawableLine.fromPoints({x, y, x + addx, y + addy}, "303030", 1)
+function CassetteRotatingSpinner.drawLines(sprites, radius, x, y, objx, objy)
+    local mainLine = drawableLine.fromPoints({x, y, objx, objy}, "303030", 1)
     mainLine.depth = 5000
     table.insert(sprites, mainLine)
 
@@ -115,8 +122,8 @@ function CassetteRotatingSpinner.selection(room, entity)
     local pivotRectangle = utils.rectangle(x-8, y-8, 16, 16)
     table.insert(pivotRectTable, pivotRectangle)
 
-    local objx = x + math.sin(angle * degToRad) * radius
-    local objy = y + -1 * (math.cos(angle * degToRad) * radius)
+    local objx = math.floor(x + math.sin(angle * degToRad) * radius + 0.5)
+    local objy = math.floor(y + -1 * (math.cos(angle * degToRad) * radius) + 0.5)
     local objectRectangle = utils.rectangle(objx-8, objy-8, 16, 16)
 
     return objectRectangle, pivotRectTable

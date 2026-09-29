@@ -3,6 +3,7 @@ using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Monocle;
+using MonoMod;
 
 namespace Celeste.Mod.audiohelper.Entities;
 
@@ -97,18 +98,7 @@ public class CassetteRotatingPlatform : JumpThru
     }
     public void SilentUpdate()
     {
-        List<Component> sms = Scene.Tracker.GetComponents<StaticMover>();
-        if (sms.Count == 0) return;
 
-        foreach (StaticMover sm in sms)
-        {
-            if (sm.Platform == null && sm.IsRiding(this))
-            {
-                staticMovers.Add(sm);
-                sm.Platform = this;
-                if (sm.OnAttach != null) sm.OnAttach(this);
-            }
-        }
     }
     public void OnSwap()
     {

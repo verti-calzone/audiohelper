@@ -26,7 +26,7 @@ public class CassetteRotatingBlockPath : Entity
         radius = size;
         big = bigSprite;
         outerPadding = big ? 11 : 5;
-        innerPadding = big ? 9 : 4;
+        innerPadding = big ? 10 : 4;
         renderPosition = location - new Vector2(radius + outerPadding, radius + outerPadding);
         Depth = Depths.BGDecals - 1;
         if (!textureDictionary.ContainsKey((radius, big))) BakeTextures();
@@ -35,7 +35,7 @@ public class CassetteRotatingBlockPath : Entity
     {
         int size = (int)(radius + outerPadding) * 2;
 
-        VirtualRenderTarget pathTexture = VirtualContent.CreateRenderTarget("crb-rendertarget", size, size);
+        VirtualRenderTarget pathTexture = VirtualContent.CreateRenderTarget("crb-rendertarget", size, size + 1);
         Engine.Graphics.GraphicsDevice.SetRenderTarget(pathTexture);
 
         Vector2 localPivot = new(radius + outerPadding, radius + outerPadding);
@@ -44,29 +44,30 @@ public class CassetteRotatingBlockPath : Entity
 
         Draw.SpriteBatch.Begin();
 
-        DrawInners(localPivot + Vector2.UnitY, true, segments);
-        DrawInners(localPivot, false, segments);
-
-        Draw.Circle(localPivot, radius + outerPadding, outerColour, segments);
-        Draw.Circle(localPivot, radius - innerPadding, outerColour, segments);
+        DrawAll(localPivot + Vector2.UnitY, true, segments);
+        DrawAll(localPivot, false, segments);
 
         Draw.SpriteBatch.End();
 
         textureDictionary.Add((radius, big), pathTexture);
     }
 
-    public void DrawInners(Vector2 centre, bool shadow, int segments)
+    public void DrawAll(Vector2 centre, bool shadow, int segments)
     {
         Draw.Circle(centre, radius + outerPadding - 1, shadow ? Color.Black : innerColour, segments);
         Draw.Circle(centre, radius - innerPadding + 1, shadow ? Color.Black : innerColour, segments);
 
         DrawTeeth(centre, shadow ? Color.Black : toothColour, true);
         DrawTeeth(centre, shadow ? Color.Black : toothColour, false);
+
+        Draw.Circle(centre, radius + outerPadding, shadow ? Color.Black : outerColour, segments);
+        Draw.Circle(centre, radius - innerPadding, shadow ? Color.Black : outerColour, segments);
     }
 
     public void DrawTeeth(Vector2 centre, Color colour, bool inner)
     {
-        float circumfrence = (radius + (inner ? -innerPadding + 2 : outerPadding - 2)) * MathF.Tau;
+        float teethRadius = radius + (inner ? -innerPadding + 2 : outerPadding - 2);
+        float circumfrence = teethRadius * MathF.Tau;
         int resolution = 6;
 
         for (int i = 0; i < circumfrence/resolution; i++)
@@ -74,8 +75,8 @@ public class CassetteRotatingBlockPath : Entity
             float startAngle = (MathF.Tau * i) / circumfrence * resolution;
             float endAngle = (MathF.Tau * (i + 0.5f)) / circumfrence * resolution;
 
-            Vector2 start = Calc.AngleToVector(startAngle, radius + (inner ? -innerPadding + 2 : outerPadding - 2));
-            Vector2 end = Calc.AngleToVector(endAngle, radius + (inner ? -innerPadding + 2 : outerPadding - 2));
+            Vector2 start = Calc.AngleToVector(startAngle, teethRadius);
+            Vector2 end = Calc.AngleToVector(endAngle, teethRadius);
 
             Draw.Line(centre + start, centre + end, colour);
         }

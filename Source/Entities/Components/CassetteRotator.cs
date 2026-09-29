@@ -56,9 +56,15 @@ public class CassetteRotator : CassetteTickReader
         if (loopProgress < 0) loopProgress += 1;
 
         // moves to its "home" spot to attach static movers, then moves to where it needs to be to sync
-        Move(0);
+        //Move(0);
         silentUpdateAction();
         Move(loopProgress);
+    }
+
+    public override void EntityAwake()
+    {
+        base.EntityAwake();
+        Move(0);
     }
 
     public override void Update()

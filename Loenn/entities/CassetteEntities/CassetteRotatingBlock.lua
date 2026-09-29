@@ -28,7 +28,7 @@ CassetteRotatingBlock.placements = {
         width = 16,
         height = 16,
         SoundIndex = 35,
-        texture = "default",
+        Texture = "default",
         Colour = "ffffff",
     },
 }
@@ -119,6 +119,8 @@ function CassetteRotatingBlock.drawLines(sprites, radius, x, y, addx, addy)
 end
 
 function CassetteRotatingBlock.nodeTexture(room, entity, node)
+    entity.nodes[1].x = entity.x
+    entity.nodes[1].y = entity.y
     if entity.Clockwise then
         return "objects/audiohelper/cassetterotatingblock/cw"
     else
@@ -145,8 +147,6 @@ function CassetteRotatingBlock.move(room, entity, nodeIndex, offsetX, offsetY)
     if nodeIndex ~= 0 then
         entity.x = entity.x + offsetX
         entity.y = entity.y + offsetY
-        entity.nodes[1].x = entity.x
-        entity.nodes[1].y = entity.y
         return
     end
 

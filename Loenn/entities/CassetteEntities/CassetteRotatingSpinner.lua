@@ -105,8 +105,9 @@ function CassetteRotatingSpinner.drawLines(sprites, radius, x, y, objx, objy)
     return sprites
 end
 
--- node is the pivot
 function CassetteRotatingSpinner.nodeTexture(room, entity)
+    entity.nodes[1].x = entity.x
+    entity.nodes[1].y = entity.y
     if entity.Clockwise then
         return cwStyles[entity.Style]
     else
@@ -133,8 +134,6 @@ function CassetteRotatingSpinner.move(room, entity, nodeIndex, offsetX, offsetY)
     if nodeIndex ~= 0 then
         entity.x = entity.x + offsetX
         entity.y = entity.y + offsetY
-        entity.nodes[1].x = entity.x
-        entity.nodes[1].y = entity.y
         return
     end
 

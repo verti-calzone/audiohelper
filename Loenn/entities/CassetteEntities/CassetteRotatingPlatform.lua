@@ -88,6 +88,8 @@ function CassetteRotatingPlatform.drawLines(sprites, radius, x, y, objx, objy)
 end
 
 function CassetteRotatingPlatform.nodeTexture(room, entity)
+    entity.nodes[1].x = entity.x
+    entity.nodes[1].y = entity.y
     if entity.Clockwise then
         return "objects/audiohelper/cassetterotatingplatform/cw"
     else
@@ -114,8 +116,6 @@ function CassetteRotatingPlatform.move(room, entity, nodeIndex, offsetX, offsetY
     if nodeIndex ~= 0 then
         entity.x = entity.x + offsetX
         entity.y = entity.y + offsetY
-        entity.nodes[1].x = entity.x
-        entity.nodes[1].y = entity.y
         return
     end
 

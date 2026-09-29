@@ -54,9 +54,9 @@ entities.audiohelper/CassetteMovingPlatform.attributes.description.CustomSpeed=O
 entities.audiohelper/CassetteMovingPlatform.attributes.description.Tempo=Custom cassette tempo. Along with other cassette entities, the first non-1.0 value in the entity load order will be used
 entities.audiohelper/CassetteMovingPlatform.attributes.description.Offset=By default, the platform will arrive at it's home node exactly when the blocks turn blue for the \nfirst time after load. Use this value to shift how many ticks early/late it will arrive
 entities.audiohelper/CassetteMovingPlatform.attributes.description.texture=Sprite to use, relative to objects/woodPlatform/
-entities.audiohelper/CassetteMovingPlatform.attributes.description.SoundIndex=What footstep/wallclimb sounds to use
+entities.audiohelper/CassetteMovingPlatform.attributes.description.SoundIndex=What footstep sounds to use
 
-# Cassette Moving Platform
+# Cassette Track Spinner
 entities.audiohelper/CassetteTrackSpinner.placements.name.cassettetrackspinner=Cassette Track Spinner
 entities.audiohelper/CassetteTrackSpinner.placements.description.cassettetrackspinner=Track spinner that moves between its nodes in time with cassette music
 entities.audiohelper/CassetteTrackSpinner.attributes.description.Easer=How the track spinner moves between its nodes
@@ -64,8 +64,42 @@ entities.audiohelper/CassetteTrackSpinner.attributes.description.Speed=How quick
 entities.audiohelper/CassetteTrackSpinner.attributes.description.CustomSpeed=Only used for the "custom" speed. Written in the form "a,b", where "a" is the number of ticks \nto wait at each node, and "b" is the number of ticks it takes to move to the next node
 entities.audiohelper/CassetteTrackSpinner.attributes.description.Tempo=Custom cassette tempo. Along with other cassette entities, the first non-1.0 value in the entity load order will be used
 entities.audiohelper/CassetteTrackSpinner.attributes.description.Offset=By default, the track spinner will arrive at it's home node exactly when the blocks turn blue for the \nfirst time after load. Use this value to shift how many ticks early/late it will arrive
-entities.audiohelper/CassetteTrackSpinner.attributes.description.Style=Type of track spinner to use
+entities.audiohelper/CassetteTrackSpinner.attributes.description.Style=Type of hazard to use
 
+# Cassette Rotating Block
+entities.audiohelper/CassetteRotatingBlock.placements.name.cassetterotatingblock=Cassette Rotating Block
+entities.audiohelper/CassetteRotatingBlock.placements.description.cassetterotatingblock=Block that rotates around a pivot in time with cassette music
+entities.audiohelper/CassetteRotatingBlock.attributes.description.Tempo=Custom cassette tempo. Along with other cassette entities, the first non-1.0 value in the entity load order will be used
+entities.audiohelper/CassetteRotatingBlock.attributes.description.Radius=Size of the circle the block moves along. Measured from the centre of the block to the pivot
+entities.audiohelper/CassetteRotatingBlock.attributes.description.AngleOffset=Angle (in degrees) the block will be at from its pivot exactly when the blocks turn blue for the first time after load. \n0 means straight up. Use the "rotate" hotkeys to adjust in 15 degree increments
+entities.audiohelper/CassetteRotatingBlock.attributes.description.TicksPerCycle=Number of ticks of cassette music for the platform to complete a full revolution
+entities.audiohelper/CassetteRotatingBlock.attributes.description.Clockwise=Check to have the block rotate clockwise, uncheck to have it rotate counter-clockwise
+entities.audiohelper/CassetteRotatingBlock.attributes.description.Texture=Sprites to use for the block and spool, relative to objects/audiohelper/cassettemovingblock/.\nIf respriting, copy and rename the *entire* "default" folder, but do not rename any of the assets inside. \nNew sprites will need to be added to your sprites.xml for the spools, see the audiohelper sprites.xml for reference
+entities.audiohelper/CassetteRotatingBlock.attributes.description.Colour=Tint of the block
+entities.audiohelper/CassetteRotatingBlock.attributes.description.SoundIndex=What footstep/wallclimb sounds to use
+
+# Cassette Rotating Platform
+entities.audiohelper/CassetteRotatingPlatform.placements.name.cassetterotatingplatform=Cassette Rotating Platform
+entities.audiohelper/CassetteRotatingPlatform.placements.description.cassetterotatingplatform=Platform that rotates around a pivot in time with cassette music
+entities.audiohelper/CassetteRotatingPlatform.attributes.description.Tempo=Custom cassette tempo. Along with other cassette entities, the first non-1.0 value in the entity load order will be used
+entities.audiohelper/CassetteRotatingPlatform.attributes.description.Radius=Size of the circle the platform moves along. Measured from the centre of the platform to the pivot
+entities.audiohelper/CassetteRotatingPlatform.attributes.description.AngleOffset=Angle (in degrees) the platform will be at from its pivot exactly when the blocks turn blue for the first time after load. \n0 means straight up. Use the "rotate" hotkeys to adjust in 15 degree increments
+entities.audiohelper/CassetteRotatingPlatform.attributes.description.TicksPerCycle=Number of ticks of cassette music for the block to complete a full revolution
+entities.audiohelper/CassetteRotatingPlatform.attributes.description.Clockwise=Check to have the platform rotate clockwise, uncheck to have it rotate counter-clockwise
+entities.audiohelper/CassetteRotatingPlatform.attributes.description.texture=Sprite to use, relative to objects/woodPlatform/
+entities.audiohelper/CassetteRotatingPlatform.attributes.description.Colour=Tint of the block
+entities.audiohelper/CassetteRotatingPlatform.attributes.description.SoundIndex=What footstep sounds to use
+
+# Cassette Rotating Spinner
+entities.audiohelper/CassetteRotatingSpinner.placements.name.cassetterotatingspinner=Cassette Rotating Spinner
+entities.audiohelper/CassetteRotatingSpinner.placements.description.cassetterotatingspinner=Spinner that rotates around a pivot in time with cassette music
+entities.audiohelper/CassetteRotatingSpinner.attributes.description.Tempo=Custom cassette tempo. Along with other cassette entities, the first non-1.0 value in the entity load order will be used
+entities.audiohelper/CassetteRotatingSpinner.attributes.description.Radius=Size of the circle the spinner moves along
+entities.audiohelper/CassetteRotatingSpinner.attributes.description.AngleOffset=Angle (in degrees) the spinner will be at from its pivot exactly when the blocks turn blue for the first time after load. \n0 means straight up. Use the "rotate" hotkeys to adjust in 15 degree increments
+entities.audiohelper/CassetteRotatingSpinner.attributes.description.TicksPerCycle=Number of ticks of cassette music for the spinner to complete a full revolution
+entities.audiohelper/CassetteRotatingSpinner.attributes.description.Clockwise=Check to have the spinner rotate clockwise, uncheck to have it rotate counter-clockwise
+entities.audiohelper/CassetteRotatingSpinner.attributes.description.Style=Type of hazard to use
+entities.audiohelper/CassetteRotatingSpinner.attributes.description.AttachToSolid=If checked, this spinner will attach to an object at its pivot point
 
 
 # ONDASH ENTITIES

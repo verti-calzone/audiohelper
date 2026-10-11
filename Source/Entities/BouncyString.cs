@@ -23,8 +23,6 @@ public class BouncyString : JumpThru
     public enum WireStates { still, pinch, beginRing, ringing }
     public WireStates wireState;
     public Vector2 focus, renderFocus;
-
-    // Assist Logic
     private InvisibleWall leftWall, rightWall;
 
     // Rendering
@@ -37,7 +35,9 @@ public class BouncyString : JumpThru
     public Vector2[] wirePoints;
     public enum Styles { body, highlight, shadow }
     public Styles style;
+    public MTexture wireCap;
 
+    // Bounce logic
     public float speed, accel, baseSpeed, liftBoost, autolaunch, ringTimer, ringTimerMax; // variables that get init'd per-bounce
     private readonly float speedCap = 400;
     private readonly float minDistance = 8, maxDistance = 64;
@@ -69,6 +69,8 @@ public class BouncyString : JumpThru
 
         SurfaceSoundIndex = 0;
         Collider = new PlayerOnlyColliderList(new Hitbox(Width, 5f));
+
+        wireCap = GFX.Game["objects/audiohelper/bouncystring/wirecap"];
     }
     public override void Added(Scene scene)
     {
@@ -94,11 +96,9 @@ public class BouncyString : JumpThru
                 if (playerRider is not null)
                 {
                     InitializeBounce(playerRider);
-                    canLaunch = false;
                     intendedY = renderFocus.Y;
                     state = States.bounce;
                     wireState = WireStates.pinch;
-                    wireTransformProgress = 0;
                 }
                 break;
             case States.bounce:
@@ -265,6 +265,9 @@ public class BouncyString : JumpThru
         baseSpeed = speed;
         ringTimerMax = ringTimer;
         afterImageTimer = ringTimerMax / 4;
+
+        canLaunch = false;
+        wireTransformProgress = 0;
     }
     public void PlayNote()
     {
@@ -342,6 +345,9 @@ public class BouncyString : JumpThru
             DrawLineStyles(alpha, localPoints, Styles.body);
             DrawLineStyles(alpha, localPoints, Styles.highlight);
             DrawLineStyles(alpha, localPoints, Styles.shadow);
+
+            wireCap.DrawCentered(new Vector2(Position.X, startY));
+            wireCap.DrawCentered(new Vector2(Position.X + Width, startY), Color.White, new Vector2(-1,1));
         }
     }
     public void DrawLineStyles(float alpha, Vector2[] localPoints, Styles style)

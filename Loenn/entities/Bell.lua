@@ -36,7 +36,6 @@ Bell.name = "audiohelper/Bell"
 Bell.depth = -8500
 Bell.fieldInformation = {
     pitch = {
-        fieldType = "integer",
         options = noteNames,
         editable = false
     },

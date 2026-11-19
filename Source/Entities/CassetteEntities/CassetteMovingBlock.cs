@@ -17,7 +17,7 @@ public class CassetteMovingBlock : Solid
 
     public Vector2 newPosition, offset, prevPosition;
     public float rate;
-    public bool intense = false;
+    public bool intense;
 
     // audiovisuals
     public Sprite spool;
@@ -45,7 +45,7 @@ public class CassetteMovingBlock : Solid
         AddTag(TagsExt.FreezeFrameUpdate);
         
         // functional components
-        Add(mover = new CassetteMover(OnMove, StartMove, EndMove, SilentUpdate));
+        Add(mover = new CassetteMover(OnMove, StartMove, EndMove, SilentUpdate, OnStop));
         Add(listener = new CassetteListener(0));
 
         // data
@@ -61,7 +61,8 @@ public class CassetteMovingBlock : Solid
         // vfx
         Add(new LightOcclude(1f));
         Depth = Depths.FGTerrain + 1;
-        if (mover.easer == CassetteMover.Easers.CubeIn)intense = true;
+        if (mover.easer == CassetteMover.Easers.SineInOut) intense = false;
+        else intense = true;
 
         // spinner sprite
         if (Width > 24 && Height > 24) bigSprite = true;
@@ -113,7 +114,6 @@ public class CassetteMovingBlock : Solid
     {
         path.Start();
     }
-
     public void EndMove()
     {
         if (intense) StartShaking(0.2f);
@@ -127,12 +127,15 @@ public class CassetteMovingBlock : Solid
 
         path.Stop();
     }
+    public void OnStop()
+    {
+        path.spinning = false;
+    }
     public override void Added(Scene scene)
     {
         base.Added(scene);
         Scene.Add(path = new CassetteMovingBlockPath(this));
     }
-
     public void SilentUpdate() { }
     private void StopParticles(Vector2 travelDirection, bool intense)
     {

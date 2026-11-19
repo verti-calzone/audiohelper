@@ -6,7 +6,6 @@ using Monocle;
 
 namespace Celeste.Mod.audiohelper.Entities;
 
-[CustomEntity("audiohelper/CassetteMovingBlockPathWire")]
 [Tracked]
 
 public class CassetteMovingBlockPathWire : Component {

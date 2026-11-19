@@ -10,7 +10,7 @@ namespace Celeste.Mod.audiohelper.Entities;
 
 [CustomEntity("audiohelper/Muter")]
 [Tracked]
-public class Muter : SimpleAudioReplacer {
+public class Muter : AdvancedAudioReplacer {
 
     public Muter(EntityData data, Vector2 offset) : base(data,offset){
         OldEvent = data.Attr("EventToMute");

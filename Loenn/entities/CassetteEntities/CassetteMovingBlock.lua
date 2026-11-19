@@ -6,7 +6,9 @@ local utils = require("utils")
 local CassetteMovingBlock = {}
 local easers = {
     ["Sine In Out"] = 0,
-    ["Cube In"] = 1
+    ["Cube In"] = 1,
+    ["Sine In"] = 2,
+    ["Linear"] = 3
 }
 
 local speeds = {

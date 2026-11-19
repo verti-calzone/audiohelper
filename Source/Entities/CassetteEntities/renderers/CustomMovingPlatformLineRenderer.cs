@@ -17,7 +17,6 @@ using MonoMod.Utils;
 
 namespace Celeste.Mod.audiohelper.Entities;
 
-[CustomEntity("audiohelper/CustomMovingPlatformLineRenderer")]
 [Tracked(true)]
 public class CustomMovingPlatformLineRenderer : Entity {
 

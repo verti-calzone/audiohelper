@@ -36,7 +36,7 @@ public class CassetteRotatingPlatform : JumpThru
 
         // data
         radius = data.Float("Radius");
-        Add(rotator = new CassetteRotator(OnMove, SilentUpdate, OnSwap, data.Float("AngleOffset"), radius, data.Int("TicksPerCycle"), data.Bool("Clockwise")));
+        Add(rotator = new CassetteRotator(OnMove, SilentUpdate, OnSwap, OnStop, data.Float("AngleOffset"), radius, data.Int("TicksPerCycle"), data.Bool("Clockwise")));
         Add(listener = new CassetteListener(0));
         listener.Tempo = data.Float("Tempo");
 
@@ -96,10 +96,8 @@ public class CassetteRotatingPlatform : JumpThru
     {
         MoveTo(pivot + destination + positionOffset);
     }
-    public void SilentUpdate()
-    {
-
-    }
+    public void SilentUpdate() { }
+    public void OnStop() { }
     public void OnSwap()
     {
         if (soundTimer <= 0)

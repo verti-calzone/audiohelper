@@ -18,14 +18,15 @@ public class CassetteRotator : CassetteTickReader
     public float tickTimer;
     public int BpT, ticksPerSwap, tickCounter = -1, ticksPerLoop, tickSwapCounter;
 
-    public Action silentUpdateAction, swapAction;
+    public Action silentUpdateAction, swapAction, stopAction;
     public Action<Vector2> moveAction;
 
-    public CassetteRotator(Action<Vector2> OnMove, Action OnSilentUpdate, Action OnSwap, float degreeOffset, float ctorRadius, int TpL, bool direction) : base()
+    public CassetteRotator(Action<Vector2> OnMove, Action OnSilentUpdate, Action OnSwap, Action OnStop, float degreeOffset, float ctorRadius, int TpL, bool direction) : base()
     {
         moveAction = OnMove;
         silentUpdateAction = OnSilentUpdate;
         swapAction = OnSwap;
+        stopAction = OnStop;
 
         degreeOffset -= 90;
         degreeOffset %= 360f;
@@ -101,5 +102,10 @@ public class CassetteRotator : CassetteTickReader
         progress += radianOffset;
         Vector2 newPosition = Calc.AngleToVector(progress, radius);
         moveAction(newPosition);
+    }
+
+    public override void Stop()
+    {
+        stopAction();
     }
 }

@@ -7,7 +7,6 @@ using Monocle;
 
 namespace Celeste.Mod.audiohelper.Entities;
 
-[CustomEntity("audiohelper/CassetteMovingBlockPath")]
 [Tracked]
 
 public class CassetteMovingBlockPath : Entity
@@ -132,13 +131,5 @@ public class CassetteMovingBlockPath : Entity
 	{
         foreach (CassetteMovingBlockPathWire wire in wireList) wire.Loosen();
         spinning = false;
-    }
-
-    // HOOK //
-
-    public static void OnStopBlocks(On.Celeste.CassetteBlockManager.orig_StopBlocks orig, CassetteBlockManager cbm)
-    {
-        orig(cbm);
-        foreach (CassetteMovingBlockPath cmbp in cbm.Scene.Tracker.GetEntities<CassetteMovingBlockPath>()) cmbp.spinning = false;
     }
 }

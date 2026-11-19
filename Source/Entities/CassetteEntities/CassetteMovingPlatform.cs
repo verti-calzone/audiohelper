@@ -13,6 +13,7 @@ public class CassetteMovingPlatform : JumpThru
 
     public float yOffset, sinkTimer;
     public Vector2 newPosition, positionOffset;
+    public bool intense;
 
     // audiovisuals
     public string texture;
@@ -27,7 +28,7 @@ public class CassetteMovingPlatform : JumpThru
         AddTag(TagsExt.FreezeFrameUpdate);
 
         // data
-        Add(mover = new CassetteMover(OnMove, StartMove, EndMove, SilentUpdate));
+        Add(mover = new CassetteMover(OnMove, StartMove, EndMove, SilentUpdate, OnStop));
         Add(listener = new CassetteListener(0));
         mover.easer = data.Enum<CassetteMover.Easers>("Easer", CassetteMover.Easers.SineInOut);
         mover.speed = data.Enum<CassetteMover.Speeds>("Speed", CassetteMover.Speeds.FastStop);
@@ -43,6 +44,9 @@ public class CassetteMovingPlatform : JumpThru
         sfx2.Position.X += Width / 2;
         soundChoice = Calc.Random.Choose(true, false);
         Add(new LightOcclude(0.5f));
+
+        if (mover.easer == CassetteMover.Easers.SineInOut) intense = false;
+        else intense = true;
 
         // sending data to the mover
         mover.vertexList.Add(data.Position + offset);
@@ -112,9 +116,11 @@ public class CassetteMovingPlatform : JumpThru
     {
         sfx2.Play(soundChoice ? "event:/vert_audiohelper/movingplatform/move_1_end" : "event:/vert_audiohelper/movingplatform/move_2_end");
 
-        if (mover.easer == CassetteMover.Easers.CubeIn) StartShaking(0.1f);
+        if (intense) StartShaking(0.1f);
     }
     public void SilentUpdate() { }
+
+    public void OnStop() { }
 
     // fixes liftboost when horizontal only
     public override void MoveHExact(int move)

@@ -33,7 +33,7 @@ public class CassetteRotatingBlock : Solid
         // functional components
         radius = data.Float("Radius");
         int TpC = data.Int("TicksPerCycle");
-        Add(rotator = new CassetteRotator(OnMove, SilentUpdate, OnSwap, data.Float("AngleOffset"), radius, TpC, data.Bool("Clockwise")));
+        Add(rotator = new CassetteRotator(OnMove, SilentUpdate, OnSwap, OnStop, data.Float("AngleOffset"), radius, TpC, data.Bool("Clockwise")));
         Add(listener = new CassetteListener(0));
 
         // data
@@ -56,6 +56,7 @@ public class CassetteRotatingBlock : Solid
         spool.Position = Center - Position;
         spool.Rate = 0.5f + Calc.Clamp((radius*MathF.PI)/(TpC*8), 0f, 2f);
         spool.UseRawDeltaTime = true;
+        spool.Stop();
 
         if (!CassetteMovingBlockTexture.textureDictionary.ContainsKey((texture, new Vector2(Width, Height)))) CassetteMovingBlockTexture.BakeTextures(texture, this, bigSprite);
     }
@@ -87,11 +88,12 @@ public class CassetteRotatingBlock : Solid
 
     public void SilentUpdate()
     {
-
+        spool.Play("spin");
     }
 
-    public void OnSwap()
+    public void OnSwap() { }
+    public void OnStop()
     {
-
+        spool.Stop();
     }
 }

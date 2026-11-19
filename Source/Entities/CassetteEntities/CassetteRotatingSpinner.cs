@@ -36,7 +36,7 @@ public class CassetteRotatingSpinner : Entity {
         AddTag(TagsExt.FreezeFrameUpdate);
 
         // data
-        Add(rotator = new CassetteRotator(OnMove, SilentUpdate, OnSwap, data.Float("AngleOffset"), data.Float("Radius"), data.Int("TicksPerCycle"), data.Bool("Clockwise")));
+        Add(rotator = new CassetteRotator(OnMove, SilentUpdate, OnSwap, OnStop, data.Float("AngleOffset"), data.Float("Radius"), data.Int("TicksPerCycle"), data.Bool("Clockwise")));
         Add(listener = new CassetteListener(0));
         if (data.Bool("AttachToSolid"))
         {
@@ -144,4 +144,6 @@ public class CassetteRotatingSpinner : Entity {
         if (player.Die((player.Position - Position).SafeNormalize()) != null) rotator.frozen = true;
         if (Style == Styles.Dust) dust.OnHitPlayer();
     }
+
+    public void OnStop() { }
 }

@@ -32,7 +32,7 @@ public class CassetteTrackSpinner : Entity {
         AddTag(TagsExt.FreezeFrameUpdate);
 
         // data
-        Add(mover = new CassetteMover(OnMove, StartMove, EndMove, SilentUpdate));
+        Add(mover = new CassetteMover(OnMove, StartMove, EndMove, SilentUpdate, OnStop));
         Add(listener = new CassetteListener(0));
 
         mover.easer = data.Enum<CassetteMover.Easers>("Easer", CassetteMover.Easers.SineInOut);
@@ -71,7 +71,6 @@ public class CassetteTrackSpinner : Entity {
         Add(new MirrorReflection());
         Depth = -50;
     }
-
     public void SilentUpdate()
     {
         if (Style == Styles.Dust)
@@ -81,7 +80,6 @@ public class CassetteTrackSpinner : Entity {
             dust.EyeTargetDirection = eyeDir;
         }
     }
-
     public override void Update()
     {
         base.Update();
@@ -96,7 +94,6 @@ public class CassetteTrackSpinner : Entity {
     {
         Position = destination;
     }
-
     public void StartMove()
     {
         if (Style == Styles.Starfish)
@@ -109,12 +106,11 @@ public class CassetteTrackSpinner : Entity {
         else sprite.Play("spin"); // fallback to blade
         Audio.Play("event:/game/05_mirror_temple/bladespinner_spin", Position);
     }
-
     public void EndMove()
     {
         if (Style == Styles.Dust) dust.EyeTargetDirection = (mover.vertices[(mover.activeVertex + 1) % mover.vertices.Length] - mover.vertices[mover.activeVertex]).SafeNormalize(); 
     }
-
+    public void OnStop() { }
     public virtual void OnPlayer(Player player)
     {
         if (player.Die((player.Position - Position).SafeNormalize()) != null) mover.frozen = true;

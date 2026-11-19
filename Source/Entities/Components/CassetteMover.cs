@@ -18,7 +18,7 @@ public class CassetteMover : CassetteTickReader
 	public int activeVertex, tickOffset = 0;
 	public string customSpeed;
 
-	public enum Easers { SineInOut, CubeIn }
+	public enum Easers { SineInOut, CubeIn, SineIn, Linear}
 	public enum Speeds { SlowContinuous, SlowStop, FastContinuous, FastStop, Custom }
 	public Easers easer;
 	public Speeds speed;
@@ -27,15 +27,16 @@ public class CassetteMover : CassetteTickReader
 	public float tickTimer;
 	public int BpT, TpS, ticksPerMove, ticksPerWait, tickCounter, tickCounterLength;
 
-	public Action startMoveAction, endMoveAction, silentUpdateAction;
+	public Action startMoveAction, endMoveAction, silentUpdateAction, stopAction;
 	public Action<Vector2> moveAction;
 
-	public CassetteMover(Action<Vector2> OnMove, Action OnStartMove, Action OnEndMove, Action OnSilentUpdate) : base()
+	public CassetteMover(Action<Vector2> OnMove, Action OnStartMove, Action OnEndMove, Action OnSilentUpdate, Action OnStop) : base()
 	{		
 		moveAction = OnMove;
 		startMoveAction = OnStartMove;
 		endMoveAction = OnEndMove;
 		silentUpdateAction = OnSilentUpdate;
+		stopAction = OnStop;
 	}
 
 	public override void EntityAdded(Scene scene)
@@ -51,7 +52,6 @@ public class CassetteMover : CassetteTickReader
 			if (customTicksPerMove <= 0) customTicksPerMove = 1;
 		}
 	}
-
 	public void FakeAwake(int BpT, int TpS, float tempoMult)
 	{
 		tickTimer = 1f / 6 * (BpT / tempoMult);
@@ -81,7 +81,6 @@ public class CassetteMover : CassetteTickReader
 		}
 		tickCounterLength = ticksPerMove + ticksPerWait;
 	}
-
 	public override void SilentUpdate(int ticksUntilReset, int BpT, int TpS, float tempoMult)
 	{
 		// only run this on the mover's first SilentUpdate
@@ -109,7 +108,6 @@ public class CassetteMover : CassetteTickReader
 
 		silentUpdateAction();
 	}
-
 	public override void Update()
 	{
 		base.Update();
@@ -118,7 +116,6 @@ public class CassetteMover : CassetteTickReader
 
 		ElapseTime(Engine.DeltaTime);
 	}
-
 	public void ElapseTime(float time)
 	{
 		if (moving)
@@ -127,7 +124,6 @@ public class CassetteMover : CassetteTickReader
 			Move();
 		}
 	}
-
 	public override void Tick()
 	{
 		if (tickCounter == 0 && moving)
@@ -144,17 +140,32 @@ public class CassetteMover : CassetteTickReader
 		tickCounter++;
 		tickCounter %= tickCounterLength;
 	}
-
 	public void Move()
 	{
-		easedProgress = easer == Easers.SineInOut ? Ease.SineInOut(progress) : Ease.CubeIn(progress);
+		float tempEased;
+		switch (easer)
+		{
+			default:
+			case Easers.SineInOut:
+				tempEased = Ease.SineInOut(progress);
+				break;
+            case Easers.CubeIn:
+                tempEased = Ease.CubeIn(progress);
+                break;
+            case Easers.SineIn:
+                tempEased = Ease.SineIn(progress);
+                break;
+            case Easers.Linear:
+                tempEased = Ease.Linear(progress);
+                break;
+        }
+		easedProgress = tempEased;
 		NewPosition(Vector2.Lerp(vertices[activeVertex], vertices[(activeVertex + 1) % vertices.Length], easedProgress));
 	}
 	public void NewPosition(Vector2 newPosition)
 	{
 		moveAction(newPosition);
 	}
-
 	public void StartMove()
 	{
         if (vertices[activeVertex] == vertices[(activeVertex + 1) % vertices.Length])
@@ -165,7 +176,6 @@ public class CassetteMover : CassetteTickReader
 
         startMoveAction();
 	}
-
 	public void EndMove()
 	{
         Move();
@@ -181,4 +191,8 @@ public class CassetteMover : CassetteTickReader
         }
 		endMoveAction();
 	}
+    public override void Stop()
+    {
+        stopAction();
+    }
 }

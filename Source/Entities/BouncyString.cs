@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Graphics.PackedVector;
 using Monocle;
-using MonoMod;
 
 namespace Celeste.Mod.audiohelper.Entities;
 
@@ -25,29 +20,40 @@ public class BouncyString : JumpThru
     public Vector2 focus, renderFocus;
     private InvisibleWall leftWall, rightWall;
 
+    public MultiParameterSoundSource ringSfx;
+    public SoundSource bounceSfx;
+
+    public int pitch;
+    public string sfxEvent;
+
     // Rendering
     public float afterImageCount = 0, afterImageTimer;
-    public int maxAfterImages = 5, afterImageOffset = 3;
+    public int maxAfterImages = 3, afterImageOffset = 3;
     public bool increaseAfterImageCount = false;
     public int bufferHead = 0, bufferLength;
     public Vector2[][] pastWirePoints;
     public float wireTransformProgress = 0;
     public Vector2[] wirePoints;
+    public float ringMultiply = 5f;
     public enum Styles { body, highlight, shadow }
     public Styles style;
     public MTexture wireCap;
 
     // Bounce logic
-    public float speed, accel, baseSpeed, liftBoost, autolaunch, ringTimer, ringTimerMax; // variables that get init'd per-bounce
+    public float speed, accel, baseSpeed, liftBoost, autoLaunchSpeed, ringTimer, ringTimerMax, notePower = 0f; // variables that get init'd per-bounce
     private readonly float speedCap = 400;
     private readonly float minDistance = 8, maxDistance = 64;
     private readonly float minSpeed = 100, maxSpeed = 300;
     private readonly float minAccel = 1000, maxAccel = 2100;
     private readonly float minLiftboost = 0, maxLiftboost = -130;
     private readonly float minAutoLaunch = -150, maxAutoLaunch = - 200;
-    private readonly float minRingTimer = 1f, maxRingTimer = 5f;
+    private readonly float minRingTimer = 2f, maxRingTimer = 5f;
+
     public BouncyString(EntityData data, Vector2 offset) : base(data.Position + offset, data.Width, safe: false)
     {
+        pitch = data.Int("pitch", 12);
+        sfxEvent = data.Attr("sound", "event:/vert_audiohelper/bouncystring/harp");
+        
         Position.Y += 4;
         startY = Position.Y;
         intendedY = Position.Y;
@@ -67,10 +73,16 @@ public class BouncyString : JumpThru
         pastWirePoints = new Vector2[bufferLength][];
         for(int i = 0; i < bufferLength; i++) pastWirePoints[i] = wirePoints;
 
+        Add(bounceSfx = new SoundSource());
+        bounceSfx.Position.X += Width / 2f;
+        Add(ringSfx = new MultiParameterSoundSource());
+        ringSfx.Position.X += Width / 2f;
         SurfaceSoundIndex = 0;
         Collider = new PlayerOnlyColliderList(new Hitbox(Width, 5f));
 
         wireCap = GFX.Game["objects/audiohelper/bouncystring/wirecap"];
+
+        Add(new HoldableCollider(OnHoldable, new Hitbox(Width, 4f)));
     }
     public override void Added(Scene scene)
     {
@@ -95,7 +107,8 @@ public class BouncyString : JumpThru
             case States.wait:
                 if (playerRider is not null)
                 {
-                    InitializeBounce(playerRider);
+                    InitializeBounce(playerRider.Collider);
+                    bounceSfx.Play("event:/vert_audiohelper/bouncystring/bounce");
                     intendedY = renderFocus.Y;
                     state = States.bounce;
                     wireState = WireStates.pinch;
@@ -111,9 +124,9 @@ public class BouncyString : JumpThru
                 if (speed > 0.5f * -baseSpeed && intendedY < startY && canLaunch)
                 {
                     // launches the player automatically
-                    if (playerRider is not null && playerRider.Speed.Y >= 0) playerRider.Speed.Y = autolaunch;
+                    if (playerRider is not null && playerRider.Speed.Y >= 0) playerRider.Speed.Y = autoLaunchSpeed;
                     state = States.wait;
-                    wireState = WireStates.beginRing;
+                    if (wireState == WireStates.pinch) wireState = WireStates.beginRing;
                     intendedY = startY;
                 }
                 else intendedY += speed * Engine.DeltaTime;
@@ -139,13 +152,11 @@ public class BouncyString : JumpThru
                 break;
             case WireStates.beginRing:
                 increaseAfterImageCount = true;
-                PlayNote();
+                accel *= ringMultiply;
+                PlayNote(notePower);
 
                 focus.Y += speed * Engine.DeltaTime;
                 renderFocus = focus;
-
-                //if (accel < 0) accel = -2 * maxAccel;
-                //else accel = 2 * maxAccel;
 
                 wireState = WireStates.ringing;
                 break;
@@ -162,6 +173,7 @@ public class BouncyString : JumpThru
                     increaseAfterImageCount = false;
                     afterImageCount = 0;
                     wireTransformProgress = 0;
+                    ringSfx.Stop();
                 }
 
                 focus.X = Calc.Approach(focus.X, midpointX, 50 * Engine.DeltaTime);
@@ -170,7 +182,7 @@ public class BouncyString : JumpThru
                 focus.Y += speed * Engine.DeltaTime;
 
                 // set renderFocus
-                renderFocus.Y = startY + (focus.Y - startY) * (ringTimer * ringTimer) / (ringTimerMax * ringTimerMax);
+                renderFocus.Y = startY + (focus.Y - startY) * ((ringTimer * 1) / (ringTimerMax * 1));
                 renderFocus.X = focus.X;
 
                 ringTimer -= Engine.DeltaTime;
@@ -182,7 +194,7 @@ public class BouncyString : JumpThru
     {
         if (afterImageCount == maxAfterImages) increaseAfterImageCount = false;
 
-        if (increaseAfterImageCount) afterImageCount = Calc.Approach(afterImageCount, maxAfterImages, 20 * Engine.DeltaTime);
+        if (increaseAfterImageCount) afterImageCount = Calc.Approach(afterImageCount, maxAfterImages, 10 * Engine.DeltaTime);
         else if (afterImageTimer > 0) afterImageTimer -= Engine.DeltaTime;
         else afterImageCount = Calc.Approach(afterImageCount, 0, 2 * Engine.DeltaTime);
     }
@@ -250,17 +262,18 @@ public class BouncyString : JumpThru
         if (speed > speedCap) speed = speedCap;
         else if (speed < -speedCap) speed = -speedCap;
     }
-    public void InitializeBounce(Player player)
+    public void InitializeBounce(Collider collider)
     {
-        float left = player.Left - Position.X;
-        float right = Position.X + Width - player.Right;
+        float left = collider.Entity.Left - Position.X;
+        float right = Position.X + Width - collider.Entity.Right;
         float distance = MathF.Min(left, right);
 
         speed = Calc.ClampedMap(distance, minDistance, maxDistance, minSpeed, maxSpeed);
         accel = Calc.ClampedMap(distance, minDistance, maxDistance, minAccel, maxAccel);
         liftBoost = Calc.ClampedMap(distance, minDistance, maxDistance, minLiftboost, maxLiftboost);
-        autolaunch = Calc.ClampedMap(distance, minDistance, maxDistance, minAutoLaunch, maxAutoLaunch);
+        autoLaunchSpeed = Calc.ClampedMap(distance, minDistance, maxDistance, minAutoLaunch, maxAutoLaunch);
         ringTimer = Calc.ClampedMap(distance, minDistance, maxDistance, minRingTimer, maxRingTimer);
+        notePower = Calc.ClampedMap(distance, minDistance, maxDistance, 0, 1);
 
         baseSpeed = speed;
         ringTimerMax = ringTimer;
@@ -268,10 +281,27 @@ public class BouncyString : JumpThru
 
         canLaunch = false;
         wireTransformProgress = 0;
-    }
-    public void PlayNote()
-    {
 
+        afterImageCount = 0;
+        StopSfx();
+    }
+    public void PlayNote(float power)
+    {
+        StopSfx();
+        ringSfx.Play(sfxEvent, "pitch", pitch, "power", power);
+    }
+    public void StopSfx()
+    {
+        if (ringSfx.Playing) ringSfx.instance.triggerCue();
+        if (bounceSfx.Playing) bounceSfx.Stop();
+    }
+    public void OnHoldable(Holdable holdable)
+    {
+        if (wireState == WireStates.still)
+        {
+            InitializeBounce(holdable.Entity.Collider);
+            wireState = WireStates.beginRing;
+        }
     }
     public void GetPoints()
     {
@@ -345,10 +375,9 @@ public class BouncyString : JumpThru
             DrawLineStyles(alpha, localPoints, Styles.body);
             DrawLineStyles(alpha, localPoints, Styles.highlight);
             DrawLineStyles(alpha, localPoints, Styles.shadow);
-
-            wireCap.DrawCentered(new Vector2(Position.X, startY));
-            wireCap.DrawCentered(new Vector2(Position.X + Width, startY), Color.White, new Vector2(-1,1));
         }
+        wireCap.DrawCentered(new Vector2(Position.X, startY));
+        wireCap.DrawCentered(new Vector2(Position.X + Width, startY), Color.White, new Vector2(-1,1));
     }
     public void DrawLineStyles(float alpha, Vector2[] localPoints, Styles style)
     {
@@ -397,7 +426,6 @@ public class BouncyString : JumpThru
         {
             this.colliders = colliders;
         }
-
         public override bool Collide(Hitbox hitbox) => hitbox.Entity is Player && base.Collide(hitbox);
         public override bool Collide(Circle hitbox) => false;
         public override bool Collide(Grid hitbox) => false;

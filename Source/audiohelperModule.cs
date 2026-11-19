@@ -125,14 +125,14 @@ public class audiohelperModule : EverestModule {
         SuppressVanillaCassetteBlockManager = new ILHook(typeof(Level).GetMethod("orig_LoadLevel", BindingFlags.Public | BindingFlags.Instance),IL_SuppressVanillaCassetteBlockManager);
         SuppressVanillaCassetteBlockManagerOnLevelStart = new ILHook(typeof(Level).GetMethod("orig_LoadLevel", BindingFlags.Public | BindingFlags.Instance),IL_SuppressVanillaCassetteBlockManagerOnLevelStart);
 
-        // Cassette mover
+        // Cassette movers
         On.Celeste.CassetteBlockManager.SilentUpdateBlocks += CassetteTickReader.OnSilentUpdateBlocks;
         IL.Celeste.CassetteBlockManager.AdvanceMusic += CassetteTickReader.IL_AdvanceMusic;
-        On.Celeste.CassetteBlockManager.StopBlocks += CassetteMovingBlockPath.OnStopBlocks;
+        On.Celeste.CassetteBlockManager.StopBlocks += CassetteTickReader.OnStopBlocks;
 
         // // Single hooks // //
 
-        // Audio replacer
+        // Audio replacers
         On.Celeste.Audio.GetEventDescription += AdvancedAudioReplacer.OnGetEventDescription;
 
         // Pause on pause controller
@@ -143,6 +143,12 @@ public class audiohelperModule : EverestModule {
 
         // Blueberry pulse
         IL.Celeste.Strawberry.OnAnimate += IL_BlueberryPulseHook;
+
+        // Blublublub controller
+        BlublublubController.SubmergedHook = new Hook(typeof(CrushBlock).GetProperty(
+            "Submerged", BindingFlags.NonPublic | BindingFlags.Instance).GetGetMethod(true),
+            typeof(BlublublubController).GetMethod("GetSubmerged", BindingFlags.Public | BindingFlags.Static));
+        On.Celeste.CrushBlock.ctor_Vector2_float_float_Axes_bool += KevinAwakener.OnKevinCtor;
 
         // srt
         SpeedrunToolIop.srtloaduseapi();
@@ -160,14 +166,14 @@ public class audiohelperModule : EverestModule {
         SuppressVanillaCassetteBlockManager.Dispose();
         SuppressVanillaCassetteBlockManagerOnLevelStart.Dispose();
 
-        // Cassette mover
+        // Cassette movers
         On.Celeste.CassetteBlockManager.SilentUpdateBlocks -= CassetteTickReader.OnSilentUpdateBlocks;
         IL.Celeste.CassetteBlockManager.AdvanceMusic -= CassetteTickReader.IL_AdvanceMusic;
-        On.Celeste.CassetteBlockManager.StopBlocks -= CassetteMovingBlockPath.OnStopBlocks;
+        On.Celeste.CassetteBlockManager.StopBlocks -= CassetteTickReader.OnStopBlocks;
 
         // // Single hooks // //
 
-        // Audio replacer
+        // Audio replacers
         On.Celeste.Audio.GetEventDescription -= AdvancedAudioReplacer.OnGetEventDescription;
 
         // Pause on pause controller
@@ -178,6 +184,10 @@ public class audiohelperModule : EverestModule {
 
         // Blueberry pulse
         IL.Celeste.Strawberry.OnAnimate -= IL_BlueberryPulseHook;
+
+        // Blublublub Controller
+        BlublublubController.SubmergedHook?.Dispose();
+        On.Celeste.CrushBlock.ctor_Vector2_float_float_Axes_bool -= KevinAwakener.OnKevinCtor;
 
         // srt
         SpeedrunToolIop.Unload();

@@ -18,9 +18,11 @@ namespace Celeste.Mod.audiohelper.Entities;
 public class CassetteTickReader : Component {
   	public CassetteTickReader() : base(active: true, visible: false){}
 
-    public virtual void SilentUpdate(int ticksUntilReset, int BpT, int TpS, float tempoMult){}
+    public virtual void SilentUpdate(int ticksUntilReset, int BpT, int TpS, float tempoMult) { }
 
-    public virtual void Tick(){}
+    public virtual void Tick() { }
+
+    public virtual void Stop() { }
 
 	// // HOOKS // //
 
@@ -50,7 +52,17 @@ public class CassetteTickReader : Component {
 
 		foreach (CassetteTickReader ctr in ctrs) ctr.SilentUpdate(ticksUntilReset, BpT, TpS, cbm.tempoMult);
     }
-	public static void AdvanceMusicDelegate(CassetteBlockManager cbm)
+
+    public static void OnStopBlocks(On.Celeste.CassetteBlockManager.orig_StopBlocks orig, CassetteBlockManager cbm)
+    {
+        orig(cbm);
+
+        List<Component> ctrs = cbm.Scene.Tracker.GetComponents<CassetteTickReader>();
+        if (ctrs.Count == 0) return;
+
+        foreach (CassetteTickReader ctr in ctrs) ctr.Stop();
+    }
+    public static void AdvanceMusicDelegate(CassetteBlockManager cbm)
     {
         int BpT = DynamicData.For(cbm).Get<int>("beatsPerTick");
         if (cbm.beatIndex % BpT == 0) foreach (CassetteTickReader ctr in cbm.SceneAs<Level>().Tracker.GetComponents<CassetteTickReader>()) ctr.Tick();

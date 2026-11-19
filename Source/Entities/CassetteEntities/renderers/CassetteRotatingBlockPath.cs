@@ -9,7 +9,6 @@ using Monocle;
 
 namespace Celeste.Mod.audiohelper.Entities;
 
-[CustomEntity("audiohelper/CassetteRotatingBlockPath")]
 [Tracked]
 public class CassetteRotatingBlockPath : Entity
 {

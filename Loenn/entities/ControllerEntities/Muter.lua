@@ -7,6 +7,8 @@ Muter.placements = {
     name = "muter",
     data = {
         EventToMute = "",
+        Flag = "",
+        UsesFlag = false,
     }
 }
 return Muter

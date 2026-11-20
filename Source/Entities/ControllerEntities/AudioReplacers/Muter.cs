@@ -15,15 +15,7 @@ public class Muter : AdvancedAudioReplacer {
     public Muter(EntityData data, Vector2 offset) : base(data,offset){
         OldEvent = data.Attr("EventToMute");
         NewEvent = "event:/char/madeline/footstep";
-	}
-
-    public override void Added(Scene scene)
-    {
-        EventPairs[OldEvent] = this;
-        base.Added(scene);
-    }
-    public override void Update()
-    {
-        base.Update();
+        FlagName = data.Attr("Flag");
+        usesFlag = data.Bool("UsesFlag", false);
     }
 }

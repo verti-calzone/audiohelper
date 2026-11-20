@@ -147,6 +147,10 @@ function CassetteRotatingBlock.move(room, entity, nodeIndex, offsetX, offsetY)
     if nodeIndex ~= 0 then
         entity.x = entity.x + offsetX
         entity.y = entity.y + offsetY
+
+        entity.nodes[nodeIndex].x = entity.nodes[nodeIndex].x + offsetX
+        entity.nodes[nodeIndex].y = entity.nodes[nodeIndex].y + offsetY
+
         return
     end
 

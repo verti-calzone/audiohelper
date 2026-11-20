@@ -13,7 +13,7 @@ namespace Celeste.Mod.audiohelper.Entities;
 public class CassetteRotator : CassetteTickReader
 {
     public float tickProgress = -1f, loopProgress, radius, radianOffset;
-    public bool moving = false, frozen = false, readyToLeave = false, clockwise = true;
+    public bool moving = false, frozen = true, readyToLeave = false, clockwise = true;
 
     public float tickTimer;
     public int BpT, ticksPerSwap, tickCounter = -1, ticksPerLoop, tickSwapCounter;
@@ -57,7 +57,7 @@ public class CassetteRotator : CassetteTickReader
         if (loopProgress < 0) loopProgress += 1;
 
         // moves to its "home" spot to attach static movers, then moves to where it needs to be to sync
-        //Move(0);
+        frozen = false;
         silentUpdateAction();
         Move(loopProgress);
     }
@@ -107,5 +107,6 @@ public class CassetteRotator : CassetteTickReader
     public override void Stop()
     {
         stopAction();
+        frozen = true;
     }
 }

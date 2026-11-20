@@ -30,6 +30,10 @@ entities.audiohelper/AlwaysAudibleWingedBerry.attributes.description.IncludeFlap
 entities.audiohelper/AlwaysAudibleWingedBerry.attributes.description.order=Manually determines where in the order this berry is placed in on the pause menu during gameplay and in level select. Overrides Everest's automatic berry IDs. (Default = -1)
 entities.audiohelper/AlwaysAudibleWingedBerry.attributes.description.checkpointID=Manually determines which checkpoint this berry is in, showing up on the start menu during gameplay and level select. Overrides Everest's automatic berry IDs. (Default = -1)
 
+# Bouncy String
+entities.audiohelper/BouncyString.placements.name.bouncystring=Bouncy String
+entities.audiohelper/BouncyString.placements.description.bouncystring=A bouncy tightrope that plays a pitch
+
 
 # CASSETTE READERS
 
@@ -180,6 +184,10 @@ entities.audiohelper/CassetteLoopController.placements.name.cassetteloopcontroll
 entities.audiohelper/CassetteLoopController.placements.description.cassetteloopcontroller=Defines a new loop region for the current cassette song, toggled by a flag
 entities.audiohelper/CassetteLoopController.attributes.description.LoopStart=First note to play after taking the loop. These values are 1-indexed, so they match the numbers associated with each note inside FMOD. /n For example, the vanilla loop would be 1-256, not 0-255
 entities.audiohelper/CassetteLoopController.attributes.description.LoopEnd=last note to play before taking the loop. These values are 1-indexed, so they match the numbers associated with each note inside FMOD. /n For example, the vanilla loop would be 1-256, not 0-255
+
+# Cassette Colour Continuity Controller
+entities.audiohelper/CassetteColourContinuityController.placements.name.cassettecolourcontinuitycontroller=Cassette Colour Continuity Controller
+entities.audiohelper/CassetteColourContinuityController.placements.description.cassettecolourcontinuitycontroller=Prevents the game from resetting the colour cycle on every room load or respawn. Lets the colours persistently align to the same "beat" of the music
 
 # Pause Music On Pause
 entities.audiohelper/PauseMusicOnPause.placements.name.pausemusiconpause=Pause Music On Pause Controller

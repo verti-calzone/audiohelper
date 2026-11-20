@@ -13,6 +13,7 @@ AdvancedAudioReplacer.placements = {
         MusicParameter = "",
         ParameterValue = 0,
         IncMode = false,
+        UsesFlag = true,
     }
 }
 return AdvancedAudioReplacer

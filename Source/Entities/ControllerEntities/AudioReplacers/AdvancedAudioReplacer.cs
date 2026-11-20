@@ -16,7 +16,7 @@ public class AdvancedAudioReplacer : Entity {
     public string OldEvent;
     public string NewEvent;
     public string FlagName;
-    public bool OldFlag;
+    public bool OldFlag, usesFlag;
     public float ResetTimer = 0f;
     public Musicalizer Musicalizer;
     public float ResetTime;
@@ -33,6 +33,7 @@ public class AdvancedAudioReplacer : Entity {
         OldEvent = data.Attr("OldEvent");
         NewEvent = data.Attr("NewEvent");
         FlagName = data.Attr("Flag");
+        usesFlag = data.Bool("UsesFlag", true);
         ResetTime = data.Float("ResetTime");
         MusicParam = data.Attr("MusicParameter");
         ParamValue = data.Float("ParameterValue");
@@ -48,23 +49,30 @@ public class AdvancedAudioReplacer : Entity {
         OldFlag = level.Session.GetFlag(FlagName);
 	}
 
+    public override void Added(Scene scene)
+    {
+        base.Added(scene);
+
+        if (!usesFlag) EventPairs[OldEvent] = this;
+    }
     public override void Update()
     {
         base.Update();
-        if(!string.IsNullOrEmpty(FlagName))
+        if(usesFlag && !string.IsNullOrEmpty(FlagName))
         {
             if(SceneAs<Level>().Session.GetFlag(FlagName) == true && OldFlag == false) EventPairs[OldEvent] = this;
             else if(SceneAs<Level>().Session.GetFlag(FlagName) == false && OldFlag == true) if(EventPairs.TryGetValue(OldEvent,out var replacer) && replacer == this) EventPairs.Remove(OldEvent);
-        OldFlag = SceneAs<Level>().Session.GetFlag(FlagName);
+            OldFlag = SceneAs<Level>().Session.GetFlag(FlagName);
         }
+
         if (ResetTimer > 0)
         {
             ResetTimer -= Engine.DeltaTime;
             CanReset = true;
         }
-        else if(CanReset)
+        else if (CanReset)
         {
-            Musicalizer.ResetParameter(MusicParam,ParamValue,IncMode,Mode,ResetValue);
+            Musicalizer.ResetParameter(MusicParam, ParamValue, IncMode, Mode, ResetValue);
             CanReset = false;
         }
     }

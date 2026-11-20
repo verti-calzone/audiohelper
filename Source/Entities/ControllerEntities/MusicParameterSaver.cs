@@ -13,7 +13,8 @@ namespace Celeste.Mod.audiohelper.Entities;
 
 public class MusicParameterSaver : Entity {
 
-    public MusicParameterSaver(EntityData data, Vector2 offset){}
+    public MusicParameterSaver(EntityData data, Vector2 offset)
+    {
 
-
+    }
 }

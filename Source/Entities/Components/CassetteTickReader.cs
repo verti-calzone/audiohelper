@@ -39,8 +39,10 @@ public class CassetteTickReader : Component {
 		int BpS = BpT*TpS;
 		float swapProgress = (cbm.beatIndex % BpS) / (float)BpS;
 
-        // sees if the cbm set back 1 or 2 swaps
-        if (cbm.currentIndex == cbm.maxBeat - 2) ticksUntilReset += TpS;
+        // sees how many indices off the current colour is
+        //if (cbm.currentIndex == cbm.maxBeat - 2) ticksUntilReset += TpS;
+
+        ticksUntilReset += TpS * (cbm.maxBeat - cbm.currentIndex - 1);
 
         // additional ticks back
         float countdown = 1;

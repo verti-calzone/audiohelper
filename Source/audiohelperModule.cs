@@ -141,6 +141,9 @@ public class audiohelperModule : EverestModule {
         // Cassette loop controller
         IL.Celeste.CassetteBlockManager.AdvanceMusic += CassetteLoopController.IL_CassetteLoopController;
 
+        // Cassette colour continuity controller
+        On.Celeste.CassetteBlockManager.OnLevelStart += CassetteColourContinuityController.OnOnLevelStart;
+
         // Blueberry pulse
         IL.Celeste.Strawberry.OnAnimate += IL_BlueberryPulseHook;
 
@@ -181,6 +184,9 @@ public class audiohelperModule : EverestModule {
 
         // Cassette loop controller
         IL.Celeste.CassetteBlockManager.AdvanceMusic -= CassetteLoopController.IL_CassetteLoopController;
+
+        // Cassette colour continuity controller
+        On.Celeste.CassetteBlockManager.OnLevelStart -= CassetteColourContinuityController.OnOnLevelStart;
 
         // Blueberry pulse
         IL.Celeste.Strawberry.OnAnimate -= IL_BlueberryPulseHook;
